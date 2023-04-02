@@ -22,7 +22,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.438'
     implementation 'com.github.derjust:spring-data-dynamodb:5.1.0'
     implementation 'org.springframework.data:spring-data-releasetrain:Neumann-SR9'
