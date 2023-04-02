@@ -12,7 +12,7 @@ import lombok.ToString;
 public class BaseResponse {
 
     private String status;
-    private String errorCode;
-    private String errorDescription;
+    private String returnCode;
+    private String message;
 
 }

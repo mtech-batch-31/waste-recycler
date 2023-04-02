@@ -4,7 +4,6 @@ import com.mtech.recycler.model.User;
 import com.mtech.recycler.repository.UserRepository;
 import com.mtech.recycler.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -26,5 +25,13 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("id cannot be null");
 
         return userRepository.findById(id);
+    }
+
+    @Override
+    public Optional<User> getUserByUserName(String userName) {
+        if (!StringUtils.hasText(userName))
+            throw new IllegalArgumentException("user name cannot be null");
+
+        return userRepository.findUserByUserName(userName);
     }
 }

@@ -8,4 +8,5 @@ public interface UserService {
 
     Optional<User> getUserById(String id);
 
+    Optional<User> getUserByUserName(String userName);
 }
