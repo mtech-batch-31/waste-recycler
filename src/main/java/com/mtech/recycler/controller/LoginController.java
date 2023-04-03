@@ -25,7 +25,6 @@ public class LoginController {
     }
 
     @GetMapping("/test")
-    @ResponseBody
     public ResponseEntity<?> test() {
         return ResponseEntity.ok("reached");
     }
@@ -37,8 +36,7 @@ public class LoginController {
         if (StringUtils.hasText(request.getUserName()) || StringUtils.hasText(request.getPassword()))
             return ResponseEntity.badRequest().body(CommonConstant.ErrorMessage.INVAID_REQUEST);
 
-
         Optional<LoginResponse> loginResponse = loginService.authenticate(request.getUserName(), request.getPassword());
-        return ResponseEntity.ok(loginResponse);
+        return ResponseEntity.ok(loginResponse.get());
     }
 }

@@ -1,8 +1,9 @@
 package com.mtech.recycler.service.Impl;
 
-import com.mtech.recycler.model.Role;
 import com.mtech.recycler.entity.User;
+import com.mtech.recycler.exception.UserNotFoundException;
 import com.mtech.recycler.model.RegisterRequest;
+import com.mtech.recycler.model.Role;
 import com.mtech.recycler.repository.UserRepository;
 import com.mtech.recycler.service.UserService;
 import lombok.AllArgsConstructor;
@@ -28,11 +29,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserByUserName(String userName) {
-        if (!StringUtils.hasText(userName))
-            throw new IllegalArgumentException("user name cannot be null");
-
-        return userRepository.findUserByUserName(userName);
+    public User getUserByUserName(String userName) {
+        return userRepository.findUserByUserName(userName).orElseThrow(() -> new UserNotFoundException(String.format("The user name (%s) cannot be found", userName)));
     }
 
     @Override

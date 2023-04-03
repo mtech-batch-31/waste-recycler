@@ -9,7 +9,7 @@ public interface UserService {
 
     Optional<User> getUserById(String id);
 
-    Optional<User> getUserByUserName(String userName);
+    User getUserByUserName(String userName);
 
     User createUser(RegisterRequest registerRequest);
 }
