@@ -2,12 +2,15 @@ package com.mtech.recycler.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
 import com.mtech.recycler.model.RegisterRequest;
+import com.mtech.recycler.service.UserService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +23,12 @@ public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private UserService userService;
 
     @Test
     void givenRegisterRequest_returnSuccessResponse() throws Exception {
@@ -35,12 +44,12 @@ public class UserControllerTest {
     }
 
     @Test
-    void callSecuredApi_return403() throws Exception {
+    void callSecuredApi_return401() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/v1/user/secured")
                         .content(asJsonString(new RegisterRequest()))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isForbidden());
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
 
     }
 

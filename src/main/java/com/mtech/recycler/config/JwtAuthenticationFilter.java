@@ -1,7 +1,7 @@
 package com.mtech.recycler.config;
 
 import com.mtech.recycler.exception.UserNotFoundException;
-import com.mtech.recycler.model.User;
+import com.mtech.recycler.entity.User;
 import com.mtech.recycler.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,6 +1,6 @@
 package com.mtech.recycler.repository;
 
-import com.mtech.recycler.model.User;
+import com.mtech.recycler.entity.User;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.data.repository.CrudRepository;
 

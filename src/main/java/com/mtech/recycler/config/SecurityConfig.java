@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .exceptionHandling()
+                .exceptionHandling()// todo: need to change belowing handling, it's catching all kinds of exception
                 .authenticationEntryPoint((req, res, ex) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "UNAUTHORIZED : " + ex.getMessage()))
                 .and()
                 .sessionManagement()
