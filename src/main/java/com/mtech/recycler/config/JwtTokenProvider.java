@@ -5,32 +5,33 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
-import java.util.Date;
 
 @Slf4j
 @Component
 public class JwtTokenProvider {
     @Value("${app.jwtSecret}")
     private String jwtSecret;
-    @Value("${app.jwtExpirationInMs}")
-    private int jwtExpirationInMs;
+    @Value("${app.jwtExpirationInMinutes}")
+    private int jwtExpirationInMinutes;
 
     public String generateToken(String userName) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+        DateTime now = Instant.now().toDateTime();
+        DateTime expiryDate = now.plusMinutes(jwtExpirationInMinutes);
 
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         Key key = Keys.hmacShaKeyFor(keyBytes);
 
         return Jwts.builder()
                 .setSubject(userName)
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
+                .setIssuedAt(now.toDate())
+                .setExpiration(expiryDate.toDate())
                 .signWith(key)
                 .compact();
     }

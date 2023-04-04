@@ -1,7 +1,7 @@
 package com.mtech.recycler.service;
 
-import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.entity.User;
+import com.mtech.recycler.model.RegisterRequest;
 
 import java.util.Optional;
 

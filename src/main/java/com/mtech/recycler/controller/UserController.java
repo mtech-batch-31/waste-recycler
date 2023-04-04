@@ -19,7 +19,7 @@ public class UserController {
 
     @GetMapping("/secured")
     public ResponseEntity<BaseResponse> test() {
-        return ResponseEntity.ok(new BaseResponse("hello", null, null));
+        return ResponseEntity.ok(new BaseResponse("hello", null));
     }
 
     @PostMapping("/register")
@@ -27,6 +27,6 @@ public class UserController {
         log.info("registerRequest: {}", registerRequest);
         User user = userService.createUser(registerRequest);
         log.info("user created: {}", user);
-        return ResponseEntity.ok(new BaseResponse("success", null, null));
+        return ResponseEntity.ok(new BaseResponse("success", null));
     }
 }

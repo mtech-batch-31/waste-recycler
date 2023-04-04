@@ -10,9 +10,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseResponse {
-
-    private String status;
-    private String returnCode; //todo: check why errorCode and errorDescription changed
+    private String returnCode;
     private String message;
-
 }

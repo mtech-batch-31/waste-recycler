@@ -1,19 +1,27 @@
 package com.mtech.recycler.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
+import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.LoginRequest;
+import com.mtech.recycler.model.LoginResponse;
+import com.mtech.recycler.service.Impl.LoginServiceImpl;
+import com.mtech.recycler.service.Impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hamcrest.CoreMatchers.is;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.is;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(LoginController.class)
@@ -25,27 +33,38 @@ public class LoginControllerTest {
 
     private LoginRequest request;
 
+    @MockBean
+    private LoginServiceImpl loginService;
+
+    @MockBean
+    private UserServiceImpl userService;
+
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
     @BeforeEach
     public void setup() {
         request = new LoginRequest("username", "password");
     }
 
     @Test
-    public void testRun_Successful() throws Exception {
-        mockMvc.perform(get("/api/v1/login"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("token", is("testing")));
+    public void givenLoginRequest_AbleToReachApi() throws Exception {
+
+        mockMvc.perform(get("/api/v1/auth/test"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void shouldReturnTokenAfterLoggedIn_Successful() throws Exception {
-        String requestJsonString = asJsonString(request);
+    public void givenLoginRequest_returnSuccessfulResponse() throws Exception {
+        String requestJsonString = Utilities.asJsonString(request);
+        LoginResponse response = new LoginResponse("access-token", "refresh-token");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
+        given(loginService.authenticate(request.getUserName(), request.getPassword())).willReturn(Optional.of(response));
+
+        mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("token", is("testing")));
+                .andExpect(jsonPath("accessToken", is("access-token")));
     }
 
 //    @Test
@@ -60,11 +79,5 @@ public class LoginControllerTest {
 //                .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.is("success")));
 //    }
 
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }
