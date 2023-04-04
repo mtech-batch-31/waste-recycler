@@ -2,6 +2,7 @@ package com.mtech.recycler.service.Impl;
 
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.exception.UserNotFoundException;
+import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.model.Role;
 import com.mtech.recycler.repository.UserRepository;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
         log.info("creating new user");
         User user = new User();
         user.setEmail(registerRequest.getEmail());
-        user.setPassword(registerRequest.getPassword());
+        user.setPassword(Utilities.encodePassword(registerRequest.getPassword()));
         user.setFirstname(registerRequest.getFirstName());
         user.setLastname(registerRequest.getLastName());
         user.setRole(Role.CUSTOMER);
