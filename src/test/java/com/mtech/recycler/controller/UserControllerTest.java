@@ -33,23 +33,23 @@ public class UserControllerTest {
     @Test
     void givenRegisterRequest_returnSuccessResponse() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/user/register")
-                        .content(asJsonString(new RegisterRequest()))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.post("/api/v1/user/register")
+                                .content(asJsonString(new RegisterRequest()))
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("status", Matchers.is ("success")));
+                .andExpect(MockMvcResultMatchers.jsonPath("returnCode", Matchers.is("success")));
 
     }
 
     @Test
     void callSecuredApi_return401() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/user/secured")
-                        .content(asJsonString(new RegisterRequest()))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+                        MockMvcRequestBuilders.get("/api/v1/user/secured")
+                                .content(asJsonString(new RegisterRequest()))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
 
     }
 
