@@ -43,7 +43,7 @@ public class LoginControllerTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
-    public void setup() {
+    public void setupEach() {
         request = new LoginRequest("username", "password");
     }
 

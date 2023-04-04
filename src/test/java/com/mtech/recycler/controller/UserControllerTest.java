@@ -4,9 +4,11 @@ package com.mtech.recycler.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
+import com.mtech.recycler.entity.User;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.service.UserService;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,6 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 @WebMvcTest(UserController.class)
 @Import(SecurityConfig.class)
@@ -30,8 +35,19 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
+    private User user;
+
+
+    @BeforeEach
+    public void setupEach() {
+        user = new User();
+    }
+
     @Test
     void givenRegisterRequest_returnSuccessResponse() throws Exception {
+
+        given(userService.createUser(any(RegisterRequest.class))).willReturn(user);
+
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/user/register")
                                 .content(asJsonString(new RegisterRequest()))
