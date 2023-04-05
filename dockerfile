@@ -1,5 +1,6 @@
 # Build stage
 FROM gradle:7.6.1-jdk17 AS build
+RUN mkdir -p /home/runner/.gradle/wrapper
 COPY --chown=gradle:gradle . /home/gradle/app
 WORKDIR /home/gradle/app
 RUN gradle bootJar
