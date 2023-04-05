@@ -11,7 +11,8 @@ env:
   IMAGE_REPO_NAME: ${{ secrets.ECR_REPO_NAME }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  CACHE_BUCKET: ${{ AWS_S3_CACHE_BUCKET }}
+  CACHE_BUCKET: ${{ secrets.AWS_S3_CACHE_BUCKET }}
+
 
 jobs:
   build-and-deploy:
