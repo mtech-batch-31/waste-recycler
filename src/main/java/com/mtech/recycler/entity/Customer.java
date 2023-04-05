@@ -2,7 +2,10 @@ package com.mtech.recycler.entity;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -25,7 +28,6 @@ public class Customer extends User {
     public String toString() {
         return "Customer{" +
                 "id='" + this.getId() + '\'' +
-                ", userName='" + this.getUserName() + '\'' +
                 ", email='" + this.getEmail() + '\'' +
                 ", password='" + this.getPassword() + '\'' +
                 ", token='" + this.getToken() + '\'' +

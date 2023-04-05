@@ -1,10 +1,10 @@
 package com.mtech.recycler.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
 import com.mtech.recycler.entity.Customer;
-import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.service.UserService;
 import org.hamcrest.Matchers;
@@ -52,7 +52,7 @@ public class UserControllerTest {
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/user/register")
-                                .content(Utilities.asJsonString(new RegisterRequest()))
+                                .content(asJsonString(new RegisterRequest()))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
@@ -66,9 +66,9 @@ public class UserControllerTest {
         given(userService.createCustomer(any(RegisterRequest.class))).willThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists"));
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/user/register")
-                        .content(Utilities.asJsonString(new RegisterRequest()))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.post("/api/v1/user/register")
+                                .content(asJsonString(new RegisterRequest()))
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isConflict())
                 .andExpect(MockMvcResultMatchers.content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -79,11 +79,17 @@ public class UserControllerTest {
     void callSecuredApi_return401() throws Exception {
         mockMvc.perform(
                         MockMvcRequestBuilders.get("/api/v1/user/secured")
-                                .content(Utilities.asJsonString(new RegisterRequest()))
+                                .content(asJsonString(new RegisterRequest()))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
 
     }
 
-
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
