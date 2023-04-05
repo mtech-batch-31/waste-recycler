@@ -1,6 +1,7 @@
 package com.mtech.recycler.controller;
 
-import com.mtech.recycler.entity.User;
+import com.mtech.recycler.common.CommonConstant;
+import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.model.base.BaseResponse;
 import com.mtech.recycler.service.UserService;
@@ -19,14 +20,12 @@ public class UserController {
 
     @GetMapping("/secured")
     public ResponseEntity<BaseResponse> test() {
-        return ResponseEntity.ok(new BaseResponse("hello", null));
+        return ResponseEntity.ok(new BaseResponse("00", null));
     }
 
     @PostMapping("/register")
     public ResponseEntity<BaseResponse> register(@RequestBody RegisterRequest registerRequest) {
-        log.info("registerRequest: {}", registerRequest);
-        User user = userService.createUser(registerRequest);
-        log.info("user created: {}", user);
-        return ResponseEntity.ok(new BaseResponse("success", null));
+        Customer customer = userService.createCustomer(registerRequest);
+        return ResponseEntity.ok(new BaseResponse("00", CommonConstant.Message.SUCCESSFUL_REQUEST));
     }
 }

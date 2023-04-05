@@ -1,5 +1,6 @@
 package com.mtech.recycler.service;
 
+import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.model.RegisterRequest;
 
@@ -11,5 +12,5 @@ public interface UserService {
 
     User getUserByUserName(String userName);
 
-    User createUser(RegisterRequest registerRequest);
+    Customer createCustomer(RegisterRequest registerRequest);
 }

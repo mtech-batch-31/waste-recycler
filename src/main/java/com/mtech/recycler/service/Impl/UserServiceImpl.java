@@ -1,10 +1,12 @@
 package com.mtech.recycler.service.Impl;
 
+import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.exception.UserNotFoundException;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.model.Role;
+import com.mtech.recycler.repository.CustomerRepository;
 import com.mtech.recycler.repository.UserRepository;
 import com.mtech.recycler.service.UserService;
 import lombok.AllArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     public Optional<User> getUserById(String id) {
@@ -35,14 +38,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(RegisterRequest registerRequest) {
-        log.info("creating new user");
-        User user = new User();
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(Utilities.encodePassword(registerRequest.getPassword()));
-        user.setFirstname(registerRequest.getFirstName());
-        user.setLastname(registerRequest.getLastName());
-        user.setRole(Role.CUSTOMER);
-        return userRepository.save(user);
+    public Customer createCustomer(RegisterRequest registerRequest) {
+        log.info("creating new customer registerRequest: {}", registerRequest);
+        Customer customer = new Customer();
+        customer.setEmail(registerRequest.getEmail());
+        customer.setPassword(Utilities.encodePassword(registerRequest.getPassword()));
+        customer.setFirstName(registerRequest.getFirstName());
+        customer.setLastName(registerRequest.getLastName());
+        customer.setRole(Role.CUSTOMER);
+        customer.setContactNumber(registerRequest.getContactNumber());
+        customer.setAddress(registerRequest.getAddress());
+        customer.setPostalCode(registerRequest.getPostalCode());
+        customerRepository.save(customer);
+        log.info("customer created: {}", customer);
+        return customer;
     }
 }

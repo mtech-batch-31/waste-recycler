@@ -27,7 +27,7 @@ public class UserServiceImplTest {
     void testCreateUser_Success() {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setPassword("123");
-        userService.createUser(registerRequest);
+        userService.createCustomer(registerRequest);
         verify(userRepository, times(1)).save(any());
     }
 }

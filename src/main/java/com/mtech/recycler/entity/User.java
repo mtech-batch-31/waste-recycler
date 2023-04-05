@@ -20,18 +20,18 @@ public class User {
     private String userName;
 
     @DynamoDBAttribute
+    private String email;
+
+    @DynamoDBAttribute
     private String password;
 
     private String token;
 
     @DynamoDBAttribute
-    private String firstname;
+    private String firstName;
 
     @DynamoDBAttribute
-    private String lastname;
-
-    @DynamoDBAttribute
-    private String email;
+    private String lastName;
 
     @DynamoDBAttribute
     @DynamoDBTypeConvertedEnum

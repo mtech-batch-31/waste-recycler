@@ -1,10 +1,10 @@
 package com.mtech.recycler.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
-import com.mtech.recycler.entity.User;
+import com.mtech.recycler.entity.Customer;
+import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.service.UserService;
 import org.hamcrest.Matchers;
@@ -35,45 +35,38 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    private User user;
+    private Customer customer;
 
 
     @BeforeEach
     public void setupEach() {
-        user = new User();
+        customer = new Customer();
     }
 
     @Test
     void givenRegisterRequest_returnSuccessResponse() throws Exception {
 
-        given(userService.createUser(any(RegisterRequest.class))).willReturn(user);
+        given(userService.createCustomer(any(RegisterRequest.class))).willReturn(customer);
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/user/register")
-                                .content(asJsonString(new RegisterRequest()))
+                                .content(Utilities.asJsonString(new RegisterRequest()))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("returnCode", Matchers.is("success")));
-
+                .andExpect(MockMvcResultMatchers.jsonPath("returnCode", Matchers.is("00")));
     }
 
     @Test
     void callSecuredApi_return401() throws Exception {
         mockMvc.perform(
                         MockMvcRequestBuilders.get("/api/v1/user/secured")
-                                .content(asJsonString(new RegisterRequest()))
+                                .content(Utilities.asJsonString(new RegisterRequest()))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
 
     }
 
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }
