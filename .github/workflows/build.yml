@@ -1,0 +1,49 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  AWS_REGION: ap-southeast-1
+  IMAGE_REPO_NAME: ${{ secrets.ECR_REPO_NAME }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  CACHE_BUCKET: ${{ AWS_S3_CACHE_BUCKET }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and Push Docker Image
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build --cache-from ${{ env.IMAGE_REPO_NAME }}:latest --tag ${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }} .
+        docker tag ${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }} ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }}
+        docker push ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }}
+
+    - name: Deploy to ECS
+      uses: aws-actions/amazon-ecs-deploy@v2
+      with:
+        cluster: ${{ secrets.ECS_CLUSTER }}
+        service: ${{ secrets.ECS_SERVICE }}
+        image: ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }}
