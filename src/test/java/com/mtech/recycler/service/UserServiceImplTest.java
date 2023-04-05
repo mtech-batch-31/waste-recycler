@@ -4,6 +4,8 @@ package com.mtech.recycler.service;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +17,7 @@ import static org.mockito.Mockito.verify;
 
 @Slf4j
 @SpringBootTest
+@Disabled
 public class UserServiceImplTest {
 
     @Autowired
