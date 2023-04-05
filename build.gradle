@@ -39,3 +39,8 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootJar {
+    archiveName = "recycler.jar"
+    archiveClassifier.set(null)
+}
