@@ -37,6 +37,9 @@ jobs:
         mkdir -p $HOME/.gradle/caches
         mkdir -p $HOME/.gradle/wrapper
 
+    - name: Setup Gradle Cache Directory
+      run: mkdir -p $HOME/.gradle/caches
+
     - name: Cache Dependencies
       run: |
         mkdir -p /home/runner/.gradle/caches
