@@ -52,11 +52,6 @@ jobs:
         docker tag ${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }} ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }}
         docker push ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }}
 
-    - name: Clear build cache
-      uses: jakejarvis/cache-clear-action@v1
-      with:
-        path: ~/.gradle/caches
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
