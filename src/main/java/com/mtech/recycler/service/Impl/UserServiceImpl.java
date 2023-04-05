@@ -11,8 +11,10 @@ import com.mtech.recycler.repository.UserRepository;
 import com.mtech.recycler.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -40,6 +42,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Customer createCustomer(RegisterRequest registerRequest) {
         log.info("creating new customer registerRequest: {}", registerRequest);
+        Optional<Customer> customerFromDB = customerRepository.findByEmail(registerRequest.getEmail());
+        if(customerFromDB.isPresent()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
+
         Customer customer = new Customer();
         customer.setEmail(registerRequest.getEmail());
         customer.setPassword(Utilities.encodePassword(registerRequest.getPassword()));

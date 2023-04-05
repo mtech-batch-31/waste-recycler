@@ -14,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -56,6 +58,21 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("returnCode", Matchers.is("00")));
+    }
+
+    @Test
+    void givenRegisterRequest_returnErrorResponse() throws Exception {
+
+        given(userService.createCustomer(any(RegisterRequest.class))).willThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists"));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/user/register")
+                        .content(Utilities.asJsonString(new RegisterRequest()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isConflict())
+                .andExpect(MockMvcResultMatchers.content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("returnCode", Matchers.is(String.valueOf(HttpStatus.CONFLICT.value()))));
     }
 
     @Test
