@@ -34,6 +34,8 @@ jobs:
 
     - name: Cache Dependencies
       run: |
+        mkdir -p /home/runner/.gradle/caches
+
         aws s3 ls s3://${{ env.CACHE_BUCKET }} || aws s3 mb s3://${{ env.CACHE_BUCKET }}
 
         aws s3 sync $HOME/.gradle/caches s3://${{ env.CACHE_BUCKET }}/gradle/caches --delete
