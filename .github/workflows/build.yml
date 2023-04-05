@@ -40,6 +40,7 @@ jobs:
     - name: Cache Dependencies
       run: |
         mkdir -p /home/runner/.gradle/caches
+        touch /home/runner/.gradle/caches/.keep
 
         aws s3 ls s3://${{ env.CACHE_BUCKET }} || aws s3 mb s3://${{ env.CACHE_BUCKET }}
 
