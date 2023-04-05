@@ -1,10 +1,9 @@
 # Build stage
 FROM gradle:7.6.1-jdk17 AS build
-RUN mkdir -p /home/runner/.gradle
-RUN mkdir -p /home/runner/.gradle/wrapper
-COPY --chown=gradle:gradle .gradle/caches /home/runner/.gradle/caches
 WORKDIR /home/gradle/app
-RUN gradle bootJar
+COPY --chown=gradle:gradle . .
+RUN mkdir -p /home/gradle/.gradle/caches && \
+    gradle bootJar
 
 # Test stage
 FROM openjdk:17-alpine AS test
