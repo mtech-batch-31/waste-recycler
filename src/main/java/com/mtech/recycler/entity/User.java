@@ -17,9 +17,6 @@ public class User {
     private String id;
 
     @DynamoDBAttribute
-    private String userName;
-
-    @DynamoDBAttribute
     private String email;
 
     @DynamoDBAttribute

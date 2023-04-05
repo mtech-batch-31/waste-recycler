@@ -27,15 +27,7 @@ public class UserServiceImpl implements UserService {
     private final CustomerRepository customerRepository;
 
     @Override
-    public Optional<User> getUserById(String id) {
-        if (!StringUtils.hasText(id))
-            throw new IllegalArgumentException("id cannot be null");
-
-        return userRepository.findById(id);
-    }
-
-    @Override
-    public User getUserByUserName(String userName) {
+    public User getUserByEmail(String userName) {
         return userRepository.findUserByEmail(userName).orElseThrow(() -> new UserNotFoundException(String.format("The user name (%s) cannot be found", userName)));
     }
 

@@ -34,10 +34,10 @@ public class LoginController {
     @ResponseBody
     public ResponseEntity<?> authenticate(@RequestBody LoginRequest request) {
 
-        if (!StringUtils.hasText(request.getUserName()) || !StringUtils.hasText(request.getPassword()))
+        if (!StringUtils.hasText(request.getEmail()) || !StringUtils.hasText(request.getPassword()))
             return ResponseEntity.badRequest().body(CommonConstant.ErrorMessage.INVAID_REQUEST);
 
-        Optional<LoginResponse> response = loginService.authenticate(request.getUserName(), request.getPassword());
+        Optional<LoginResponse> response = loginService.authenticate(request.getEmail(), request.getPassword());
 
         if (response.isEmpty())
             return ResponseEntity.notFound().build();
@@ -52,7 +52,7 @@ public class LoginController {
 
     @PostMapping("/refresh-token")
     @ResponseBody
-    public ResponseEntity<?> authenticate(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
 
         if (!StringUtils.hasText(request.getRefreshToken()))
             return ResponseEntity.badRequest().body(CommonConstant.ErrorMessage.INVAID_REQUEST);

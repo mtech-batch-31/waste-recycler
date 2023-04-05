@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @Transactional
@@ -26,6 +28,11 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public RefreshToken getTokenByRefreshToken(String refreshToken) {
         return refreshTokenRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new RefreshTokenExpiredException(CommonConstant.ErrorMessage.REFRESH_TOKEN_EXPIRED));
+    }
+
+    @Override
+    public Optional<RefreshToken> getTokenByEmail(String email) {
+        return refreshTokenRepository.findById(email);
     }
 
     @Override

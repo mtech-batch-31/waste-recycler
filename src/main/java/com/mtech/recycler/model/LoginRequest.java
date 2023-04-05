@@ -1,9 +1,11 @@
 package com.mtech.recycler.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class LoginRequest {
-    private final String userName;
-    private final String password;
+    private String email;
+    private String password;
 }

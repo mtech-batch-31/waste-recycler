@@ -4,13 +4,9 @@ import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.model.RegisterRequest;
 
-import java.util.Optional;
-
 public interface UserService {
 
-    Optional<User> getUserById(String id);
-
-    User getUserByUserName(String userName);
+    User getUserByEmail(String userName);
 
     Customer createCustomer(RegisterRequest registerRequest);
 }

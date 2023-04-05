@@ -19,7 +19,7 @@ public class RecyclerApplication {
 //
 //            var user = new User();
 //            user.setEmail("test@test.com");
-//            user.setPassword("$2a$10$DRQjFI9xuB.8uC37RldSN.nXxXNY1wenDASR7jyuMphat8pz3D9aC");
+//            user.setPassword(Utilities.encodePassword("your-password"));
 //            user.setRole(Role.CUSTOMER);
 //            repo.save(user);
 //        };

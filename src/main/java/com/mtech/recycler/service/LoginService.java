@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface LoginService {
 
-    Optional<LoginResponse> authenticate(String userName, String rawInputPassword);
+    Optional<LoginResponse> authenticate(String email, String rawInputPassword);
 
     Optional<LoginResponse> refreshAccessToken(String refreshToken);
 }

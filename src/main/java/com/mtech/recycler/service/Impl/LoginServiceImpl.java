@@ -44,12 +44,12 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Optional<LoginResponse> authenticate(String userName, String rawInputPassword) {
+    public Optional<LoginResponse> authenticate(String email, String rawInputPassword) {
         log.info("Login Service Start");
         LoginResponse response = new LoginResponse();
         String refreshToken = UUID.randomUUID().toString();
 
-        User user = userService.getUserByUserName(userName);
+        User user = userService.getUserByEmail(email);
 
         boolean isMatched = isMatchedPassword(rawInputPassword, user.getPassword());
 
@@ -59,8 +59,13 @@ public class LoginServiceImpl implements LoginService {
             return Optional.of(response);
         }
 
-        addOrUpdateToken(user.getEmail(), refreshToken, Instant.now().toDate());
-        response.setAccessToken(tokenProvider.generateToken(userName));
+        Optional<RefreshToken> existingToken = tokenService.getTokenByEmail(email);
+
+        if (existingToken.isPresent())
+            refreshToken = existingToken.get().getRefreshToken();
+
+        addOrUpdateToken(user.getEmail(), refreshToken);
+        response.setAccessToken(tokenProvider.generateToken(email));
         response.setRefreshToken(refreshToken);
 
         log.info("Login Service end");
@@ -75,7 +80,7 @@ public class LoginServiceImpl implements LoginService {
         RefreshToken token = tokenService.getTokenByRefreshToken(refreshToken);
 
         token = tokenService.verifyTokenExpiration(token);
-        addOrUpdateToken(token.getId(), token.getRefreshToken(), token.getTokenExpiryDateTime());
+        addOrUpdateToken(token.getId(), token.getRefreshToken());
 
         response.setRefreshToken(refreshToken);
         response.setAccessToken(tokenProvider.generateToken(token.getId()));
@@ -85,12 +90,12 @@ public class LoginServiceImpl implements LoginService {
         return Optional.of(response);
     }
 
-    private void addOrUpdateToken(String id, String refreshToken, Date currentDate) {
+    private void addOrUpdateToken(String id, String refreshToken) {
         var token = new RefreshToken();
         token.setId(id);
         token.setRefreshToken(refreshToken);
 
-        var currentExpiration = new DateTime(currentDate);
+        var currentExpiration = new DateTime(Instant.now().toDate());
         Date newExpiration = currentExpiration.plusMinutes(refreshTokenExpirationInMinutes).toDate();
         token.setTokenExpiryDateTime(newExpiration);
         tokenService.addOrUpdateRefreshToken(token);
