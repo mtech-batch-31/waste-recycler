@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -38,7 +37,9 @@ public class UserServiceImpl implements UserService {
         if(customerFromDB.isPresent()){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
-
+        if(!Utilities.isValidEmail(registerRequest.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
+        }
         Customer customer = new Customer();
         customer.setEmail(registerRequest.getEmail());
         customer.setPassword(Utilities.encodePassword(registerRequest.getPassword()));

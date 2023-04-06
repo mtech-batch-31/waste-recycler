@@ -1,10 +1,10 @@
 package com.mtech.recycler.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mtech.recycler.common.CommonConstant;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
 import com.mtech.recycler.exception.UserNotFoundException;
+import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.LoginRequest;
 import com.mtech.recycler.model.LoginResponse;
 import com.mtech.recycler.model.RefreshTokenRequest;
@@ -62,7 +62,7 @@ public class LoginControllerTest {
 
     @Test
     public void givenLoginRequest_returnSuccessfulResponse() throws Exception {
-        String requestJsonString = asJsonString(loginRequest);
+        String requestJsonString = Utilities.asJsonString(loginRequest);
         LoginResponse response = new LoginResponse("access-token", "refresh-token");
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.of(response));
@@ -80,7 +80,7 @@ public class LoginControllerTest {
     public void givenLoginRequestPropertiesAreEmpty_returnBadRequest() throws Exception {
         loginRequest.setEmail("");
         loginRequest.setPassword("");
-        String requestJsonString = asJsonString(loginRequest);
+        String requestJsonString = Utilities.asJsonString(loginRequest);
         LoginResponse response = new LoginResponse("access-token", "refresh-token");
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.of(response));
@@ -93,7 +93,7 @@ public class LoginControllerTest {
     public void givenLoginRequestUserNotFound_returnBadRequest() throws Exception {
         loginRequest.setEmail("");
         loginRequest.setPassword("");
-        String requestJsonString = asJsonString(loginRequest);
+        String requestJsonString = Utilities.asJsonString(loginRequest);
 
         given(loginService.authenticate(any(String.class), any(String.class))).willThrow(UserNotFoundException.class);
 
@@ -103,7 +103,7 @@ public class LoginControllerTest {
 
     @Test
     public void givenLoginRequestCouldNotAuthenticate_returnBadRequest() throws Exception {
-        String requestJsonString = asJsonString(loginRequest);
+        String requestJsonString = Utilities.asJsonString(loginRequest);
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.empty());
 
@@ -113,7 +113,7 @@ public class LoginControllerTest {
 
     @Test
     public void givenLoginRequestNullFromAuthenticate_returnBadRequest() throws Exception {
-        String requestJsonString = asJsonString(loginRequest);
+        String requestJsonString = Utilities.asJsonString(loginRequest);
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.ofNullable(null));
 
@@ -123,7 +123,7 @@ public class LoginControllerTest {
 
     @Test
     public void givenRefreshTokenRequest_returnSuccessfulResponse() throws Exception {
-        String requestJsonString = asJsonString(tokenRequest);
+        String requestJsonString = Utilities.asJsonString(tokenRequest);
         LoginResponse response = new LoginResponse("access-token", "refresh-token");
 
         given(loginService.refreshAccessToken(any(String.class))).willReturn(Optional.of(response));
@@ -140,7 +140,7 @@ public class LoginControllerTest {
     @Test
     public void givenRefreshTokenRequestPropertiesAreEmpty_returnBadRequest() throws Exception {
         tokenRequest.setRefreshToken("");
-        String requestJsonString = asJsonString(tokenRequest);
+        String requestJsonString = Utilities.asJsonString(tokenRequest);
         LoginResponse response = new LoginResponse("access-token", "refresh-token");
 
         given(loginService.refreshAccessToken(any(String.class))).willReturn(Optional.of(response));
@@ -151,7 +151,7 @@ public class LoginControllerTest {
 
     @Test
     public void givenRefreshTokenRequestRefreshAccessReturnsEmpty_returnBadRequest() throws Exception {
-        String requestJsonString = asJsonString(tokenRequest);
+        String requestJsonString = Utilities.asJsonString(tokenRequest);
 
         given(loginService.refreshAccessToken(any(String.class))).willReturn(Optional.empty());
 
@@ -159,11 +159,4 @@ public class LoginControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    private static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
