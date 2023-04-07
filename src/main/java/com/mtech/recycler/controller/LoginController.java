@@ -31,7 +31,6 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    @ResponseBody
     public ResponseEntity<?> authenticate(@RequestBody LoginRequest request) {
 
         if (!StringUtils.hasText(request.getEmail()) || !StringUtils.hasText(request.getPassword()))
@@ -51,7 +50,6 @@ public class LoginController {
     }
 
     @PostMapping("/refresh-token")
-    @ResponseBody
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
 
         if (!StringUtils.hasText(request.getRefreshToken()))

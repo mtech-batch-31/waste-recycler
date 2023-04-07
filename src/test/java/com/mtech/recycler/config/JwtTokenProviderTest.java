@@ -15,11 +15,13 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @TestPropertySource(properties = {
         "app.jwtSecret=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "app.jwtExpirationInMinutes=5"
+        "app.jwtExpirationInMinutes=999999999"
 })
 public class JwtTokenProviderTest {
 
     private String email;
+
+    private String expectedToken;
 
     private String instantExpected;
 
@@ -34,6 +36,7 @@ public class JwtTokenProviderTest {
     void init() {
         email = "test@test.com";
         instantExpected = "2023-04-06T00:00:00Z";
+        expectedToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjYxNjgwNzM5MTQwfQ.ZhWiPQ1h04wWZP_6ALVVGpW9U_Zj5DgLYvOn4sLoy8JPgjVr5tXNIxAipThXVCmy";
     }
 
     @AfterEach
@@ -44,7 +47,6 @@ public class JwtTokenProviderTest {
     @Test()
     void testJwtTokenProvider_GenerateValidToken() {
         // Arrange
-        String expectedToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjE2ODA3Mzk1MDB9.rj98WMsyOofORav8-mwr8oXrm2S7IIUFrAL7PWL8c9rF1hAhzarxbLglDXhIr2bh";
         long setup = Instant.parse(instantExpected).getMillis();
         DateTimeUtils.setCurrentMillisFixed(setup);
 
@@ -59,12 +61,10 @@ public class JwtTokenProviderTest {
     @Test()
     void testJwtTokenProvider_GetUserNameFromToken() {
         // Arrange
-        //String jwtToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjE2ODA3Mzk1MDB9.rj98WMsyOofORav8-mwr8oXrm2S7IIUFrAL7PWL8c9rF1hAhzarxbLglDXhIr2bh";
-        String jwtToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjE2ODA3Mzk1MDAsIlJvbGUiOiJVU0VSIiwiSVMtU1RBRkYiOnRydWV9.4_eEZiE_1koEGJd2-IjFVmDBvCSSx0Vuv25_o8AXINOgpBB9qnfeyUrTpV-ha5oa";
         String expectedEmail = "test@test.com";
 
         // Act
-        String result = tokenProvider.getUserNameFromJWT(jwtToken);
+        String result = tokenProvider.getUserNameFromJWT(expectedToken);
 
         // Assert
         Assertions.assertEquals(expectedEmail, result);
@@ -73,7 +73,7 @@ public class JwtTokenProviderTest {
     @Test()
     void testJwtTokenProvider_ShouldThrowExceptionFromInvalidToken() {
         // Arrange
-        String jwtToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjE2ODA3Mzk1MDB9.rj98WMsyOofORav8-mwr8oXrm2S7IIUFrAL7PWL8c9rF1hAhzarxbLglDXhIrcbh";
+        String jwtToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjYxNjgwNzM5MTQwfQ.ZhWiPQ1h04wWZP_6ALVVGpW9U_Zj5DgLYvOn4sLoyPgjVr5tXNIxAipThXVCmy";
 
         // Act
         Assertions.assertThrows(SignatureException.class, () -> {
@@ -84,10 +84,9 @@ public class JwtTokenProviderTest {
     @Test()
     void testJwtTokenProvider_ValidToken() {
         // Arrange
-        String jwtToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjE2ODA3Mzk1MDB9.rj98WMsyOofORav8-mwr8oXrm2S7IIUFrAL7PWL8c9rF1hAhzarxbLglDXhIr2bh";
-
+        
         // Act
-        boolean result = tokenProvider.validateToken(jwtToken);
+        boolean result = tokenProvider.validateToken(expectedToken);
 
         // Assert
         Assertions.assertTrue(result);

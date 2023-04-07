@@ -122,6 +122,16 @@ public class LoginControllerTest {
     }
 
     @Test
+    public void givenLoginRequestThrowsUserNotFoundException_returnNotFound() throws Exception {
+        String requestJsonString = Utilities.asJsonString(loginRequest);
+
+        given(loginService.authenticate(any(String.class), any(String.class))).willThrow(UserNotFoundException.class);
+
+        mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void givenRefreshTokenRequest_returnSuccessfulResponse() throws Exception {
         String requestJsonString = Utilities.asJsonString(tokenRequest);
         LoginResponse response = new LoginResponse("access-token", "refresh-token");
