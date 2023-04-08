@@ -33,13 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Customer createCustomer(RegisterRequest registerRequest) {
         log.info("creating new customer registerRequest: {}", registerRequest);
-        Optional<Customer> customerFromDB = customerRepository.findByEmail(registerRequest.getEmail());
-        if(customerFromDB.isPresent()){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
-        }
-        if(!Utilities.isValidEmail(registerRequest.getEmail())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
-        }
+        validateRegisterRequest(registerRequest);
         Customer customer = new Customer();
         customer.setEmail(registerRequest.getEmail());
         customer.setPassword(Utilities.encodePassword(registerRequest.getPassword()));
@@ -53,4 +47,21 @@ public class UserServiceImpl implements UserService {
         log.info("customer created: {}", customer);
         return customer;
     }
+
+
+    private void validateRegisterRequest(RegisterRequest registerRequest) {
+        log.info("validating registerRequest: {}", registerRequest);
+        if(!Utilities.isValidEmail(registerRequest.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
+        }
+        Optional<Customer> customerFromDB = customerRepository.findByEmail(registerRequest.getEmail());
+        if(customerFromDB.isPresent()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
+        if(!Utilities.isValidPassword(registerRequest.getPassword())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Password");
+        }
+    }
+
+
 }
