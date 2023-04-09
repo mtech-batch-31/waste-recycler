@@ -7,16 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 
-@SuppressWarnings("SpringBootApplicationProperties")
-@SpringBootTest
-@TestPropertySource(properties = {
-        "app.jwtSecret=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "app.jwtExpirationInMinutes=999999999"
-})
 public class JwtTokenProviderTest {
 
     private String email;
@@ -25,10 +16,6 @@ public class JwtTokenProviderTest {
 
     private String instantExpected;
 
-
-    private Instant instant;
-
-    @Autowired
     JwtTokenProvider tokenProvider;
 
 
@@ -37,6 +24,7 @@ public class JwtTokenProviderTest {
         email = "test@test.com";
         instantExpected = "2023-04-06T00:00:00Z";
         expectedToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjYxNjgwNzM5MTQwfQ.ZhWiPQ1h04wWZP_6ALVVGpW9U_Zj5DgLYvOn4sLoy8JPgjVr5tXNIxAipThXVCmy";
+        tokenProvider = new JwtTokenProvider("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 999999999);
     }
 
     @AfterEach
@@ -84,7 +72,7 @@ public class JwtTokenProviderTest {
     @Test()
     void testJwtTokenProvider_ValidToken() {
         // Arrange
-        
+
         // Act
         boolean result = tokenProvider.validateToken(expectedToken);
 

@@ -3,7 +3,6 @@ package com.mtech.recycler.controller;
 import com.mtech.recycler.common.CommonConstant;
 import com.mtech.recycler.model.LoginRequest;
 import com.mtech.recycler.model.LoginResponse;
-import com.mtech.recycler.model.RefreshTokenRequest;
 import com.mtech.recycler.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,25 +36,6 @@ public class LoginController {
             return ResponseEntity.badRequest().body(CommonConstant.ErrorMessage.INVAID_REQUEST);
 
         Optional<LoginResponse> response = loginService.authenticate(request.getEmail(), request.getPassword());
-
-        if (response.isEmpty())
-            return ResponseEntity.notFound().build();
-
-        var loginResponse = response.get();
-
-        loginResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
-        loginResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
-
-        return ResponseEntity.ok(loginResponse);
-    }
-
-    @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
-
-        if (!StringUtils.hasText(request.getRefreshToken()))
-            return ResponseEntity.badRequest().body(CommonConstant.ErrorMessage.INVAID_REQUEST);
-
-        Optional<LoginResponse> response = loginService.refreshAccessToken(request.getRefreshToken());
 
         if (response.isEmpty())
             return ResponseEntity.notFound().build();

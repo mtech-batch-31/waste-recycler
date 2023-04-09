@@ -12,6 +12,4 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class LoginResponse extends BaseResponse {
     private String accessToken;
-
-    private String refreshToken;
 }

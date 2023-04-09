@@ -63,7 +63,7 @@ public class LoginControllerTest {
     @Test
     public void givenLoginRequest_returnSuccessfulResponse() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequest);
-        LoginResponse response = new LoginResponse("access-token", "refresh-token");
+        LoginResponse response = new LoginResponse("access-token");
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.of(response));
 
@@ -71,7 +71,6 @@ public class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("accessToken", is("access-token")))
-                .andExpect(jsonPath("refreshToken", is("refresh-token")))
                 .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
                 .andExpect(jsonPath("message", is(CommonConstant.Message.SUCCESSFUL_REQUEST)));
     }
@@ -81,7 +80,7 @@ public class LoginControllerTest {
         loginRequest.setEmail("");
         loginRequest.setPassword("");
         String requestJsonString = Utilities.asJsonString(loginRequest);
-        LoginResponse response = new LoginResponse("access-token", "refresh-token");
+        LoginResponse response = new LoginResponse("access-token");
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.of(response));
 
@@ -130,43 +129,4 @@ public class LoginControllerTest {
         mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-
-    @Test
-    public void givenRefreshTokenRequest_returnSuccessfulResponse() throws Exception {
-        String requestJsonString = Utilities.asJsonString(tokenRequest);
-        LoginResponse response = new LoginResponse("access-token", "refresh-token");
-
-        given(loginService.refreshAccessToken(any(String.class))).willReturn(Optional.of(response));
-
-        mockMvc.perform(post("/api/v1/auth/refresh-token").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("accessToken", is("access-token")))
-                .andExpect(jsonPath("refreshToken", is("refresh-token")))
-                .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
-                .andExpect(jsonPath("message", is(CommonConstant.Message.SUCCESSFUL_REQUEST)));
-    }
-
-    @Test
-    public void givenRefreshTokenRequestPropertiesAreEmpty_returnBadRequest() throws Exception {
-        tokenRequest.setRefreshToken("");
-        String requestJsonString = Utilities.asJsonString(tokenRequest);
-        LoginResponse response = new LoginResponse("access-token", "refresh-token");
-
-        given(loginService.refreshAccessToken(any(String.class))).willReturn(Optional.of(response));
-
-        mockMvc.perform(post("/api/v1/auth/refresh-token").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void givenRefreshTokenRequestRefreshAccessReturnsEmpty_returnBadRequest() throws Exception {
-        String requestJsonString = Utilities.asJsonString(tokenRequest);
-
-        given(loginService.refreshAccessToken(any(String.class))).willReturn(Optional.empty());
-
-        mockMvc.perform(post("/api/v1/auth/refresh-token").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
 }
