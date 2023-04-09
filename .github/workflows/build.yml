@@ -23,7 +23,7 @@ jobs:
       - name: Check_and_build
         uses: actions/setup-java@v3
         with:
-          distribution: 'openjdk'
+          distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
       - run: ./gradlew check
