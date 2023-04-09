@@ -29,9 +29,18 @@ public class UserServiceImplTest {
 
     private final String password = "P@ssw0rd";
     private final String email = "test@mail.com";
+    private RegisterRequest registerRequest;
 
     @BeforeEach
     public void init() {
+        registerRequest = new RegisterRequest();
+        registerRequest.setEmail(email);
+        registerRequest.setPassword(password);
+        registerRequest.setFirstName("John");
+        registerRequest.setLastName("Doe");
+        registerRequest.setContactNumber("87654321");
+        registerRequest.setAddress("221B Baker Street, Bishan");
+        registerRequest.setPostalCode("123456");
         userService = Mockito.mock(UserServiceImpl.class);
         userRepository = Mockito.mock(UserRepository.class);
         customerRepository = Mockito.mock(CustomerRepository.class);
@@ -41,9 +50,6 @@ public class UserServiceImplTest {
 
     @Test
     void testCreateUser_Success() {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail(email);
-        registerRequest.setPassword(password);
         Customer customer = userService.createCustomer(registerRequest);
         Mockito.verify (customerRepository, Mockito.times(1)).save(ArgumentMatchers.any());
         Assertions.assertNotNull(customer);
@@ -51,11 +57,45 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void testCreateUser_EmailAlreadyExists() {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail(email);
-        registerRequest.setPassword(password);
+    void testCreateUser_emailAlreadyExists() {
         Mockito.when(customerRepository.findByEmail(ArgumentMatchers.anyString())).thenReturn(Optional.of(new Customer()));
         Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
     }
+
+    @Test
+    void testCreateUser_invalidPassword() {
+        registerRequest.setPassword("password");
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+    @Test
+    void testCreateUser_missingFirstName() {
+        registerRequest.setFirstName(null);
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+    @Test
+    void testCreateUser_missingLastName() {
+        registerRequest.setLastName(null);
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+    @Test
+    void testCreateUser_missingContactNumber() {
+        registerRequest.setContactNumber(null);
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+    @Test
+    void testCreateUser_missingAddress() {
+        registerRequest.setAddress(null);
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+    @Test
+    void testCreateUser_missingPostalCode() {
+        registerRequest.setPostalCode(null);
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+
 }

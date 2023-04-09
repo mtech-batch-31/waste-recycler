@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -60,6 +61,21 @@ public class UserServiceImpl implements UserService {
         }
         if(!Utilities.isValidPassword(registerRequest.getPassword())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Password");
+        }
+        if(!StringUtils.hasText(registerRequest.getFirstName())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "firstName cannot be empty");
+        }
+        if(!StringUtils.hasText(registerRequest.getLastName())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "lastName cannot be empty");
+        }
+        if(!StringUtils.hasText(registerRequest.getContactNumber())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "contactNumber cannot be empty");
+        }
+        if(!StringUtils.hasText(registerRequest.getAddress())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "address cannot be empty");
+        }
+        if(!StringUtils.hasText(registerRequest.getPostalCode())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "postal code cannot be empty");
         }
     }
 
