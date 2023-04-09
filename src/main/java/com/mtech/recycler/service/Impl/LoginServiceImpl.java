@@ -8,12 +8,10 @@ import com.mtech.recycler.service.LoginService;
 import com.mtech.recycler.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.mtech.recycler.helper.Utilities.isMatchedPassword;
 
@@ -22,11 +20,7 @@ import static com.mtech.recycler.helper.Utilities.isMatchedPassword;
 @Transactional
 public class LoginServiceImpl implements LoginService {
 
-    @Value("${app.refreshTokenExpirationInMinutes}")
-    private int refreshTokenExpirationInMinutes;
-
     final private JwtTokenProvider tokenProvider;
-
     final private UserService userService;
 
     @Autowired
@@ -39,11 +33,11 @@ public class LoginServiceImpl implements LoginService {
     public Optional<LoginResponse> authenticate(String email, String rawInputPassword) {
         log.info("Login Service Start");
         LoginResponse response = new LoginResponse();
-        String refreshToken = UUID.randomUUID().toString();
-
         User user = userService.getUserByEmail(email);
 
         boolean isMatched = isMatchedPassword(rawInputPassword, user.getPassword());
+
+        log.info("is matched: " + isMatched);
 
         if (!isMatched) {
             response.setMessage(CommonConstant.ErrorMessage.WRONG_USER_NAME_OR_PASSWORD);
@@ -52,7 +46,9 @@ public class LoginServiceImpl implements LoginService {
         }
 
         response.setAccessToken(tokenProvider.generateToken(email));
-        
+
+        log.info("Token: " + response.getAccessToken());
+
         log.info("Login Service end");
         return Optional.of(response);
     }

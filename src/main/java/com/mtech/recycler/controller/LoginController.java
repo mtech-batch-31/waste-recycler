@@ -31,11 +31,14 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody LoginRequest request) {
+        log.info("LoginController - authenticate - started");
 
         if (!StringUtils.hasText(request.getEmail()) || !StringUtils.hasText(request.getPassword()))
             return ResponseEntity.badRequest().body(CommonConstant.ErrorMessage.INVAID_REQUEST);
 
         Optional<LoginResponse> response = loginService.authenticate(request.getEmail(), request.getPassword());
+
+        log.info("LoginController - authenticate - Is Empty: " + response.isEmpty());
 
         if (response.isEmpty())
             return ResponseEntity.notFound().build();
@@ -44,6 +47,8 @@ public class LoginController {
 
         loginResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         loginResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
+
+        log.info("LoginController - authenticate - end");
 
         return ResponseEntity.ok(loginResponse);
     }
