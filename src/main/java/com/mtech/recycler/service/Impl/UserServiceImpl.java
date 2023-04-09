@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "address cannot be empty");
         }
         if(!StringUtils.hasText(registerRequest.getPostalCode())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "postal code cannot be empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "postalCode cannot be empty");
         }
         if(!Utilities.isValidPostalCode(registerRequest.getPostalCode())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid postalCode");
