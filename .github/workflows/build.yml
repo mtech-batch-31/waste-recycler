@@ -23,7 +23,7 @@ jobs:
       - name: Check_and_build
         uses: actions/setup-java@v3
         with:
-          distribution: 'cache'
+          distribution: 'openjdk'
           java-version: '17'
           cache: 'gradle'
       - run: ./gradlew check
@@ -44,7 +44,7 @@ jobs:
       IMAGE_NAME: ${{ secrets.ECR_REPO_NAME }}:$GITHUB_SHA
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
