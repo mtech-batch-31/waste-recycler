@@ -27,7 +27,7 @@ jobs:
           java-version: '17'
           cache: 'gradle'
       - run: ./gradlew check
-      - run: ./gradlew
+      - run: ./gradlew bootJar
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
