@@ -8,7 +8,7 @@ on:
 
 env:
   AWS_REGION: ap-southeast-1
-  ECR_REPO_NAME: ${{ secrets.ECR_REPO_NAME }}
+  ECR_REPO_NAME: ${{ secrets.ECR_REPOSITORY_URL }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   CACHE_BUCKET: ${{ secrets.AWS_S3_CACHE_BUCKET }}
@@ -41,7 +41,7 @@ jobs:
     needs: build_and_test
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME:
+      IMAGE_NAME: ${{ secrets.ECR_REPOSITORY_URL }}:${{ github.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -69,9 +69,9 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.ECR_REPO_NAME }}:latest
+          tags: ${{ env.IMAGE_NAME }}
 
       - name: Push to ECR
         run: |
-          docker tag ${{ secrets.ECR_REPO_NAME }}:latest ${{ steps.login-ecr.outputs.registry }}/${{ env.IMAGE_NAME }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }} ${{ steps.login-ecr.outputs.registry }}/${{ env.IMAGE_NAME }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.IMAGE_NAME }}
