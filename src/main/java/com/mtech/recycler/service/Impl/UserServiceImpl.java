@@ -52,15 +52,21 @@ public class UserServiceImpl implements UserService {
 
     private void validateRegisterRequest(RegisterRequest registerRequest) {
         log.info("validating registerRequest: {}", registerRequest);
+        if(!StringUtils.hasText(registerRequest.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email cannot be empty");
+        }
         if(!Utilities.isValidEmail(registerRequest.getEmail())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Email");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid email");
         }
         Optional<Customer> customerFromDB = customerRepository.findByEmail(registerRequest.getEmail());
         if(customerFromDB.isPresent()){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "email already exists");
+        }
+        if(!StringUtils.hasText(registerRequest.getPassword())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "password cannot be empty");
         }
         if(!Utilities.isValidPassword(registerRequest.getPassword())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Password");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid Password");
         }
         if(!StringUtils.hasText(registerRequest.getFirstName())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "firstName cannot be empty");
@@ -71,11 +77,17 @@ public class UserServiceImpl implements UserService {
         if(!StringUtils.hasText(registerRequest.getContactNumber())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "contactNumber cannot be empty");
         }
+        if(!Utilities.isValidContactNumber(registerRequest.getContactNumber())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid contactNumber");
+        }
         if(!StringUtils.hasText(registerRequest.getAddress())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "address cannot be empty");
         }
         if(!StringUtils.hasText(registerRequest.getPostalCode())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "postal code cannot be empty");
+        }
+        if(!Utilities.isValidPostalCode(registerRequest.getPostalCode())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid postalCode");
         }
     }
 

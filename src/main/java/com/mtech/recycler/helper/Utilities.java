@@ -38,16 +38,24 @@ public class Utilities {
         return matcher.matches();
     }
 
-    private static final String VALID_PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
-
-//    private static final Pattern VALID_PASSWORD_REGEX =
-//            Pattern.compile("(?=.*[0-9])");
+    private static final Pattern VALID_PASSWORD_REGEX = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}");
 
     public static boolean isValidPassword(String password) {
-//        Matcher matcher = VALID_PASSWORD_REGEX.matcher(password);
-        return password.matches(VALID_PASSWORD_REGEX);
-//        return matcher.matches();
+        Matcher matcher = VALID_PASSWORD_REGEX.matcher(password);
+        return matcher.matches();
     }
 
+    private static final Pattern VALID_CONTACT_NUMBER_REGEX = Pattern.compile("^(\\+?65)?[689]\\d{7}$");
 
+    public static boolean isValidContactNumber(String contactNumber) {
+        Matcher matcher = VALID_CONTACT_NUMBER_REGEX.matcher(contactNumber);
+        return matcher.matches();
+    }
+
+    private static final Pattern VALID_SG_POSTAL_CODE = Pattern.compile("^\\d{6}$");
+
+    public static boolean isValidPostalCode(String postalCode) {
+        Matcher matcher = VALID_SG_POSTAL_CODE.matcher(postalCode);
+        return matcher.matches();
+    }
 }

@@ -33,7 +33,29 @@ public class UtilitiesTest {
         Assertions.assertFalse(Utilities.isValidPassword(password));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"+6561234567", "6561234567","+6599876543","6599876543","+6580123456", "6580123456", "60123456", "80123456","90123456"})
+    void givenValidContact_isValidContactNumberTrue(String contactNumber) {
+        Assertions.assertTrue(Utilities.isValidContactNumber(contactNumber));
+    }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"12345","+6512345678", "6512345678","+6591234567890", "6591234567890", "91234567890"})
+    void givenInvalidContact_isValidContactNumberFalse(String contactNumber) {
+        Assertions.assertFalse(Utilities.isValidContactNumber(contactNumber));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"123456"})
+    void givenValidPostalCode_isValidPostalCodeTrue(String postalCode) {
+        Assertions.assertTrue(Utilities.isValidPostalCode(postalCode));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"12345","1234567","A12345"})
+    void givenInvalidPostalCode_isValidPostalCodeFalse(String postalCode) {
+        Assertions.assertFalse(Utilities.isValidPostalCode(postalCode));
+    }
 
     @Test
     void test_asJsonString() {

@@ -57,8 +57,26 @@ public class UserServiceImplTest {
     }
 
     @Test
+    void testCreateUser_missingEmail() {
+        registerRequest.setEmail(null);
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+    @Test
+    void testCreateUser_invalidEmail() {
+        registerRequest.setEmail("test@mail");
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+    @Test
     void testCreateUser_emailAlreadyExists() {
         Mockito.when(customerRepository.findByEmail(ArgumentMatchers.anyString())).thenReturn(Optional.of(new Customer()));
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+    @Test
+    void testCreateUser_missingPassword() {
+        registerRequest.setPassword(null);
         Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
     }
 
@@ -86,6 +104,12 @@ public class UserServiceImplTest {
     }
 
     @Test
+    void testCreateUser_invalidContactNumber() {
+        registerRequest.setContactNumber("12345");
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+    @Test
     void testCreateUser_missingAddress() {
         registerRequest.setAddress(null);
         Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
@@ -94,6 +118,12 @@ public class UserServiceImplTest {
     @Test
     void testCreateUser_missingPostalCode() {
         registerRequest.setPostalCode(null);
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
+    }
+
+    @Test
+    void testCreateUser_invalidPostalCode() {
+        registerRequest.setPostalCode("12345");
         Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
     }
 
