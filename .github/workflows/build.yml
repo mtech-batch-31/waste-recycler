@@ -52,6 +52,7 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+      - run: echo ${{ env.IMAGE_NAME }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -72,6 +73,4 @@ jobs:
           tags: ${{ env.IMAGE_NAME }}
 
       - name: Push to ECR
-        run: |
-          docker tag ${{ env.IMAGE_NAME }} ${{ steps.login-ecr.outputs.registry }}/${{ env.IMAGE_NAME }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.IMAGE_NAME }}
+        run: docker push ${{ env.IMAGE_NAME }}
