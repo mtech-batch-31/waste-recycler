@@ -1,6 +1,6 @@
 package com.mtech.recycler.controller;
 
-import com.mtech.recycler.common.CommonConstant;
+import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
 import com.mtech.recycler.exception.UserNotFoundException;

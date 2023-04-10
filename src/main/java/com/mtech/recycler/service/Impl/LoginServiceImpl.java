@@ -1,6 +1,6 @@
 package com.mtech.recycler.service.Impl;
 
-import com.mtech.recycler.common.CommonConstant;
+import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.model.LoginResponse;

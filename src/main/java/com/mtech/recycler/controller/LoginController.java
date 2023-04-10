@@ -1,6 +1,6 @@
 package com.mtech.recycler.controller;
 
-import com.mtech.recycler.common.CommonConstant;
+import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.model.LoginRequest;
 import com.mtech.recycler.model.LoginResponse;
 import com.mtech.recycler.service.LoginService;

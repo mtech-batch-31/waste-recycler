@@ -1,4 +1,4 @@
-package com.mtech.recycler.common;
+package com.mtech.recycler.constant;
 
 public class CommonConstant {
 

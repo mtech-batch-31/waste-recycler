@@ -1,6 +1,6 @@
 package com.mtech.recycler.controller;
 
-import com.mtech.recycler.common.CommonConstant;
+import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.model.base.BaseResponse;
