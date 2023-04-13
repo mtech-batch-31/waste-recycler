@@ -1,15 +1,12 @@
 package com.mtech.recycler.controller;
 
-import com.mtech.recycler.constant.CommonConstant;
-import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
+import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.exception.UserNotFoundException;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.LoginRequest;
 import com.mtech.recycler.model.LoginResponse;
-import com.mtech.recycler.model.RefreshTokenRequest;
 import com.mtech.recycler.service.Impl.LoginServiceImpl;
-import com.mtech.recycler.service.Impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,21 +33,14 @@ public class LoginControllerTest {
     private MockMvc mockMvc;
 
     private LoginRequest loginRequest;
-    private RefreshTokenRequest tokenRequest;
 
     @MockBean
     private LoginServiceImpl loginService;
 
-    @MockBean
-    private UserServiceImpl userService;
-
-    @MockBean
-    private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     public void setupEach() {
         loginRequest = new LoginRequest("username", "password");
-        tokenRequest = new RefreshTokenRequest("refreshToken");
     }
 
     @Test
