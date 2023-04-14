@@ -22,7 +22,7 @@ public class PricingResponse extends BaseResponse {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Items {
+    public static class Items {
         private String name;
 
         private int quantity;

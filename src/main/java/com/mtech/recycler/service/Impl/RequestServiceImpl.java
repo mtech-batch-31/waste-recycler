@@ -15,6 +15,6 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public Optional<PricingResponse> GetRequestTotalPricing(List<PricingRequest> request) {
-        return null;
+        return Optional.empty();
     }
 }
