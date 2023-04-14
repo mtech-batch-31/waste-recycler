@@ -1,5 +1,6 @@
 package com.mtech.recycler.config;
 
+import com.mtech.recycler.constant.CommonConstant;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
+import java.util.function.Function;
 
 @Slf4j
 @Component
@@ -25,7 +27,7 @@ public class JwtTokenProvider {
     @Value("${app.jwtExpirationInMinutes}")
     private int jwtExpirationInMinutes;
 
-    public String generateToken(String userName) {
+    public String generateToken(String userName, String role) {
         DateTime now = Instant.now().toDateTime();
         DateTime expiryDate = now.plusMinutes(jwtExpirationInMinutes);
 
@@ -36,19 +38,17 @@ public class JwtTokenProvider {
                 .setSubject(userName)
                 .setIssuedAt(now.toDate())
                 .setExpiration(expiryDate.toDate())
+                .claim(CommonConstant.JwtKey.ROLE, role)
                 .signWith(key)
                 .compact();
     }
 
     public String getUserNameFromJWT(String token) {
-        SecretKey secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        return extractClaim(token, Claims::getSubject);
+    }
 
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secret)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+    public String getRoleFromJWT(String token) {
+        return extractClaim(token, claims -> claims.get(CommonConstant.JwtKey.ROLE).toString());
     }
 
     public boolean validateToken(String authToken) {
@@ -66,5 +66,20 @@ public class JwtTokenProvider {
             log.error("Error at validateToken: " + ex.getMessage());
         }
         return false;
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimsTFunction) {
+        final Claims claims = extractAllClaims(token);
+        return claimsTFunction.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        SecretKey secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+
+        return Jwts.parserBuilder()
+                .setSigningKey(secret)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

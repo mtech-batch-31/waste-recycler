@@ -1,27 +1,23 @@
 package com.mtech.recycler.service;
 
-import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.config.JwtTokenProvider;
+import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.exception.UserNotFoundException;
 import com.mtech.recycler.model.LoginResponse;
+import com.mtech.recycler.model.Role;
 import com.mtech.recycler.service.Impl.LoginServiceImpl;
 import com.mtech.recycler.service.Impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 
 
-@TestPropertySource(properties = {
-        "app.jwtSecret=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "app.jwtExpirationInMinutes=999999999"
-})
 public class LoginServiceImplTest {
 
     private String email;
@@ -66,6 +62,7 @@ public class LoginServiceImplTest {
         var user = new User();
         user.setEmail(email);
         user.setPassword("$2a$10$lH929tpdGIGZK/CwJ3t4muLWrlFuvQDTDiBb4uLQgeRt9bNy4uDgy");
+        user.setRole(Role.CUSTOMER);
 
 
         Mockito.when(userService.getUserByEmail(any(String.class))).thenReturn(user);

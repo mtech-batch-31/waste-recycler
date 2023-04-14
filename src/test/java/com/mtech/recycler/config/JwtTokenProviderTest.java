@@ -1,5 +1,6 @@
 package com.mtech.recycler.config;
 
+import com.mtech.recycler.model.Role;
 import io.jsonwebtoken.security.SignatureException;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Instant;
@@ -23,7 +24,7 @@ public class JwtTokenProviderTest {
     void init() {
         email = "test@test.com";
         instantExpected = "2023-04-06T00:00:00Z";
-        expectedToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjYxNjgwNzM5MTQwfQ.ZhWiPQ1h04wWZP_6ALVVGpW9U_Zj5DgLYvOn4sLoy8JPgjVr5tXNIxAipThXVCmy";
+        expectedToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjYxNjgwNzM5MTQwLCJST0xFIjoiQ1VTVE9NRVIifQ.KFxeNjCd24xQRa5872QHgfLvUZ8SCs1tqPdjoXGRMCeuuBJJCwwYgGNj9euun5tA";
         tokenProvider = new JwtTokenProvider("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 999999999);
     }
 
@@ -39,7 +40,7 @@ public class JwtTokenProviderTest {
         DateTimeUtils.setCurrentMillisFixed(setup);
 
         // Act
-        String result = tokenProvider.generateToken(email);
+        String result = tokenProvider.generateToken(email, Role.CUSTOMER.toString());
 
         // Assert
         Assertions.assertEquals(expectedToken, result);
@@ -59,14 +60,24 @@ public class JwtTokenProviderTest {
     }
 
     @Test()
+    void testJwtTokenProvider_GetRoleFromToken() {
+        // Arrange
+        String expectedRole = Role.CUSTOMER.toString();
+
+        // Act
+        String result = tokenProvider.getRoleFromJWT(expectedToken);
+
+        // Assert
+        Assertions.assertEquals(expectedRole, result);
+    }
+
+    @Test()
     void testJwtTokenProvider_ShouldThrowExceptionFromInvalidToken() {
         // Arrange
         String jwtToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNjgwNzM5MjAwLCJleHAiOjYxNjgwNzM5MTQwfQ.ZhWiPQ1h04wWZP_6ALVVGpW9U_Zj5DgLYvOn4sLoyPgjVr5tXNIxAipThXVCmy";
 
         // Act
-        Assertions.assertThrows(SignatureException.class, () -> {
-            tokenProvider.getUserNameFromJWT(jwtToken);
-        });
+        Assertions.assertThrows(SignatureException.class, () -> tokenProvider.getUserNameFromJWT(jwtToken));
     }
 
     @Test()

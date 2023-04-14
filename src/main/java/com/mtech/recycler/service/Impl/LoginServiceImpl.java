@@ -43,7 +43,7 @@ public class LoginServiceImpl implements LoginService {
             return Optional.of(response);
         }
 
-        response.setAccessToken(tokenProvider.generateToken(email));
+        response.setAccessToken(tokenProvider.generateToken(email, user.getRole().toString()));
 
         log.info("Token: " + response.getAccessToken());
 
