@@ -27,7 +27,9 @@ public class PricingResponse extends BaseResponse {
 
         private int quantity;
 
-        private BigDecimal itemPrice;
+        private BigDecimal price;
+
+        private BigDecimal totalPrice;
     }
 }
 

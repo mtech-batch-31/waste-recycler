@@ -1,16 +1,16 @@
 package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
+import com.mtech.recycler.model.Category;
 import com.mtech.recycler.model.PricingRequest;
 import com.mtech.recycler.model.PricingResponse;
+import com.mtech.recycler.model.RecyclingCategoryResponse;
 import com.mtech.recycler.service.RequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,25 +27,19 @@ public class RequestController {
     }
 
     @PostMapping("/categories")
-    public ResponseEntity<?> getRequestTotalPricing(@RequestBody List<PricingRequest> request) {
+    public ResponseEntity<?> getRequestTotalPricing(@RequestBody PricingRequest request) {
         log.info("RequestController - getRequestTotalPricing - started");
+
+        log.info("RequestController - getRequestTotalPricing - discount code: " + request.getPromoCode());
 
         Optional<PricingResponse> response = requestService.GetRequestTotalPricing(request);
 
         log.info("RequestController - GetRequestTotalPricing - Is Empty: " + response.isEmpty());
 
-//        if (response.isEmpty())
-//            return ResponseEntity.notFound().build();
+        if (response.isEmpty())
+            return ResponseEntity.notFound().build();
 
-//        PricingResponse pricingResponse = response.get();
-
-        List<PricingResponse.Items> items = new ArrayList<>();
-        items.add(new PricingResponse.Items(request.get(0).getName(), request.get(0).getQuantity(), new BigDecimal(500)));
-        items.add(new PricingResponse.Items(request.get(1).getName(), request.get(1).getQuantity(), new BigDecimal(500)));
-
-        PricingResponse pricingResponse = new PricingResponse();
-        pricingResponse.setTotalPrice(new BigDecimal(1000));
-        pricingResponse.setItems(items);
+        PricingResponse pricingResponse = response.get();
 
         pricingResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         pricingResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
@@ -56,31 +50,21 @@ public class RequestController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<?> getAllCategories(@RequestBody List<PricingRequest> request) {
-        log.info("RequestController - getRequestTotalPricing - started");
+    public ResponseEntity<?> getAllCategories() {
+        log.info("RequestController - getAllCategories - started");
+        RecyclingCategoryResponse response = new RecyclingCategoryResponse();
 
-        Optional<PricingResponse> response = requestService.GetRequestTotalPricing(request);
+        List<Category> recyclingCategories = requestService.GetAllRecycleCategories()
+                .stream()
+                .map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement()))
+                .toList();
 
-        log.info("RequestController - GetRequestTotalPricing - Is Empty: " + response.isEmpty());
+        response.setCategories(recyclingCategories);
+        response.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        response.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
 
-//        if (response.isEmpty())
-//            return ResponseEntity.notFound().build();
+        log.info("RequestController - getAllCategories - end");
 
-//        PricingResponse pricingResponse = response.get();
-
-        List<PricingResponse.Items> items = new ArrayList<>();
-        items.add(new PricingResponse.Items(request.get(0).getName(), request.get(0).getQuantity(), new BigDecimal(500)));
-        items.add(new PricingResponse.Items(request.get(1).getName(), request.get(1).getQuantity(), new BigDecimal(500)));
-
-        PricingResponse pricingResponse = new PricingResponse();
-        pricingResponse.setTotalPrice(new BigDecimal(1000));
-        pricingResponse.setItems(items);
-
-        pricingResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
-        pricingResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
-
-        log.info("RequestController - getRequestTotalPricing - end");
-
-        return ResponseEntity.ok(pricingResponse);
+        return ResponseEntity.ok(response);
     }
 }

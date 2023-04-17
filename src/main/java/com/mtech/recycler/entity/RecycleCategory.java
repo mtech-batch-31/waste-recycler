@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,5 +32,12 @@ public class RecycleCategory {
     private BigDecimal price;
 
     @DynamoDBAttribute
-    private String unitOfMeasurement;
+    private List<String> unitOfMeasurement;
+
+    public RecycleCategory(String name, BigDecimal price, String... unitOfMeasurement) {
+        this.name = name;
+        this.price = price;
+        this.unitOfMeasurement = new ArrayList<>();
+        this.unitOfMeasurement.addAll(Arrays.stream(unitOfMeasurement).toList());
+    }
 }
