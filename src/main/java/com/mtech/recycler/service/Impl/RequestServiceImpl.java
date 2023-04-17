@@ -1,10 +1,10 @@
 package com.mtech.recycler.service.Impl;
 
-import com.mtech.recycler.entity.Discount;
+import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.entity.RecycleCategory;
 import com.mtech.recycler.model.PricingRequest;
 import com.mtech.recycler.model.PricingResponse;
-import com.mtech.recycler.repository.DiscountRepository;
+import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.service.RequestService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +25,11 @@ import java.util.Optional;
 public class RequestServiceImpl implements RequestService {
 
     final private RecycleCategoryRepository recycleCategoryRepository;
-    final private DiscountRepository discountRepository;
+    final private PromotionRepository promotionRepository;
 
-    public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, DiscountRepository discountRepository) {
+    public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository) {
         this.recycleCategoryRepository = recycleCategoryRepository;
-        this.discountRepository = discountRepository;
+        this.promotionRepository = promotionRepository;
     }
 
     @Override
@@ -38,24 +38,24 @@ public class RequestServiceImpl implements RequestService {
         var response = new PricingResponse();
         List<PricingResponse.Items> items = new ArrayList<>();
 
-        double totalPrice = request.getCategories().stream().mapToDouble(c -> {
+        BigDecimal totalPrice = request.getCategories().stream().map(c -> {
             BigDecimal price = recycleCategoryRepository.findByName(c.getName()).getPrice();
-            BigDecimal eachItemTotalPrice = BigDecimal.valueOf(price.doubleValue() * c.getQuantity());
+            BigDecimal eachItemTotalPrice = price.multiply(new BigDecimal(c.getQuantity()));
             items.add(new PricingResponse.Items(c.getName(), c.getQuantity(), price, eachItemTotalPrice));
-            return eachItemTotalPrice.doubleValue();
-        }).sum();
+            return eachItemTotalPrice;
+        }).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (StringUtils.hasText(request.getPromoCode())) {
-            Discount discount = discountRepository.findDiscountByDiscountCode(request.getPromoCode()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid discount code"));
+            Promotion promotion = promotionRepository.findDiscountByPromotionCode(request.getPromoCode()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid discount code"));
 
-            if (!isWithinRange(discount.getStartDate(), discount.getEndDate())) {
+            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Your discount code is expired");
             }
 
-            totalPrice = totalPrice - (totalPrice * discount.getPercentage());
+            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage())));
         }
 
-        response.setTotalPrice(new BigDecimal(totalPrice));
+        response.setTotalPrice(totalPrice);
         response.setItems(items);
 
         log.info("RequestService - GetRequestTotalPricing - end");

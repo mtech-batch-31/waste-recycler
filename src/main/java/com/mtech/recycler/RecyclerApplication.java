@@ -1,11 +1,11 @@
 package com.mtech.recycler;
 
 import com.mtech.recycler.entity.Customer;
-import com.mtech.recycler.entity.Discount;
+import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.entity.RecycleCategory;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.Role;
-import com.mtech.recycler.repository.DiscountRepository;
+import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.UserRepository;
 import org.joda.time.Instant;
@@ -29,7 +29,7 @@ public class RecyclerApplication {
     // uncomment below to insert dummy data in your local db
 
     @Bean
-    public CommandLineRunner demoData(UserRepository userRepository, RecycleCategoryRepository recycleCategoryRepository, DiscountRepository discountRepository) {
+    public CommandLineRunner demoData(UserRepository userRepository, RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository) {
         return args -> {
             userRepository.deleteAll();
 
@@ -51,15 +51,15 @@ public class RecyclerApplication {
 
             recycleCategoryRepository.saveAll(categories);
 
-            discountRepository.deleteAll();
-            var discount1 = new Discount();
-            discount1.setDiscountCode("d001");
+            promotionRepository.deleteAll();
+            var discount1 = new Promotion();
+            discount1.setPromotionCode("d001");
             discount1.setDescription("Early bird");
             discount1.setPercentage(0.2f);
             discount1.setStartDate(Instant.now().toDateTime().minusDays(1).toDate());
             discount1.setEndDate(Instant.now().toDateTime().plusMonths(1).toDate());
 
-            discountRepository.save(discount1);
+            promotionRepository.save(discount1);
         };
     }
 

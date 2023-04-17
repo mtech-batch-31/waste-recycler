@@ -1,13 +1,13 @@
 package com.mtech.recycler.repository;
 
-import com.mtech.recycler.entity.Discount;
+import com.mtech.recycler.entity.Promotion;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
 @EnableScan
-public interface DiscountRepository extends CrudRepository<Discount, String> {
+public interface PromotionRepository extends CrudRepository<Promotion, String> {
 
-    Optional<Discount> findDiscountByDiscountCode(String discountCode);
+    Optional<Promotion> findDiscountByPromotionCode(String promotionCode);
 }
