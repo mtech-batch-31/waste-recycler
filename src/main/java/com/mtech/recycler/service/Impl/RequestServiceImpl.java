@@ -1,5 +1,6 @@
 package com.mtech.recycler.service.Impl;
 
+import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.entity.RecycleCategory;
 import com.mtech.recycler.model.PricingRequest;
@@ -46,10 +47,11 @@ public class RequestServiceImpl implements RequestService {
         }).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (StringUtils.hasText(request.getPromoCode())) {
-            Promotion promotion = promotionRepository.findDiscountByPromotionCode(request.getPromoCode()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid discount code"));
+            Promotion promotion = promotionRepository.findDiscountByPromotionCode(request.getPromoCode())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
 
             if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Your discount code is expired");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
 
             totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage())));

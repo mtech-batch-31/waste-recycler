@@ -34,7 +34,7 @@ public class LoginController {
         log.info("LoginController - authenticate - started");
 
         if (!StringUtils.hasText(request.getEmail()) || !StringUtils.hasText(request.getPassword()))
-            return ResponseEntity.badRequest().body(CommonConstant.ErrorMessage.INVAID_REQUEST);
+            return ResponseEntity.badRequest().body(CommonConstant.ErrorMessage.INVALID_REQUEST);
 
         Optional<LoginResponse> response = loginService.authenticate(request.getEmail(), request.getPassword());
 
