@@ -32,5 +32,5 @@ public class Promotion {
     private Date endDate;
 
     @DynamoDBAttribute
-    private float percentage;
+    private double percentage;
 }

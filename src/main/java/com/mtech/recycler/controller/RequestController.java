@@ -7,7 +7,6 @@ import com.mtech.recycler.model.PricingResponse;
 import com.mtech.recycler.model.RecyclingCategoryResponse;
 import com.mtech.recycler.service.RequestService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +20,6 @@ public class RequestController {
 
     private final RequestService requestService;
 
-    @Autowired
     public RequestController(RequestService requestService) {
         this.requestService = requestService;
     }

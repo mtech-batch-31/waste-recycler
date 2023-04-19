@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,8 @@ public class RequestServiceImpl implements RequestService {
             return eachItemTotalPrice;
         }).reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        log.info("RequestService - GetRequestTotalPricing - total price before promo: %s".formatted(totalPrice));
+
         if (StringUtils.hasText(request.getPromoCode())) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(request.getPromoCode())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
@@ -54,8 +57,10 @@ public class RequestServiceImpl implements RequestService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
 
-            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage())));
+            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(3, RoundingMode.CEILING);
         }
+
+        log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 
         response.setTotalPrice(totalPrice);
         response.setItems(items);
