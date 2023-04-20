@@ -158,6 +158,10 @@ public class RequestServiceImplTest {
 
         Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(batteryRecycle);
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(plasticRecycle);
-        Assertions.assertThrows(ResponseStatusException.class, () -> requestService.GetRequestTotalPricing(pricingRequest));
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
+
+            Assertions.assertNull(response);
+        });
     }
 }
