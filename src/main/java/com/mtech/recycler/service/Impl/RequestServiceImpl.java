@@ -57,7 +57,7 @@ public class RequestServiceImpl implements RequestService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
 
-            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(3, RoundingMode.CEILING);
+            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
         }
 
         log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
