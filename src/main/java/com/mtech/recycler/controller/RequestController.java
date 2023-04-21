@@ -1,15 +1,13 @@
 package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
-import com.mtech.recycler.model.Category;
-import com.mtech.recycler.model.PricingRequest;
-import com.mtech.recycler.model.PricingResponse;
-import com.mtech.recycler.model.RecyclingCategoryResponse;
+import com.mtech.recycler.model.*;
 import com.mtech.recycler.service.RequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,5 +62,23 @@ public class RequestController {
         log.info("RequestController - getAllCategories - end");
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/recycle")
+    public ResponseEntity<?> getRecycleRequest() {
+
+        RecycleResponse recycleResponse = new RecycleResponse();
+        recycleResponse.setTotalPrice(new BigDecimal(1000));
+        recycleResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        recycleResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
+        return ResponseEntity.ok(recycleResponse);
+    }
+
+    @PostMapping("/recycle")
+    public ResponseEntity<?> submitRequest(@RequestBody SubmitRequest submitRequest) {
+        log.info("RequestController - submitRequest with two params");
+        //input validation
+        requestService.SubmitRequest(submitRequest);
+        return ResponseEntity.ok("ok");
     }
 }

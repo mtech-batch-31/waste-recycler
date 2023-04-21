@@ -3,10 +3,14 @@ package com.mtech.recycler.service.Impl;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.entity.RecycleCategory;
+import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.PricingRequest;
 import com.mtech.recycler.model.PricingResponse;
+import com.mtech.recycler.model.RecycleResponse;
+import com.mtech.recycler.model.SubmitRequest;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
+import com.mtech.recycler.repository.RecycleRequestRepository;
 import com.mtech.recycler.service.RequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.Instant;
@@ -29,9 +33,12 @@ public class RequestServiceImpl implements RequestService {
     final private RecycleCategoryRepository recycleCategoryRepository;
     final private PromotionRepository promotionRepository;
 
-    public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository) {
+    final private RecycleRequestRepository recycleRequestRepository;
+
+    public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository, RecycleRequestRepository recycleRequestRepository) {
         this.recycleCategoryRepository = recycleCategoryRepository;
         this.promotionRepository = promotionRepository;
+        this.recycleRequestRepository = recycleRequestRepository;
     }
 
     @Override
@@ -76,6 +83,17 @@ public class RequestServiceImpl implements RequestService {
         recycleCategoryRepository.findAll().forEach(recycleCategories::add);
 
         return recycleCategories;
+    }
+
+    @Override
+    public Optional<RecycleResponse> SubmitRequest(SubmitRequest request) {
+        RecycleRequest recycleRequest = new RecycleRequest();
+        recycleRequest.setContactNumber(request.getContactNumber());
+        recycleRequest.setContactPerson(request.getContactPerson());
+        recycleRequestRepository.save(recycleRequest);
+        return Optional.empty();
+        //check if username exists database and request not pending
+        //save to database
     }
 
     boolean isWithinRange(Date startDate, Date endDate) {
