@@ -18,4 +18,6 @@ public class Item {
     private BigDecimal unitPrice;
 
     private BigDecimal subTotalPrice;
+
+    private String description;
 }

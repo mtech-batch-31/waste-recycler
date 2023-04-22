@@ -18,10 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 @Slf4j
@@ -46,6 +43,8 @@ public class RequestServiceImpl implements RequestService {
 
         BigDecimal totalPrice = CalculateTotalPrice(request.getData(), request.getPromoCode(), items);
 
+        Utilities.mapDescriptions(request.getData(), items);
+
         log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 
         response.setTotalPrice(totalPrice);
@@ -61,9 +60,8 @@ public class RequestServiceImpl implements RequestService {
             BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name (%s) is not found".formatted(c.getCategory())))
                     .getPrice();
-
             BigDecimal subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
-            items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice));
+            items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
             return subTotalPrice;
         }).reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -84,7 +82,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<Category> GetAllRecycleCategories() {
-        return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement())).toList();
+        return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement(), "")).toList();
     }
 
     @Override

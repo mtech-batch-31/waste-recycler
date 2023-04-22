@@ -3,12 +3,15 @@ package com.mtech.recycler.helper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mtech.recycler.entity.RecycleItem;
+import com.mtech.recycler.model.Category;
 import com.mtech.recycler.model.Item;
 import com.mtech.recycler.model.PricingRequest;
 import com.mtech.recycler.model.RecycleRequest;
+import jakarta.validation.Valid;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +19,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Utilities {
 
@@ -95,9 +99,23 @@ public class Utilities {
                 item.setQuantity(dbItem.getQuantity());
                 item.setUnitPrice(dbItem.getUnitPrice());
                 item.setSubTotalPrice(dbItem.getSubTotalPrice());
+                item.setDescription(dbItem.getDescription());
                 items.add(item);
             }
             return items;
         }
     }
+
+    public static List<Item> mapDescriptions(@Valid List<Category> categories, List<Item> items) {
+        Iterator<Category> pricingIterator = categories.iterator();
+        return items.stream()
+                .map(item -> {
+                    if (pricingIterator.hasNext()) {
+                        item.setDescription(pricingIterator.next().getDescription());
+                    }
+                    return item;
+                })
+                .collect(Collectors.toList());
+    }
+
 }

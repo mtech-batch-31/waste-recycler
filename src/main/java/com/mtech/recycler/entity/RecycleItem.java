@@ -63,5 +63,8 @@ public class RecycleItem {
 
         @DynamoDBAttribute
         private BigDecimal subTotalPrice;
+
+        @DynamoDBAttribute
+        private String description;
     }
 }

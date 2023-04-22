@@ -26,4 +26,6 @@ public class Category {
     private double quantity;
 
     private String unitOfMeasurement;
+
+    private String description;
 }
