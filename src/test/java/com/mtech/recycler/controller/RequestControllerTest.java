@@ -62,8 +62,8 @@ public class RequestControllerTest {
     @BeforeEach
     public void setupEach() {
         List<Category> categories = new ArrayList<>() {{
-            add(new Category("Electronics", new BigDecimal(700), 0.1, "item"));
-            add(new Category("Battery", new BigDecimal(500), 1, "kg"));
+            add(new Category("Electronics", new BigDecimal(700), 0.1, "item", ""));
+            add(new Category("Battery", new BigDecimal(500), 1, "kg", ""));
         }};
 
         request = new PricingRequest("promo", categories);
@@ -80,11 +80,11 @@ public class RequestControllerTest {
     @Test
     public void givenRecyclingRequestWhenSendForPricing_returnSuccessfulResponse() throws Exception {
         initAuth();
-        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"totalPrice\":100,\"items\":[{\"category\":\"test\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50},{\"category\":\"test2\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50}]}";
+        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"totalPrice\":100,\"items\":[{\"category\":\"test\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50,\"description\":\"\"},{\"category\":\"test2\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50,\"description\":\"\"}]}";
         String requestJsonString = Utilities.asJsonString(request);
         List<Item> items = new ArrayList<>() {{
-            add(new Item("test", 1, new BigDecimal(50), new BigDecimal(50)));
-            add(new Item("test2", 1, new BigDecimal(50), new BigDecimal(50)));
+            add(new Item("test", 1, new BigDecimal(50), new BigDecimal(50), ""));
+            add(new Item("test2", 1, new BigDecimal(50), new BigDecimal(50), ""));
         }};
         PricingResponse response = new PricingResponse(new BigDecimal(100), items);
 
@@ -154,11 +154,11 @@ public class RequestControllerTest {
     @Test
     public void givenRecyclingCategoriesRequest_returnSuccessfulResponse() throws Exception {
         initAuth();
-        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[{\"category\":\"c1\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\"},{\"category\":\"c2\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\"}]}";
+        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[{\"category\":\"c1\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"},{\"category\":\"c2\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"}]}";
 
         var response = new ArrayList<Category>() {{
-            add(new Category("c1", new BigDecimal(1), 0.1, "kg"));
-            add(new Category("c2", new BigDecimal(1), 0.1, "kg"));
+            add(new Category("c1", new BigDecimal(1), 0.1, "kg", ""));
+            add(new Category("c2", new BigDecimal(1), 0.1, "kg", ""));
         }};
 
         given(requestService.GetAllRecycleCategories()).willReturn(response);

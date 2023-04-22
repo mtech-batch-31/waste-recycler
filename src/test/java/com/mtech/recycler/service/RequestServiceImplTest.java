@@ -75,8 +75,8 @@ public class RequestServiceImplTest {
         var expectedBatteryTotalPrice = new BigDecimal("100.0");
         var expectedPlasticTotalPrice = new BigDecimal("50.0");
         var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, ""));
+            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
+            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
         var batteryRecycle = new RecycleCategory();
@@ -107,8 +107,8 @@ public class RequestServiceImplTest {
         var expectedBatteryTotalPrice = new BigDecimal("100.0");
         var expectedPlasticTotalPrice = new BigDecimal("50.0");
         var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, ""));
+            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
+            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
         var promotion = new Promotion() {{
@@ -145,8 +145,8 @@ public class RequestServiceImplTest {
     @Test
     void testGetRequestTotalPricing_ThrowExceptionWhenPromoCodeNotFound() {
         var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, ""));
+            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
+            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
         var batteryRecycle = new RecycleCategory();
@@ -171,8 +171,8 @@ public class RequestServiceImplTest {
     @Test
     void testGetRequestTotalPricing_ThrowExceptionWhenCategoryNotFound() {
         var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, ""));
+            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
+            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
         var pricingRequest = new PricingRequest();
@@ -189,8 +189,8 @@ public class RequestServiceImplTest {
     @Test
     void testGetRequestTotalPricing_WithPromotionIsExpired_Success() {
         var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, ""));
+            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
+            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
         var promotion = new Promotion() {{
