@@ -2,7 +2,6 @@ package com.mtech.recycler.service.Impl;
 
 import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.entity.User;
-import com.mtech.recycler.exception.UserNotFoundException;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.model.Role;
@@ -26,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByEmail(String userName) {
-        return customerRepository.findByEmail(userName).orElseThrow(() -> new UserNotFoundException(String.format("The user name (%s) cannot be found", userName)));
+        return customerRepository.findByEmail(userName).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("The user name (%s) cannot be found", userName)));
     }
 
     @Override

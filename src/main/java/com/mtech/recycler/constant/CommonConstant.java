@@ -17,6 +17,10 @@ public class CommonConstant {
         public static final String INVALID_PROMOTION_CODE = "Invalid promotion code";
 
         public static final String EXPIRED_PROMOTION_CODE = "Your promotion code is expired";
+
+        public static final String QUANTITY_VALIDATION_FAILED = "Quantity must be greater than 0";
+
+        public static final String CATEGORY_VALIDATION_FAILED = "Invalid category";
     }
 
     public static class ReturnCode {

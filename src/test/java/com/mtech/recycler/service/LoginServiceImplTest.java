@@ -3,7 +3,6 @@ package com.mtech.recycler.service;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.User;
-import com.mtech.recycler.exception.UserNotFoundException;
 import com.mtech.recycler.model.LoginResponse;
 import com.mtech.recycler.model.Role;
 import com.mtech.recycler.service.Impl.LoginServiceImpl;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -82,9 +82,9 @@ public class LoginServiceImplTest {
         user.setEmail(email);
         user.setPassword("$2a$10$lH929tpdGIGZK/CwJ3t4muLWrlFuvQDTDiBb4uLQgeRt9bNy4uDgy");
 
-        Mockito.when(userService.getUserByEmail(any(String.class))).thenThrow(UserNotFoundException.class);
+        Mockito.when(userService.getUserByEmail(any(String.class))).thenThrow(ResponseStatusException.class);
 
-        Assertions.assertThrows(UserNotFoundException.class, () -> {
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
             Optional<LoginResponse> loginResponse = loginService.authenticate(email, password);
 
             Assertions.assertNull(loginResponse);

@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class Item {
 
-    private String name;
+    private String category;
 
     private double quantity;
 

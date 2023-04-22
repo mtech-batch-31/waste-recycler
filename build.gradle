@@ -23,6 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.438'
     implementation 'com.github.derjust:spring-data-dynamodb:5.1.0'
     implementation 'org.springframework.data:spring-data-releasetrain:Neumann-SR9'
@@ -43,7 +44,7 @@ tasks.named('test') {
 }
 
 bootJar {
-    archiveName = "recycler.jar"
+    archiveFileName = "recycler.jar"
     archiveClassifier.set(null)
 }
 
@@ -53,7 +54,7 @@ jacocoTestReport {
     afterEvaluate {
         getClassDirectories().setFrom(
                 files(classDirectories.files.collect {
-                    fileTree(dir: it, exclude:  [
+                    fileTree(dir: it, exclude: [
                             '**/entity/*',
                             '**/model/*',
                             '**/exception/*',

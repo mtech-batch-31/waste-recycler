@@ -10,11 +10,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Valid
 public class PricingRequest {
 
     private String promoCode;
 
+    @Valid
     private List<Category> data;
 
 }

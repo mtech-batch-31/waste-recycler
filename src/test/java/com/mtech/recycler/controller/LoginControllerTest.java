@@ -3,7 +3,6 @@ package com.mtech.recycler.controller;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
 import com.mtech.recycler.constant.CommonConstant;
-import com.mtech.recycler.exception.UserNotFoundException;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.LoginRequest;
 import com.mtech.recycler.model.LoginResponse;
@@ -15,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -91,7 +92,7 @@ public class LoginControllerTest {
         loginRequest.setPassword("");
         String requestJsonString = Utilities.asJsonString(loginRequest);
 
-        given(loginService.authenticate(any(String.class), any(String.class))).willThrow(UserNotFoundException.class);
+        given(loginService.authenticate(any(String.class), any(String.class))).willThrow(ResponseStatusException.class);
 
         mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -121,10 +122,10 @@ public class LoginControllerTest {
     public void givenLoginRequestThrowsUserNotFoundException_returnNotFound() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequest);
 
-        given(loginService.authenticate(any(String.class), any(String.class))).willThrow(UserNotFoundException.class);
+        given(loginService.authenticate(any(String.class), any(String.class))).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not found"));
 
         mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 }
 

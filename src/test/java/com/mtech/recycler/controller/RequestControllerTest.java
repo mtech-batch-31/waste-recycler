@@ -6,6 +6,7 @@ import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.Category;
+import com.mtech.recycler.model.Item;
 import com.mtech.recycler.model.PricingRequest;
 import com.mtech.recycler.model.PricingResponse;
 import com.mtech.recycler.service.Impl.RequestServiceImpl;
@@ -72,17 +73,17 @@ public class RequestControllerTest {
     @Test
     public void givenRecyclingRequestWhenSendForPricing_returnSuccessfulResponse() throws Exception {
         initAuth();
-        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"totalPrice\":100,\"items\":[{\"name\":\"test\",\"quantity\":1,\"price\":50,\"totalPrice\":50},{\"name\":\"test2\",\"quantity\":1,\"price\":50,\"totalPrice\":50}]}";
+        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"totalPrice\":100,\"items\":[{\"category\":\"test\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50},{\"category\":\"test2\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50}]}";
         String requestJsonString = Utilities.asJsonString(request);
-        List<PricingResponse.Items> items = new ArrayList<>() {{
-            add(new PricingResponse.Items("test", 1, new BigDecimal(50), new BigDecimal(50)));
-            add(new PricingResponse.Items("test2", 1, new BigDecimal(50), new BigDecimal(50)));
+        List<Item> items = new ArrayList<>() {{
+            add(new Item("test", 1, new BigDecimal(50), new BigDecimal(50)));
+            add(new Item("test2", 1, new BigDecimal(50), new BigDecimal(50)));
         }};
         PricingResponse response = new PricingResponse(new BigDecimal(100), items);
 
         given(requestService.GetRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.of(response));
 
-        MvcResult result = mockMvc.perform(post("/api/v1/request/categories").content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+        MvcResult result = mockMvc.perform(post("/api/v1/request/price").content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
@@ -91,6 +92,29 @@ public class RequestControllerTest {
 
         Assertions.assertEquals(expectedResponse, result.getResponse().getContentAsString());
     }
+
+//    @Test
+//    public void givenRecyclingRequestWhenSendForPricing_returnSuccessfulResponse() throws Exception {
+//        initAuth();
+//        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"totalPrice\":100,\"items\":[{\"name\":\"test\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50},{\"name\":\"test2\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50}]}";
+//        String requestJsonString = Utilities.asJsonString(request);
+//        List<Item> items = new ArrayList<>() {{
+//            add(new Item("test", 1, new BigDecimal(50), new BigDecimal(50)));
+//            add(new Item("test2", 1, new BigDecimal(50), new BigDecimal(50)));
+//        }};
+//        PricingResponse response = new PricingResponse(new BigDecimal(100), items);
+//
+//        given(requestService.GetRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.of(response));
+//
+//        MvcResult result = mockMvc.perform(post("/api/v1/request/price").content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
+//                .andExpect(jsonPath("message", is(CommonConstant.Message.SUCCESSFUL_REQUEST)))
+//                .andReturn();
+//
+//        Assertions.assertEquals(expectedResponse, result.getResponse().getContentAsString());
+//    }
 
 //    @Test
 //    public void givenLoginRequestPropertiesAreEmpty_returnBadRequest() throws Exception {

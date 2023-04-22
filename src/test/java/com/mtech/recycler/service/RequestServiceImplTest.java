@@ -72,9 +72,9 @@ public class RequestServiceImplTest {
     @Test
     void testGetRequestTotalPricing_WithoutPromotion_Success() {
 
-        var expectedTotalPrice = new BigDecimal(150);
-        var expectedBatteryTotalPrice = new BigDecimal(100);
-        var expectedPlasticTotalPrice = new BigDecimal(50);
+        var expectedTotalPrice = new BigDecimal("150.0");
+        var expectedBatteryTotalPrice = new BigDecimal("100.0");
+        var expectedPlasticTotalPrice = new BigDecimal("50.0");
         var categories = new ArrayList<Category>() {{
             add(new Category("Battery", new BigDecimal(0), 10, ""));
             add(new Category("Plastic", new BigDecimal(0), 10, ""));
@@ -89,8 +89,8 @@ public class RequestServiceImplTest {
         var pricingRequest = new PricingRequest();
         pricingRequest.setData(categories);
 
-        Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(batteryRecycle);
-        Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(plasticRecycle);
+        Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(Optional.of(batteryRecycle));
+        Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
 
         Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
         Mockito.verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
@@ -105,8 +105,8 @@ public class RequestServiceImplTest {
     @Test
     void testGetRequestTotalPricing_WithPromotion_Success() {
         var expectedTotalPrice = new BigDecimal("165.00");
-        var expectedBatteryTotalPrice = new BigDecimal(100);
-        var expectedPlasticTotalPrice = new BigDecimal(50);
+        var expectedBatteryTotalPrice = new BigDecimal("100.0");
+        var expectedPlasticTotalPrice = new BigDecimal("50.0");
         var categories = new ArrayList<Category>() {{
             add(new Category("Battery", new BigDecimal(0), 10, ""));
             add(new Category("Plastic", new BigDecimal(0), 10, ""));
@@ -129,8 +129,8 @@ public class RequestServiceImplTest {
         pricingRequest.setPromoCode("p001");
         pricingRequest.setData(categories);
 
-        Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(batteryRecycle);
-        Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(plasticRecycle);
+        Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(Optional.of(batteryRecycle));
+        Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
         Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
 
         Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
@@ -160,8 +160,8 @@ public class RequestServiceImplTest {
         pricingRequest.setPromoCode("p001");
         pricingRequest.setData(categories);
 
-        Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(batteryRecycle);
-        Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(plasticRecycle);
+        Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(Optional.of(batteryRecycle));
+        Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
         Assertions.assertThrows(ResponseStatusException.class, () -> {
             Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
 

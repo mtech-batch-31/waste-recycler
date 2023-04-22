@@ -1,8 +1,9 @@
 package com.mtech.recycler.model;
 
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+import com.mtech.recycler.constant.CommonConstant;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,17 +14,16 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Valid
 public class Category {
 
-    @NotNull(message = "name is empty")
+    @NotNull(message = CommonConstant.ErrorMessage.CATEGORY_VALIDATION_FAILED)
+    @NotEmpty(message = CommonConstant.ErrorMessage.CATEGORY_VALIDATION_FAILED)
     private String category;
 
     private BigDecimal price;
 
-    @Min(message = "Quantity must be greater than 0", value = 1)
+    @DecimalMin(message = CommonConstant.ErrorMessage.QUANTITY_VALIDATION_FAILED, value = "0.1")
     private double quantity;
 
     private String unitOfMeasurement;
-
 }
