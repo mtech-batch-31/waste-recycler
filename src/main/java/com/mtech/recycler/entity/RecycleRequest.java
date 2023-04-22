@@ -31,7 +31,7 @@ public class RecycleRequest {
     private String contactNumber;
 
     @DynamoDBAttribute
-    private List<RecycleItem> recycleItemList;
+    private List<Category> recycleItemList;
 
 }
 

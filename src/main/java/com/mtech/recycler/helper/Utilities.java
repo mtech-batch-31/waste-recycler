@@ -1,6 +1,9 @@
 package com.mtech.recycler.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mtech.recycler.entity.RecycleRequest;
+import com.mtech.recycler.model.PricingRequest;
+import com.mtech.recycler.model.SubmitRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -57,5 +60,12 @@ public class Utilities {
     public static boolean isValidPostalCode(String postalCode) {
         Matcher matcher = VALID_SG_POSTAL_CODE.matcher(postalCode);
         return matcher.matches();
+    }
+
+    public static PricingRequest convertSubmitRequestToPricingRequest(SubmitRequest submitRequest) {
+        PricingRequest pricingRequest = new PricingRequest();
+        pricingRequest.setPromoCode(submitRequest.getPromoCode());
+        pricingRequest.setData(submitRequest.getData());
+        return pricingRequest;
     }
 }

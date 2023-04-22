@@ -13,22 +13,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecycleResponse extends BaseResponse {
-
-    private BigDecimal totalPrice;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Items {
-        private String name;
-
-        private int quantity;
-
-        private BigDecimal price;
-
-        private BigDecimal totalPrice;
-    }
+public class RecycleResponse extends PricingResponse {
+    private String returnCode;
+    private String collectionStatus;
+    private String promoCode;
+    private String contactPerson;
+    private String contactNumber;
+    private String collectionDate;
+    private List<Category> recyclingItems;
 }
 
 

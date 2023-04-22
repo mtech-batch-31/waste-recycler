@@ -1,6 +1,7 @@
 package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
+import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.service.RequestService;
 import jakarta.validation.Valid;
@@ -77,9 +78,20 @@ public class RequestController {
 
     @PostMapping("/recycle")
     public ResponseEntity<?> submitRequest(@RequestBody SubmitRequest submitRequest) {
-        log.info("RequestController - submitRequest with two params");
-        //input validation
-        requestService.SubmitRequest(submitRequest);
-        return ResponseEntity.ok("ok");
+        log.info("RequestController - RecycleRequest - start");
+        //Todo: input validation
+        PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(submitRequest);
+        Optional<PricingResponse> pricingResponse = requestService.GetRequestTotalPricing(pricingRequest);
+        RecycleResponse recycleResponse = new RecycleResponse();
+        recycleResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        recycleResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
+        recycleResponse.setTotalPrice(pricingResponse.get().getTotalPrice());
+        recycleResponse.setCollectionStatus("Pending Approval");
+        recycleResponse.setPromoCode(submitRequest.getPromoCode());
+        recycleResponse.setContactPerson(submitRequest.getContactPerson());
+        recycleResponse.setContactNumber(submitRequest.getContactNumber());
+        recycleResponse.setCollectionDate(submitRequest.getCollectionDate());
+        recycleResponse.setItems(pricingResponse.get().getItems());
+        return ResponseEntity.ok(recycleResponse);
     }
 }

@@ -3,7 +3,6 @@ package com.mtech.recycler.service.Impl;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.entity.RecycleCategory;
-import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
@@ -92,7 +91,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public Optional<RecycleResponse> SubmitRequest(SubmitRequest request) {
-        RecycleRequest recycleRequest = new RecycleRequest();
+        com.mtech.recycler.entity.RecycleRequest recycleRequest = new com.mtech.recycler.entity.RecycleRequest();
         recycleRequest.setContactNumber(request.getContactNumber());
         recycleRequest.setContactPerson(request.getContactPerson());
         recycleRequestRepository.save(recycleRequest);
