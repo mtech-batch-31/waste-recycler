@@ -26,15 +26,13 @@ public class RequestServiceImplTest {
     private RecycleCategoryRepository recycleCategoryRepository;
     private PromotionRepository promotionRepository;
 
-    private RecycleRequestRepository recycleRequestRepository;
-
     private RequestService requestService;
 
     @BeforeEach
     public void init() {
         promotionRepository = Mockito.mock(PromotionRepository.class);
         recycleCategoryRepository = Mockito.mock(RecycleCategoryRepository.class);
-        recycleRequestRepository = Mockito.mock(RecycleRequestRepository.class);
+        RecycleRequestRepository recycleRequestRepository = Mockito.mock(RecycleRequestRepository.class);
         requestService = new RequestServiceImpl(recycleCategoryRepository, promotionRepository, recycleRequestRepository);
     }
 
@@ -49,12 +47,12 @@ public class RequestServiceImplTest {
         }};
 
         Mockito.when(recycleCategoryRepository.findAll()).thenReturn(recycleCategories);
-        List<RecycleCategory> rc = requestService.GetAllRecycleCategories();
+        List<Category> rc = requestService.GetAllRecycleCategories();
         Mockito.verify(recycleCategoryRepository, Mockito.times(1)).findAll();
         Assertions.assertNotNull(rc);
         Assertions.assertEquals(expectedSize, rc.size());
-        Assertions.assertEquals("test", rc.get(0).getName());
-        Assertions.assertEquals("test2", rc.get(1).getName());
+        Assertions.assertEquals("test", rc.get(0).getCategory());
+        Assertions.assertEquals("test2", rc.get(1).getCategory());
     }
 
     @Test
@@ -63,7 +61,7 @@ public class RequestServiceImplTest {
         Iterable<RecycleCategory> recycleCategories = new ArrayList<>();
 
         Mockito.when(recycleCategoryRepository.findAll()).thenReturn(recycleCategories);
-        List<RecycleCategory> rc = requestService.GetAllRecycleCategories();
+        List<Category> rc = requestService.GetAllRecycleCategories();
         Mockito.verify(recycleCategoryRepository, Mockito.times(1)).findAll();
         Assertions.assertNotNull(rc);
         Assertions.assertEquals(expectedSize, rc.size());
@@ -165,6 +163,59 @@ public class RequestServiceImplTest {
         Assertions.assertThrows(ResponseStatusException.class, () -> {
             Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
 
+            Assertions.assertNull(response);
+        });
+    }
+
+    @Test
+    void testGetRequestTotalPricing_ThrowExceptionWhenCategoryNotFound() {
+        var categories = new ArrayList<Category>() {{
+            add(new Category("Battery", new BigDecimal(0), 10, ""));
+            add(new Category("Plastic", new BigDecimal(0), 10, ""));
+        }};
+
+        var pricingRequest = new PricingRequest();
+        pricingRequest.setData(categories);
+
+        Mockito.when(recycleCategoryRepository.findByName(Mockito.any())).thenReturn(Optional.empty());
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
+
+            Assertions.assertNull(response);
+        });
+    }
+
+    @Test
+    void testGetRequestTotalPricing_WithPromotionIsExpired_Success() {
+        var categories = new ArrayList<Category>() {{
+            add(new Category("Battery", new BigDecimal(0), 10, ""));
+            add(new Category("Plastic", new BigDecimal(0), 10, ""));
+        }};
+
+        var promotion = new Promotion() {{
+            setPromotionCode("p001");
+            setStartDate(DateTime.now().minusDays(1).toDate());
+            setEndDate(DateTime.now().toDate());
+            setPercentage(0.1);
+        }};
+
+        var batteryRecycle = new RecycleCategory();
+        batteryRecycle.setPrice(new BigDecimal(10));
+
+        var plasticRecycle = new RecycleCategory();
+        plasticRecycle.setPrice(new BigDecimal(5));
+
+        var pricingRequest = new PricingRequest();
+        pricingRequest.setPromoCode("p001");
+        pricingRequest.setData(categories);
+
+        Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(Optional.of(batteryRecycle));
+        Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
+        Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
+
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
+            Mockito.verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
             Assertions.assertNull(response);
         });
     }

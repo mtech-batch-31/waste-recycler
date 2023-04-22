@@ -51,10 +51,7 @@ public class RequestController {
         log.info("RequestController - getAllCategories - started");
         RecyclingCategoryResponse response = new RecyclingCategoryResponse();
 
-        List<Category> recyclingCategories = requestService.GetAllRecycleCategories()
-                .stream()
-                .map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement()))
-                .toList();
+        List<Category> recyclingCategories = requestService.GetAllRecycleCategories();
 
         response.setCategories(recyclingCategories);
         response.setReturnCode(CommonConstant.ReturnCode.SUCCESS);

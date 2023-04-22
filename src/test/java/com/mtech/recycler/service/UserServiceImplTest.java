@@ -23,7 +23,6 @@ public class UserServiceImplTest {
 
     private CustomerRepository customerRepository;
 
-    private final String password = "P@ssw0rd";
     private final String email = "test@mail.com";
     private RegisterRequest registerRequest;
 
@@ -31,6 +30,7 @@ public class UserServiceImplTest {
     public void init() {
         registerRequest = new RegisterRequest();
         registerRequest.setEmail(email);
+        String password = "P@ssw0rd";
         registerRequest.setPassword(password);
         registerRequest.setFirstName("John");
         registerRequest.setLastName("Doe");
@@ -123,5 +123,29 @@ public class UserServiceImplTest {
         Assertions.assertThrows(ResponseStatusException.class, () -> userService.createCustomer(registerRequest));
     }
 
+    @Test
+    void testGetUserByEmail_ReturnSpecificCustomer() {
+        String expectedEmail = "test@test.com";
+        String expectedPassword = "pass123";
 
+        var customer = new Customer();
+        customer.setEmail("test@test.com");
+        customer.setPassword("pass123");
+
+        Mockito.when(customerRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(customer));
+
+        var result = userService.getUserByEmail("test@test.com");
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(expectedEmail, result.getEmail());
+        Assertions.assertEquals(expectedPassword, result.getPassword());
+
+    }
+
+    @Test
+    void testGetUserByEmail_ThrowsExceptionWhenEmpty() {
+        Mockito.when(customerRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResponseStatusException.class, () -> userService.getUserByEmail(""));
+    }
 }

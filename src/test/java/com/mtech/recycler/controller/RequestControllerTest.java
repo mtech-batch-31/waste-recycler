@@ -18,9 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,12 +32,17 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RequestController.class)
 @Import(SecurityConfig.class)
 public class RequestControllerTest {
+
+    private final String ENDPOINT_CALCULATE_PRICING = "/api/v1/request/price";
+
+    private final String ENDPOINT_GET_CATEGORIES = "/api/v1/request/categories";
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,8 +62,8 @@ public class RequestControllerTest {
     @BeforeEach
     public void setupEach() {
         List<Category> categories = new ArrayList<>() {{
-            add(new Category("Electronics", new BigDecimal(700), 0, "item"));
-            add(new Category("Battery", new BigDecimal(500), 0, "kg"));
+            add(new Category("Electronics", new BigDecimal(700), 0.1, "item"));
+            add(new Category("Battery", new BigDecimal(500), 1, "kg"));
         }};
 
         request = new PricingRequest("promo", categories);
@@ -83,7 +90,7 @@ public class RequestControllerTest {
 
         given(requestService.GetRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.of(response));
 
-        MvcResult result = mockMvc.perform(post("/api/v1/request/price").content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+        MvcResult result = mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
@@ -93,39 +100,96 @@ public class RequestControllerTest {
         Assertions.assertEquals(expectedResponse, result.getResponse().getContentAsString());
     }
 
-//    @Test
-//    public void givenRecyclingRequestWhenSendForPricing_returnSuccessfulResponse() throws Exception {
-//        initAuth();
-//        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"totalPrice\":100,\"items\":[{\"name\":\"test\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50},{\"name\":\"test2\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50}]}";
-//        String requestJsonString = Utilities.asJsonString(request);
-//        List<Item> items = new ArrayList<>() {{
-//            add(new Item("test", 1, new BigDecimal(50), new BigDecimal(50)));
-//            add(new Item("test2", 1, new BigDecimal(50), new BigDecimal(50)));
-//        }};
-//        PricingResponse response = new PricingResponse(new BigDecimal(100), items);
-//
-//        given(requestService.GetRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.of(response));
-//
-//        MvcResult result = mockMvc.perform(post("/api/v1/request/price").content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
-//                .andExpect(jsonPath("message", is(CommonConstant.Message.SUCCESSFUL_REQUEST)))
-//                .andReturn();
-//
-//        Assertions.assertEquals(expectedResponse, result.getResponse().getContentAsString());
-//    }
+    @Test
+    public void givenRecyclingRequestWhenSendWithoutCategory_return404Response() throws Exception {
+        initAuth();
+        request.getData().get(0).setCategory("");
+        String requestJsonString = Utilities.asJsonString(request);
 
-//    @Test
-//    public void givenLoginRequestPropertiesAreEmpty_returnBadRequest() throws Exception {
-//        loginRequest.setEmail("");
-//        loginRequest.setPassword("");
-//        String requestJsonString = Utilities.asJsonString(loginRequest);
-//        LoginResponse response = new LoginResponse("access-token");
-//
-//        given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.of(response));
-//
-//        mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest());
-//    }
+        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("returnCode", is(String.valueOf(HttpStatus.BAD_REQUEST.value()))))
+                .andExpect(jsonPath("message", is(CommonConstant.ErrorMessage.CATEGORY_VALIDATION_FAILED)));
+
+    }
+
+    @Test
+    public void givenRecyclingRequestWhenQuantityIsLessOrEqualZero_return404Response() throws Exception {
+        initAuth();
+        request.getData().get(0).setQuantity(0);
+        String requestJsonString = Utilities.asJsonString(request);
+
+        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("returnCode", is(String.valueOf(HttpStatus.BAD_REQUEST.value()))))
+                .andExpect(jsonPath("message", is(CommonConstant.ErrorMessage.QUANTITY_VALIDATION_FAILED)));
+
+    }
+
+    @Test
+    public void givenRecyclingRequestWhenEmptyObjectFromService_return404Response() throws Exception {
+        initAuth();
+        String requestJsonString = Utilities.asJsonString(request);
+
+        given(requestService.GetRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.empty());
+
+        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void givenRecyclingRequestWhenThrowException_return404Response() throws Exception {
+        initAuth();
+        String requestJsonString = Utilities.asJsonString(request);
+
+        given(requestService.GetRequestTotalPricing(any(PricingRequest.class))).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "error"));
+
+        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("returnCode", is(String.valueOf(HttpStatus.BAD_REQUEST.value()))))
+                .andExpect(jsonPath("message", is("error")));
+    }
+
+    @Test
+    public void givenRecyclingCategoriesRequest_returnSuccessfulResponse() throws Exception {
+        initAuth();
+        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[{\"category\":\"c1\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\"},{\"category\":\"c2\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\"}]}";
+
+        var response = new ArrayList<Category>() {{
+            add(new Category("c1", new BigDecimal(1), 0.1, "kg"));
+            add(new Category("c2", new BigDecimal(1), 0.1, "kg"));
+        }};
+
+        given(requestService.GetAllRecycleCategories()).willReturn(response);
+
+        var result = mockMvc.perform(get(ENDPOINT_GET_CATEGORIES).header("Authorization", "Bearer 12334"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
+                .andExpect(jsonPath("message", is(CommonConstant.Message.SUCCESSFUL_REQUEST)))
+                .andReturn();
+
+        Assertions.assertEquals(expectedResponse, result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void givenRecyclingCategoriesRequest_returnEmptyResponse() throws Exception {
+        initAuth();
+        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[]}";
+
+        var response = new ArrayList<Category>();
+
+        given(requestService.GetAllRecycleCategories()).willReturn(response);
+
+        var result = mockMvc.perform(get(ENDPOINT_GET_CATEGORIES).header("Authorization", "Bearer 12334"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
+                .andExpect(jsonPath("message", is(CommonConstant.Message.SUCCESSFUL_REQUEST)))
+                .andReturn();
+
+        Assertions.assertEquals(expectedResponse, result.getResponse().getContentAsString());
+    }
+
 }
