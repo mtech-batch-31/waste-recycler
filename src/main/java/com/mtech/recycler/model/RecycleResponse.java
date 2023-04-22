@@ -18,7 +18,6 @@ public class RecycleResponse extends PricingResponse {
     private String contactPerson;
     private String contactNumber;
     private String collectionDate;
-    private List<Item> data;
 }
 
 

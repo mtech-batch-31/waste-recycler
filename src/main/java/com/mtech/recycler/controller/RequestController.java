@@ -88,7 +88,7 @@ public class RequestController {
         recycleResponse.setContactPerson(submitRequest.getContactPerson());
         recycleResponse.setContactNumber(submitRequest.getContactNumber());
         recycleResponse.setCollectionDate(submitRequest.getCollectionDate());
-        pricingResponse.ifPresent(response -> recycleResponse.setData(response.getItems()));
+        recycleResponse.setItems(pricingResponse.get().getItems());
         return ResponseEntity.ok(recycleResponse);
     }
 }
