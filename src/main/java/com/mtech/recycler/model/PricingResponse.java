@@ -17,20 +17,7 @@ public class PricingResponse extends BaseResponse {
 
     private BigDecimal totalPrice;
 
-    private List<Items> items;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Items {
-        private String name;
-
-        private int quantity;
-
-        private BigDecimal price;
-
-        private BigDecimal totalPrice;
-    }
+    private List<Item> items;
 }
 
 

@@ -4,10 +4,7 @@ import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.entity.RecycleCategory;
 import com.mtech.recycler.entity.RecycleRequest;
-import com.mtech.recycler.model.PricingRequest;
-import com.mtech.recycler.model.PricingResponse;
-import com.mtech.recycler.model.RecycleResponse;
-import com.mtech.recycler.model.SubmitRequest;
+import com.mtech.recycler.model.*;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.RecycleRequestRepository;
@@ -45,27 +42,9 @@ public class RequestServiceImpl implements RequestService {
     public Optional<PricingResponse> GetRequestTotalPricing(PricingRequest request) {
         log.info("RequestService - GetRequestTotalPricing - start");
         var response = new PricingResponse();
-        List<PricingResponse.Items> items = new ArrayList<>();
+        List<Item> items = new ArrayList<>();
 
-        BigDecimal totalPrice = request.getCategories().stream().map(c -> {
-            BigDecimal price = recycleCategoryRepository.findByName(c.getName()).getPrice();
-            BigDecimal eachItemTotalPrice = price.multiply(new BigDecimal(c.getQuantity()));
-            items.add(new PricingResponse.Items(c.getName(), c.getQuantity(), price, eachItemTotalPrice));
-            return eachItemTotalPrice;
-        }).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        log.info("RequestService - GetRequestTotalPricing - total price before promo: %s".formatted(totalPrice));
-
-        if (StringUtils.hasText(request.getPromoCode())) {
-            Promotion promotion = promotionRepository.findDiscountByPromotionCode(request.getPromoCode())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
-
-            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
-            }
-
-            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
-        }
+        BigDecimal totalPrice = CalculateTotalPrice(request.getData(), request.getPromoCode(), items);
 
         log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 
@@ -75,6 +54,32 @@ public class RequestServiceImpl implements RequestService {
         log.info("RequestService - GetRequestTotalPricing - end");
 
         return Optional.of(response);
+    }
+
+    private BigDecimal CalculateTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
+        BigDecimal totalPrice = categories.stream().map(c -> {
+            BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name (%s) is not found".formatted(c.getCategory())))
+                    .getPrice();
+
+            BigDecimal subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
+            items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice));
+            return subTotalPrice;
+        }).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        log.info("RequestService - GetRequestTotalPricing - total price before promo: %s".formatted(totalPrice));
+
+        if (StringUtils.hasText(promoCode)) {
+            Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
+
+            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
+            }
+
+            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
+        }
+        return totalPrice;
     }
 
     @Override

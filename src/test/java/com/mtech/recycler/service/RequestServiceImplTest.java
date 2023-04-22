@@ -7,6 +7,7 @@ import com.mtech.recycler.model.PricingRequest;
 import com.mtech.recycler.model.PricingResponse;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
+import com.mtech.recycler.repository.RecycleRequestRepository;
 import com.mtech.recycler.service.Impl.RequestServiceImpl;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
@@ -25,13 +26,16 @@ public class RequestServiceImplTest {
     private RecycleCategoryRepository recycleCategoryRepository;
     private PromotionRepository promotionRepository;
 
+    private RecycleRequestRepository recycleRequestRepository;
+
     private RequestService requestService;
 
     @BeforeEach
     public void init() {
         promotionRepository = Mockito.mock(PromotionRepository.class);
         recycleCategoryRepository = Mockito.mock(RecycleCategoryRepository.class);
-        requestService = new RequestServiceImpl(recycleCategoryRepository, promotionRepository);
+        recycleRequestRepository = Mockito.mock(RecycleRequestRepository.class);
+        requestService = new RequestServiceImpl(recycleCategoryRepository, promotionRepository, recycleRequestRepository);
     }
 
     @Test
@@ -83,7 +87,7 @@ public class RequestServiceImplTest {
         plasticRecycle.setPrice(new BigDecimal(5));
 
         var pricingRequest = new PricingRequest();
-        pricingRequest.setCategories(categories);
+        pricingRequest.setData(categories);
 
         Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(batteryRecycle);
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(plasticRecycle);
@@ -94,8 +98,8 @@ public class RequestServiceImplTest {
         Assertions.assertTrue(response.isPresent());
         Assertions.assertNotNull(response.get());
         Assertions.assertEquals(expectedTotalPrice, response.get().getTotalPrice());
-        Assertions.assertEquals(expectedBatteryTotalPrice, response.get().getItems().get(0).getTotalPrice());
-        Assertions.assertEquals(expectedPlasticTotalPrice, response.get().getItems().get(1).getTotalPrice());
+        Assertions.assertEquals(expectedBatteryTotalPrice, response.get().getItems().get(0).getSubTotalPrice());
+        Assertions.assertEquals(expectedPlasticTotalPrice, response.get().getItems().get(1).getSubTotalPrice());
     }
 
     @Test
@@ -123,7 +127,7 @@ public class RequestServiceImplTest {
 
         var pricingRequest = new PricingRequest();
         pricingRequest.setPromoCode("p001");
-        pricingRequest.setCategories(categories);
+        pricingRequest.setData(categories);
 
         Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(batteryRecycle);
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(plasticRecycle);
@@ -135,8 +139,8 @@ public class RequestServiceImplTest {
         Assertions.assertTrue(response.isPresent());
         Assertions.assertNotNull(response.get());
         Assertions.assertEquals(expectedTotalPrice, response.get().getTotalPrice());
-        Assertions.assertEquals(expectedBatteryTotalPrice, response.get().getItems().get(0).getTotalPrice());
-        Assertions.assertEquals(expectedPlasticTotalPrice, response.get().getItems().get(1).getTotalPrice());
+        Assertions.assertEquals(expectedBatteryTotalPrice, response.get().getItems().get(0).getSubTotalPrice());
+        Assertions.assertEquals(expectedPlasticTotalPrice, response.get().getItems().get(1).getSubTotalPrice());
     }
 
     @Test
@@ -154,7 +158,7 @@ public class RequestServiceImplTest {
 
         var pricingRequest = new PricingRequest();
         pricingRequest.setPromoCode("p001");
-        pricingRequest.setCategories(categories);
+        pricingRequest.setData(categories);
 
         Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(batteryRecycle);
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(plasticRecycle);

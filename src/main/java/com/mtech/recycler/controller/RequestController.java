@@ -3,6 +3,7 @@ package com.mtech.recycler.controller;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.service.RequestService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,8 @@ public class RequestController {
         this.requestService = requestService;
     }
 
-    @PostMapping("/categories")
-    public ResponseEntity<?> getRequestTotalPricing(@RequestBody PricingRequest request) {
+    @PostMapping("/price")
+    public ResponseEntity<?> getRequestTotalPricing(@Valid @RequestBody PricingRequest request) {
         log.info("RequestController - getRequestTotalPricing - started");
 
         log.info("RequestController - getRequestTotalPricing - discount code: " + request.getPromoCode());
