@@ -2,12 +2,12 @@ package com.mtech.recycler.service.Impl;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
-import com.mtech.recycler.entity.RecycleCategory;
-import com.mtech.recycler.entity.RecycleRequest;
+import com.mtech.recycler.entity.RecycleItem;
+import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
-import com.mtech.recycler.repository.RecycleRequestRepository;
+import com.mtech.recycler.repository.RecycleItemRepository;
 import com.mtech.recycler.service.RequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.Instant;
@@ -30,13 +30,12 @@ public class RequestServiceImpl implements RequestService {
 
     final private RecycleCategoryRepository recycleCategoryRepository;
     final private PromotionRepository promotionRepository;
+    final private RecycleItemRepository recycleItemRepository;
 
-    final private RecycleRequestRepository recycleRequestRepository;
-
-    public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository, RecycleRequestRepository recycleRequestRepository) {
+    public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository, RecycleItemRepository recycleItemRepository) {
         this.recycleCategoryRepository = recycleCategoryRepository;
         this.promotionRepository = promotionRepository;
-        this.recycleRequestRepository = recycleRequestRepository;
+        this.recycleItemRepository = recycleItemRepository;
     }
 
     @Override
@@ -89,14 +88,33 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Optional<RecycleResponse> SubmitRequest(SubmitRequest request) {
-        com.mtech.recycler.entity.RecycleRequest recycleRequest = new com.mtech.recycler.entity.RecycleRequest();
-        recycleRequest.setContactNumber(request.getContactNumber());
-        recycleRequest.setContactPerson(request.getContactPerson());
-        recycleRequestRepository.save(recycleRequest);
-        return Optional.empty();
-        //check if username exists database and request not pending
-        //save to database
+    public Optional<RecycleResponse> SubmitRequest(RecycleRequest recycleRequest) {
+        PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(recycleRequest);
+        Optional<PricingResponse> pricingResponse = GetRequestTotalPricing(pricingRequest);
+        RecycleResponse recycleResponse = new RecycleResponse();
+        recycleResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        recycleResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
+        recycleResponse.setEmail(recycleRequest.getEmail());
+        pricingResponse.ifPresent(response -> recycleResponse.setTotalPrice(response.getTotalPrice()));
+        recycleResponse.setCollectionStatus("Pending Approval");
+        recycleResponse.setPromoCode(recycleRequest.getPromoCode());
+        recycleResponse.setContactPerson(recycleRequest.getContactPerson());
+        recycleResponse.setContactNumber(recycleRequest.getContactNumber());
+        recycleResponse.setCollectionDate(recycleRequest.getCollectionDate());
+        pricingResponse.ifPresent(response -> recycleResponse.setItems(response.getItems()));
+        RecycleItem recycleItem = new RecycleItem();
+        recycleItem.setEmail(recycleRequest.getEmail());
+        recycleItem.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        recycleItem.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
+        recycleItem.setTotalPrice(recycleResponse.getTotalPrice());
+        recycleItem.setDbItems(recycleResponse.getItems());
+        recycleItem.setCollectionStatus("Pending Approval");
+        recycleItem.setPromoCode(recycleRequest.getPromoCode());
+        recycleItem.setContactPerson(recycleRequest.getContactPerson());
+        recycleItem.setContactNumber(recycleRequest.getContactNumber());
+        recycleItem.setCollectionDate(recycleRequest.getCollectionDate());
+        recycleItemRepository.save(recycleItem);
+        return Optional.of(recycleResponse);
     }
 
     boolean isWithinRange(Date startDate, Date endDate) {

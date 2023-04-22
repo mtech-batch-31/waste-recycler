@@ -2,14 +2,20 @@ package com.mtech.recycler.helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mtech.recycler.entity.RecycleRequest;
+import com.mtech.recycler.entity.RecycleItem;
+import com.mtech.recycler.model.Item;
 import com.mtech.recycler.model.PricingRequest;
-import com.mtech.recycler.model.SubmitRequest;
+import com.mtech.recycler.model.RecycleRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utilities {
 
@@ -59,10 +65,39 @@ public class Utilities {
         return matcher.matches();
     }
 
-    public static PricingRequest convertSubmitRequestToPricingRequest(SubmitRequest submitRequest) {
+    public static PricingRequest convertSubmitRequestToPricingRequest(RecycleRequest submitRequest) {
         PricingRequest pricingRequest = new PricingRequest();
         pricingRequest.setPromoCode(submitRequest.getPromoCode());
         pricingRequest.setData(submitRequest.getData());
         return pricingRequest;
+    }
+
+    public static class ItemListConverter implements DynamoDBTypeConverter<List<RecycleItem.DbItem>, List<Item>> {
+        @Override
+        public List<RecycleItem.DbItem> convert(List<Item> items) {
+            List<RecycleItem.DbItem> recycleDbItems = new ArrayList<>();
+            for (Item item : items) {
+                RecycleItem.DbItem dbItem = new RecycleItem.DbItem();
+                dbItem.setCategory(item.getCategory());
+                dbItem.setQuantity(item.getQuantity());
+                dbItem.setUnitPrice(item.getUnitPrice());
+                dbItem.setSubTotalPrice(item.getSubTotalPrice());
+                recycleDbItems.add(dbItem);
+            }
+            return recycleDbItems;
+        }
+        @Override
+        public List<Item> unconvert(List<RecycleItem.DbItem> recycleDbItems) {
+            List<Item> items = new ArrayList<>();
+            for (RecycleItem.DbItem dbItem : recycleDbItems) {
+                Item item = new Item();
+                item.setCategory(dbItem.getCategory());
+                item.setQuantity(dbItem.getQuantity());
+                item.setUnitPrice(dbItem.getUnitPrice());
+                item.setSubTotalPrice(dbItem.getSubTotalPrice());
+                items.add(item);
+            }
+            return items;
+        }
     }
 }

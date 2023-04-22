@@ -11,5 +11,5 @@ public interface RequestService {
 
     List<Category> GetAllRecycleCategories();
 
-    Optional<RecycleResponse> SubmitRequest(SubmitRequest request);
+    Optional<RecycleResponse> SubmitRequest(RecycleRequest recycleRequest);
 }

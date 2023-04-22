@@ -1,11 +1,20 @@
 package com.mtech.recycler.helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mtech.recycler.model.Category;
+import com.mtech.recycler.model.PricingRequest;
 import com.mtech.recycler.model.RegisterRequest;
+import com.mtech.recycler.model.RecycleRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UtilitiesTest {
 
@@ -61,6 +70,17 @@ public class UtilitiesTest {
     void test_asJsonString() throws JsonProcessingException {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setEmail("test@mail");
-        Assertions.assertEquals(Utilities.asJsonString(registerRequest), "{\"email\":\"test@mail\",\"password\":null,\"firstName\":null,\"lastName\":null,\"contactNumber\":null,\"address\":null,\"postalCode\":null}");
+        assertEquals(Utilities.asJsonString(registerRequest), "{\"email\":\"test@mail\",\"password\":null,\"firstName\":null,\"lastName\":null,\"contactNumber\":null,\"address\":null,\"postalCode\":null}");
     }
+//    @Test
+//    public void testConvertSubmitRequestToPricingRequest() {
+//        List<Category> categories = Arrays.asList(
+//                new Category("Paper", BigDecimal.valueOf(5), 5, "paper description"),
+//                new Category("Plastic", BigDecimal.valueOf(10), 10,"plastic description")
+//        );
+//        RecycleRequest submitRequest = new RecycleRequest("test@test.com","00", "Pending Approval","Andrew","83930521","2023-04-22 16:00:00");
+//        PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(submitRequest);
+//        assertEquals(submitRequest.getPromoCode(), pricingRequest.getPromoCode());
+//        assertEquals(submitRequest.getData(), pricingRequest.getData());
+//    }
 }
