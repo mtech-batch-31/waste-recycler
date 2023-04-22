@@ -3,6 +3,7 @@ package com.mtech.recycler.service.Impl;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.entity.RecycleCategory;
+import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
@@ -73,7 +75,7 @@ public class RequestServiceImpl implements RequestService {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
 
             if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
 
             totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
@@ -82,11 +84,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RecycleCategory> GetAllRecycleCategories() {
-        List<RecycleCategory> recycleCategories = new ArrayList<>();
-        recycleCategoryRepository.findAll().forEach(recycleCategories::add);
-
-        return recycleCategories;
+    public List<Category> GetAllRecycleCategories() {
+        return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement())).toList();
     }
 
     @Override
