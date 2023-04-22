@@ -82,13 +82,13 @@ public class RequestController {
         RecycleResponse recycleResponse = new RecycleResponse();
         recycleResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
-        recycleResponse.setTotalPrice(pricingResponse.get().getTotalPrice());
+        pricingResponse.ifPresent(response -> recycleResponse.setTotalPrice(response.getTotalPrice()));
         recycleResponse.setCollectionStatus("Pending Approval");
         recycleResponse.setPromoCode(submitRequest.getPromoCode());
         recycleResponse.setContactPerson(submitRequest.getContactPerson());
         recycleResponse.setContactNumber(submitRequest.getContactNumber());
         recycleResponse.setCollectionDate(submitRequest.getCollectionDate());
-        recycleResponse.setItems(pricingResponse.get().getItems());
+        pricingResponse.ifPresent(response -> recycleResponse.setData(response.getItems()));
         return ResponseEntity.ok(recycleResponse);
     }
 }

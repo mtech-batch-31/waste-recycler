@@ -1,12 +1,10 @@
 package com.mtech.recycler.model;
 
-import com.mtech.recycler.model.base.BaseResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,7 +18,7 @@ public class RecycleResponse extends PricingResponse {
     private String contactPerson;
     private String contactNumber;
     private String collectionDate;
-    private List<Category> recyclingItems;
+    private List<Item> data;
 }
 
 
