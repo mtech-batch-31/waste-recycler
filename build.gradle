@@ -3,7 +3,9 @@ plugins {
     id 'org.springframework.boot' version '3.0.4'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'jacoco'
+    id "org.sonarqube" version "3.5.0.2730"
 }
+
 
 group = 'com.mtech'
 version = '0.0.1-SNAPSHOT'
@@ -63,5 +65,13 @@ jacocoTestReport {
                             '**/RecyclerApplication.java'
                     ])
                 }))
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "mtech-batch-31_waste-recycler"
+        property "sonar.organization", "mtech-batch-31"
+        property "sonar.host.url", "https://sonarcloud.io"
     }
 }
