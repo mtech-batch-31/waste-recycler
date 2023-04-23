@@ -104,8 +104,8 @@ public class RequestServiceImplTest {
     @Test
     void testGetRequestTotalPricing_WithPromotion_Success() {
         var expectedTotalPrice = new BigDecimal("165.00");
-        var expectedBatteryTotalPrice = new BigDecimal("100.0");
-        var expectedPlasticTotalPrice = new BigDecimal("50.0");
+        var expectedBatteryTotalPrice = new BigDecimal("110.00");
+        var expectedPlasticTotalPrice = new BigDecimal("55.00");
         var categories = new ArrayList<Category>() {{
             add(new Category("Battery", new BigDecimal(0), 10, "", ""));
             add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
@@ -179,9 +179,9 @@ public class RequestServiceImplTest {
         pricingRequest.setData(categories);
 
         Mockito.when(recycleCategoryRepository.findByName(Mockito.any())).thenReturn(Optional.empty());
+
         Assertions.assertThrows(ResponseStatusException.class, () -> {
             Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
-
             Assertions.assertNull(response);
         });
     }

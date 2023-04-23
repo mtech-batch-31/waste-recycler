@@ -61,7 +61,7 @@ public class PromotionCode1PricingStrategy implements PromotionPricingStrategy {
         }
 
         totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
-        totalPrice = totalPrice.multiply(BigDecimal.valueOf(1.2));
+        totalPrice = totalPrice.multiply(BigDecimal.valueOf(1));
     }
     return totalPrice;
     }
@@ -76,7 +76,7 @@ public class PromotionCode1PricingStrategy implements PromotionPricingStrategy {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
 
-            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1.2));
+            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1));
         }
         return items;
     }

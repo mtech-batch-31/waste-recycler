@@ -42,27 +42,32 @@ public class RequestServiceImpl implements RequestService {
         List<Item> items = new ArrayList<>();
 
         PromotionPricingStrategy pricingStrategy;
-        switch (request.getPromoCode().toLowerCase()) {
-            case "d001" -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
-            case "d002" -> pricingStrategy = new PromotionCode2PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
-            case "d003" -> pricingStrategy = new PromotionCode3PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+        switch (Objects.requireNonNullElse(request.getPromoCode(), "").toLowerCase()) {
+            case "p001" -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+            case "p002" -> pricingStrategy = new PromotionCode2PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+            case "p003" -> pricingStrategy = new PromotionCode3PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
             default -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
         }
 
-        BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode(), items);
-        List<Item> subTotalPrice = pricingStrategy.calculateSubTotalPrice(request.getData(), request.getPromoCode(), items);
+        try {
+            BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode(), items);
+            List<Item> subTotalPrice = pricingStrategy.calculateSubTotalPrice(request.getData(), request.getPromoCode(), items);
 
-        Utilities.mapDescriptions(request.getData(), items);
+            Utilities.mapDescriptions(request.getData(), items);
 
-        log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
+            log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 
-        response.setTotalPrice(totalPrice);
-        response.setItems(subTotalPrice);
+            response.setTotalPrice(totalPrice);
+            response.setItems(subTotalPrice);
 
-        log.info("RequestService - GetRequestTotalPricing - end");
+            log.info("RequestService - GetRequestTotalPricing - end");
 
-        return Optional.of(response);
+            return Optional.of(response);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name is not found: " + e.getMessage());
+        }
     }
+
 
     @Override
     public List<Category> GetAllRecycleCategories() {
