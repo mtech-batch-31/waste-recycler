@@ -2,6 +2,7 @@ package com.mtech.recycler.service.pricingstrategy;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
+import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.Category;
 import com.mtech.recycler.model.Item;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
@@ -60,9 +61,24 @@ public class PromotionCode3PricingStrategy implements PromotionPricingStrategy {
             }
 
             totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
-            totalPrice = totalPrice.multiply(BigDecimal.valueOf(1.8));
+            totalPrice = totalPrice.multiply(BigDecimal.valueOf(1.6));
         }
         return totalPrice;
+    }
+
+    public List<Item> calculateSubTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
+
+        if (StringUtils.hasText(promoCode)) {
+            Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
+
+            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
+            }
+
+            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1.6));
+        }
+        return items;
     }
 }
 

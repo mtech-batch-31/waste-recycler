@@ -50,43 +50,19 @@ public class RequestServiceImpl implements RequestService {
         }
 
         BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode(), items);
+        List<Item> subTotalPrice = pricingStrategy.calculateSubTotalPrice(request.getData(), request.getPromoCode(), items);
 
         Utilities.mapDescriptions(request.getData(), items);
 
         log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 
         response.setTotalPrice(totalPrice);
-        response.setItems(items);
+        response.setItems(subTotalPrice);
 
         log.info("RequestService - GetRequestTotalPricing - end");
 
         return Optional.of(response);
     }
-
-//    private BigDecimal CalculateTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
-//        BigDecimal totalPrice = categories.stream().map(c -> {
-//            BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
-//                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name (%s) is not found".formatted(c.getCategory())))
-//                    .getPrice();
-//            BigDecimal subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
-//            items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
-//            return subTotalPrice;
-//        }).reduce(BigDecimal.ZERO, BigDecimal::add);
-//
-//        log.info("RequestService - GetRequestTotalPricing - total price before promo: %s".formatted(totalPrice));
-//
-//        if (StringUtils.hasText(promoCode)) {
-//            Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
-//                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
-//
-//            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
-//            }
-//
-//            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
-//        }
-//        return totalPrice;
-//    }
 
     @Override
     public List<Category> GetAllRecycleCategories() {
