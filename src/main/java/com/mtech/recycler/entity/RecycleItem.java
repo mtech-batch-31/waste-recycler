@@ -2,6 +2,7 @@ package com.mtech.recycler.entity;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.mtech.recycler.helper.Utilities;
+import com.mtech.recycler.model.Item;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -30,7 +31,7 @@ public class RecycleItem {
 
     @DynamoDBAttribute
     @DynamoDBTypeConverted(converter = Utilities.ItemListConverter.class)
-    private List<com.mtech.recycler.model.Item> dbItems;
+    private List<Item> dbItems;
 
     @DynamoDBAttribute
     private String collectionStatus;

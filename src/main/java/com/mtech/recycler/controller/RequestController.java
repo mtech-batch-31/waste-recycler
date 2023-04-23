@@ -1,6 +1,7 @@
 package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
+import com.mtech.recycler.entity.RecycleItem;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.service.RequestService;
 import jakarta.validation.Valid;
@@ -8,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,18 +63,14 @@ public class RequestController {
     }
 
     @GetMapping("/recycle")
-    public ResponseEntity<?> getRecycleRequest() {
+        public ResponseEntity<?> getRecycleRequest(@RequestBody GetRequest getRequest) {
+        Optional<RecycleItem> recycleItems = requestService.getRequest(getRequest.getEmail(), getRequest.getRecord());
+        return ResponseEntity.ok(recycleItems);
+            }
 
-        RecycleResponse recycleResponse = new RecycleResponse();
-        recycleResponse.setTotalPrice(new BigDecimal(1000));
-        recycleResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
-        recycleResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
-        return ResponseEntity.ok(recycleResponse);
+        @PostMapping("/recycle")
+        public ResponseEntity<?> submitRequest(@RequestBody RecycleRequest recycleRequest) {
+            Optional<RecycleResponse> recycleResponse = requestService.SubmitRequest(recycleRequest);
+            return ResponseEntity.ok(recycleResponse);
+        }
     }
-
-    @PostMapping("/recycle")
-    public ResponseEntity<?> submitRequest(@RequestBody RecycleRequest recycleRequest) {
-        Optional<RecycleResponse> recycleResponse = requestService.SubmitRequest(recycleRequest);
-        return ResponseEntity.ok(recycleResponse);
-    }
-}

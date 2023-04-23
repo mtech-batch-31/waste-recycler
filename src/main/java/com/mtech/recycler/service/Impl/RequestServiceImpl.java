@@ -85,6 +85,22 @@ public class RequestServiceImpl implements RequestService {
         return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement(), "")).toList();
     }
 
+    public Optional<RecycleItem> getRequest(String email, int record) {
+        List<RecycleItem> recycleItems = recycleItemRepository.findByEmail(email);
+        if (recycleItems.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.NO_RECORD_FOUND);
+        }
+        else {
+            try {
+                RecycleItem recycleItem = recycleItems.get(record);
+                return Optional.of(recycleItem);
+            } catch (IndexOutOfBoundsException e) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.NO_INDEX_FOUND + record);
+            }
+        }
+    }
+
+
     @Override
     public Optional<RecycleResponse> SubmitRequest(RecycleRequest recycleRequest) {
         PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(recycleRequest);
@@ -105,7 +121,7 @@ public class RequestServiceImpl implements RequestService {
         recycleItem.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleItem.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
         recycleItem.setTotalPrice(recycleResponse.getTotalPrice());
-        recycleItem.setDbItems(recycleResponse.getItems());
+        pricingResponse.ifPresent(response -> recycleItem.setDbItems(response.getItems()));
         recycleItem.setCollectionStatus("Pending Approval");
         recycleItem.setPromoCode(recycleRequest.getPromoCode());
         recycleItem.setContactPerson(recycleRequest.getContactPerson());

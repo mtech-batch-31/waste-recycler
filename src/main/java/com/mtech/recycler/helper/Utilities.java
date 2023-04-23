@@ -19,7 +19,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Utilities {
 
@@ -86,6 +85,7 @@ public class Utilities {
                 dbItem.setQuantity(item.getQuantity());
                 dbItem.setUnitPrice(item.getUnitPrice());
                 dbItem.setSubTotalPrice(item.getSubTotalPrice());
+                dbItem.setDescription(item.getDescription());
                 recycleDbItems.add(dbItem);
             }
             return recycleDbItems;
@@ -106,16 +106,13 @@ public class Utilities {
         }
     }
 
-    public static List<Item> mapDescriptions(@Valid List<Category> categories, List<Item> items) {
+    public static void mapDescriptions(@Valid List<Category> categories, List<Item> items) {
         Iterator<Category> pricingIterator = categories.iterator();
-        return items.stream()
-                .map(item -> {
-                    if (pricingIterator.hasNext()) {
-                        item.setDescription(pricingIterator.next().getDescription());
-                    }
-                    return item;
-                })
-                .collect(Collectors.toList());
+        items.forEach(item -> {
+            if (pricingIterator.hasNext()) {
+                item.setDescription(pricingIterator.next().getDescription());
+            }
+        });
     }
 
 }
