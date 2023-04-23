@@ -1,7 +1,6 @@
 package com.mtech.recycler.service.Impl;
 
 import com.mtech.recycler.constant.CommonConstant;
-import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.entity.RecycleItem;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.*;
@@ -9,15 +8,17 @@ import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.RecycleItemRepository;
 import com.mtech.recycler.service.RequestService;
+import com.mtech.recycler.service.pricingstrategy.PromotionCode1PricingStrategy;
+import com.mtech.recycler.service.pricingstrategy.PromotionCode2PricingStrategy;
+import com.mtech.recycler.service.pricingstrategy.PromotionCode3PricingStrategy;
+import com.mtech.recycler.service.pricingstrategy.PromotionPricingStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.Instant;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -36,12 +37,19 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Optional<PricingResponse> GetRequestTotalPricing(PricingRequest request) {
-        log.info("RequestService - GetRequestTotalPricing - start");
+    public Optional<PricingResponse> getRequestTotalPricing(PricingRequest request) {
         var response = new PricingResponse();
         List<Item> items = new ArrayList<>();
 
-        BigDecimal totalPrice = CalculateTotalPrice(request.getData(), request.getPromoCode(), items);
+        PromotionPricingStrategy pricingStrategy;
+        switch (request.getPromoCode().toLowerCase()) {
+            case "d001" -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+            case "d002" -> pricingStrategy = new PromotionCode2PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+            case "d003" -> pricingStrategy = new PromotionCode3PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+            default -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+        }
+
+        BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode(), items);
 
         Utilities.mapDescriptions(request.getData(), items);
 
@@ -55,30 +63,30 @@ public class RequestServiceImpl implements RequestService {
         return Optional.of(response);
     }
 
-    private BigDecimal CalculateTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
-        BigDecimal totalPrice = categories.stream().map(c -> {
-            BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name (%s) is not found".formatted(c.getCategory())))
-                    .getPrice();
-            BigDecimal subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
-            items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
-            return subTotalPrice;
-        }).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        log.info("RequestService - GetRequestTotalPricing - total price before promo: %s".formatted(totalPrice));
-
-        if (StringUtils.hasText(promoCode)) {
-            Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
-
-            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
-            }
-
-            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
-        }
-        return totalPrice;
-    }
+//    private BigDecimal CalculateTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
+//        BigDecimal totalPrice = categories.stream().map(c -> {
+//            BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
+//                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name (%s) is not found".formatted(c.getCategory())))
+//                    .getPrice();
+//            BigDecimal subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
+//            items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
+//            return subTotalPrice;
+//        }).reduce(BigDecimal.ZERO, BigDecimal::add);
+//
+//        log.info("RequestService - GetRequestTotalPricing - total price before promo: %s".formatted(totalPrice));
+//
+//        if (StringUtils.hasText(promoCode)) {
+//            Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
+//                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
+//
+//            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
+//            }
+//
+//            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
+//        }
+//        return totalPrice;
+//    }
 
     @Override
     public List<Category> GetAllRecycleCategories() {
@@ -104,7 +112,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Optional<RecycleResponse> SubmitRequest(RecycleRequest recycleRequest) {
         PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(recycleRequest);
-        Optional<PricingResponse> pricingResponse = GetRequestTotalPricing(pricingRequest);
+        Optional<PricingResponse> pricingResponse = getRequestTotalPricing(pricingRequest);
         RecycleResponse recycleResponse = new RecycleResponse();
         recycleResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);

@@ -88,7 +88,7 @@ public class RequestControllerTest {
         }};
         PricingResponse response = new PricingResponse(new BigDecimal(100), items);
 
-        given(requestService.GetRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.of(response));
+        given(requestService.getRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.of(response));
 
         MvcResult result = mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
                 .andExpect(status().isOk())
@@ -131,7 +131,7 @@ public class RequestControllerTest {
         initAuth();
         String requestJsonString = Utilities.asJsonString(request);
 
-        given(requestService.GetRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.empty());
+        given(requestService.getRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.empty());
 
         mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
                 .andExpect(status().isNotFound());
@@ -142,7 +142,7 @@ public class RequestControllerTest {
         initAuth();
         String requestJsonString = Utilities.asJsonString(request);
 
-        given(requestService.GetRequestTotalPricing(any(PricingRequest.class))).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "error"));
+        given(requestService.getRequestTotalPricing(any(PricingRequest.class))).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "error"));
 
         mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
                 .andExpect(status().isBadRequest())

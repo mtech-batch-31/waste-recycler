@@ -91,7 +91,7 @@ public class RequestServiceImplTest {
         Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(Optional.of(batteryRecycle));
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
 
-        Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
+        Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
         verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
         Assertions.assertNotNull(response);
         assertTrue(response.isPresent());
@@ -132,7 +132,7 @@ public class RequestServiceImplTest {
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
         Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
 
-        Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
+        Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
         verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
         Assertions.assertNotNull(response);
         assertTrue(response.isPresent());
@@ -162,7 +162,7 @@ public class RequestServiceImplTest {
         Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(Optional.of(batteryRecycle));
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
+            Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
 
             Assertions.assertNull(response);
         });
@@ -180,7 +180,7 @@ public class RequestServiceImplTest {
 
         Mockito.when(recycleCategoryRepository.findByName(Mockito.any())).thenReturn(Optional.empty());
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
+            Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
 
             Assertions.assertNull(response);
         });
@@ -215,7 +215,7 @@ public class RequestServiceImplTest {
         Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            Optional<PricingResponse> response = requestService.GetRequestTotalPricing(pricingRequest);
+            Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
             verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
             Assertions.assertNull(response);
         });

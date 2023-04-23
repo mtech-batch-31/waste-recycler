@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface RequestService {
 
-    Optional<PricingResponse> GetRequestTotalPricing(PricingRequest request);
+    Optional<PricingResponse> getRequestTotalPricing(PricingRequest request);
 
     List<Category> GetAllRecycleCategories();
 

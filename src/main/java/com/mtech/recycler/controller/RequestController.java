@@ -29,7 +29,7 @@ public class RequestController {
 
         log.info("RequestController - getRequestTotalPricing - discount code: " + request.getPromoCode());
 
-        Optional<PricingResponse> response = requestService.GetRequestTotalPricing(request);
+        Optional<PricingResponse> response = requestService.getRequestTotalPricing(request);
 
         log.info("RequestController - GetRequestTotalPricing - Is Empty: " + response.isEmpty());
 
