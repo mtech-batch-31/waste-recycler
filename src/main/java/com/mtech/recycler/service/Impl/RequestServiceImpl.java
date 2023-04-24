@@ -13,7 +13,6 @@ import com.mtech.recycler.service.pricingstrategy.PromotionCode2PricingStrategy;
 import com.mtech.recycler.service.pricingstrategy.PromotionCode3PricingStrategy;
 import com.mtech.recycler.service.pricingstrategy.PromotionPricingStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.Instant;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -53,7 +52,7 @@ public class RequestServiceImpl implements RequestService {
             BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode(), items);
             List<Item> subTotalPrice = pricingStrategy.calculateSubTotalPrice(request.getData(), request.getPromoCode(), items);
 
-            Utilities.mapDescriptions(request.getData(), items);
+            Utilities.mapDescriptionsFromCategoryToItems(request.getData(), items);
 
             log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 
@@ -120,9 +119,9 @@ public class RequestServiceImpl implements RequestService {
         return Optional.of(recycleResponse);
     }
 
-    boolean isWithinRange(Date startDate, Date endDate) {
-        Date today = Instant.now().toDate();
-
-        return today.after(startDate) && today.before(endDate);
-    }
+//    boolean isWithinRange(Date startDate, Date endDate) {
+//        Date today = Instant.now().toDate();
+//
+//        return today.after(startDate) && today.before(endDate);
+//    }
 }

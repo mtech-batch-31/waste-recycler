@@ -7,16 +7,12 @@ import com.mtech.recycler.model.Category;
 import com.mtech.recycler.model.Item;
 import com.mtech.recycler.model.PricingRequest;
 import com.mtech.recycler.model.RecycleRequest;
-import com.mtech.recycler.repository.PromotionRepository;
-import com.mtech.recycler.repository.RecycleCategoryRepository;
-import com.mtech.recycler.repository.RecycleItemRepository;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,17 +20,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class Utilities {
-    private final RecycleCategoryRepository recycleCategoryRepository;
-    private final PromotionRepository promotionRepository;
-    private final RecycleItemRepository recycleItemRepository;
-
-    public Utilities(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository, RecycleItemRepository recycleItemRepository) {
-        this.recycleCategoryRepository = recycleCategoryRepository;
-        this.promotionRepository = promotionRepository;
-        this.recycleItemRepository = recycleItemRepository;
-    }
 
     public static boolean isMatchedPassword(String inputRawPassword, String encodedPasswordFromDatabase) {
         return encoder().matches(inputRawPassword, encodedPasswordFromDatabase);
@@ -120,24 +108,22 @@ public class Utilities {
         }
     }
 
-    public static void mapDescriptions(@Valid List<Category> categories, List<Item> items) {
-        Iterator<Category> pricingIterator = categories.iterator();
-        items.forEach(item -> {
-            if (pricingIterator.hasNext()) {
-                item.setDescription(pricingIterator.next().getDescription());
-            }
-        });
+    public static void mapDescriptionsFromCategoryToItems (@Valid List<Category> categories, List<Item> items) {
+        IntStream.range(0, Math.min(categories.size(), items.size()))
+                .forEach(i -> items.get(i).setDescription(categories.get(i).getDescription()));
     }
 
     public static void updateSubTotalPriceWithPromotion(@Valid List<Item> items, double promoPercentage, BigDecimal pricingStrategyMultiplier) {
-        for (Item item : items) {
-            item.setDescription(item.getDescription());
-            BigDecimal subTotalPrice = item.getSubTotalPrice();
-            subTotalPrice = subTotalPrice.add(subTotalPrice.multiply(BigDecimal.valueOf(promoPercentage)));
-            subTotalPrice = subTotalPrice.multiply(pricingStrategyMultiplier);
-            subTotalPrice = subTotalPrice.setScale(2, RoundingMode.CEILING);
-            item.setSubTotalPrice(subTotalPrice);
-        }
+        items.stream()
+                .peek(item -> {
+                    item.setDescription(item.getDescription());
+                    BigDecimal subTotalPrice = item.getSubTotalPrice();
+                    subTotalPrice = subTotalPrice.add(subTotalPrice.multiply(BigDecimal.valueOf(promoPercentage)));
+                    subTotalPrice = subTotalPrice.multiply(pricingStrategyMultiplier);
+                    subTotalPrice = subTotalPrice.setScale(2, RoundingMode.CEILING);
+                    item.setSubTotalPrice(subTotalPrice);
+                })
+                .forEach(item -> {});
     }
 
 
