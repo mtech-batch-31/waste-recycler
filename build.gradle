@@ -101,7 +101,7 @@ jacocoTestReport {
 //}
 
 sonarqube {
-    dependsOn check
+    // dependsOn check
 
     properties {
         property "sonar.projectKey", "mtech-batch-31_waste-recycler"
