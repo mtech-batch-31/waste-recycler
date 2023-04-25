@@ -2,11 +2,13 @@ package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.RecycleItem;
+import com.mtech.recycler.entity.User;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.service.RequestService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,14 +65,25 @@ public class RequestController {
     }
 
     @GetMapping("/recycle")
-        public ResponseEntity<?> getRecycleRequest(@RequestBody GetRequest getRequest) {
+    public ResponseEntity<?> getRecycleRequest(@RequestBody GetRequest getRequest) {
         Optional<RecycleItem> recycleItems = requestService.getRequest(getRequest.getEmail(), getRequest.getRecord());
         return ResponseEntity.ok(recycleItems);
-            }
-
-        @PostMapping("/recycle")
-        public ResponseEntity<?> submitRequest(@RequestBody RecycleRequest recycleRequest) {
-            Optional<RecycleResponse> recycleResponse = requestService.SubmitRequest(recycleRequest);
-            return ResponseEntity.ok(recycleResponse);
-        }
     }
+
+
+    @GetMapping
+    public ResponseEntity<?> getRecycleRequests() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        log.info("user: {}", user);
+        List<RecycleItem> recycleItems = requestService.getRecycleRequests(user.getEmail());
+        return ResponseEntity.ok(recycleItems);
+    }
+
+
+    @PostMapping("/recycle")
+    public ResponseEntity<?> submitRequest(@RequestBody RecycleRequest recycleRequest) {
+        Optional<RecycleResponse> recycleResponse = requestService.SubmitRequest(recycleRequest);
+        return ResponseEntity.ok(recycleResponse);
+    }
+}

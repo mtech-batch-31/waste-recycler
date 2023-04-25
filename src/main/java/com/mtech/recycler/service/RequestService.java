@@ -15,4 +15,6 @@ public interface RequestService {
     Optional<RecycleResponse> SubmitRequest(RecycleRequest recycleRequest);
 
     Optional<RecycleItem> getRequest(String email,int record);
+
+    List<RecycleItem> getRecycleRequests(String email);
 }
