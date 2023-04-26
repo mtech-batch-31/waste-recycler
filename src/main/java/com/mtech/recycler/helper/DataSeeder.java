@@ -4,9 +4,9 @@ import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.entity.RecycleCategory;
 import com.mtech.recycler.model.Role;
+import com.mtech.recycler.repository.CustomerRepository;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
-import com.mtech.recycler.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.Instant;
@@ -25,7 +25,7 @@ import java.util.stream.StreamSupport;
 @RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
-    public final UserRepository userRepository;
+    public final CustomerRepository customerRepository;
     public final RecycleCategoryRepository recycleCategoryRepository;
     public final PromotionRepository promotionRepository;
 
@@ -41,13 +41,13 @@ public class DataSeeder implements CommandLineRunner {
         log.info("seeding");
         if(seedEnabled){
             log.info("seedEnabled");
-            userRepository.deleteAll();
+            customerRepository.deleteAll();
 
             var user = new Customer();
             user.setEmail("test@mail.com");
             user.setPassword(Utilities.encodePassword("P@ssw0rd"));
             user.setRole(Role.CUSTOMER);
-            userRepository.save(user);
+            customerRepository.save(user);
 
             recycleCategoryRepository.deleteAll();
             ArrayList<RecycleCategory> categories = new ArrayList<>() {{
