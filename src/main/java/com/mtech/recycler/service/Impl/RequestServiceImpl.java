@@ -88,6 +88,12 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
+    @Override
+    public List<RecycleItem> getRecycleRequests(String email) {
+        List<RecycleItem> recycleItems = recycleItemRepository.findByEmail(email);
+        return recycleItems;
+    }
+
 
     @Override
     public Optional<RecycleResponse> SubmitRequest(RecycleRequest recycleRequest) {
