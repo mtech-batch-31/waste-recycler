@@ -17,7 +17,7 @@ env:
 
 jobs:
   sonarqube:
-    name: SonarQube Scan
+    name: SonarCloud Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -57,8 +57,6 @@ jobs:
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
         uses: SonarSource/sonarqube-quality-gate-action@master
-        with:
-          scanMetadataReportFile: target/sonar/report-task.txt
         # Force to fail step after specific time.
         timeout-minutes: 5
         env:
