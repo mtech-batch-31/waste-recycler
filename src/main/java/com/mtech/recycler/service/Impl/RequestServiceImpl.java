@@ -1,7 +1,7 @@
 package com.mtech.recycler.service.Impl;
 
 import com.mtech.recycler.constant.CommonConstant;
-import com.mtech.recycler.entity.RecycleItem;
+import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.*;
@@ -75,14 +75,14 @@ public class RequestServiceImpl implements RequestService {
         return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement(), "")).toList();
     }
 
-    public Optional<RecycleItem> getRequest(String email, int record) {
-        List<RecycleItem> recycleItems = recycleItemRepository.findByEmail(email);
+    public Optional<RecycleRequest> getRequest(String email, int record) {
+        List<RecycleRequest> recycleItems = recycleItemRepository.findByEmail(email);
         if (recycleItems.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.NO_RECORD_FOUND);
         }
         else {
             try {
-                RecycleItem recycleItem = recycleItems.get(record);
+                RecycleRequest recycleItem = recycleItems.get(record);
                 return Optional.of(recycleItem);
             } catch (IndexOutOfBoundsException e) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.NO_INDEX_FOUND + record);
@@ -91,17 +91,17 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RecycleItem> getRecycleRequests() {
+    public List<RecycleRequest> getRecycleRequests() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         log.info("user: {}", user);
-        List<RecycleItem> recycleItems = recycleItemRepository.findByEmail(user.getEmail());
-        return recycleItems;
+        List<RecycleRequest> recycleRequests = recycleItemRepository.findByEmail(user.getEmail());
+        return recycleRequests;
     }
 
 
     @Override
-    public Optional<RecycleResponse> SubmitRequest(RecycleRequest recycleRequest) {
+    public Optional<RecycleResponse> SubmitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest) {
         PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(recycleRequest);
         Optional<PricingResponse> pricingResponse = getRequestTotalPricing(pricingRequest);
         RecycleResponse recycleResponse = new RecycleResponse();
@@ -115,7 +115,7 @@ public class RequestServiceImpl implements RequestService {
         recycleResponse.setContactNumber(recycleRequest.getContactNumber());
         recycleResponse.setCollectionDate(recycleRequest.getCollectionDate());
         pricingResponse.ifPresent(response -> recycleResponse.setItems(response.getItems()));
-        RecycleItem recycleItem = new RecycleItem();
+        RecycleRequest recycleItem = new RecycleRequest();
         recycleItem.setEmail(recycleRequest.getEmail());
         recycleItem.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleItem.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);

@@ -1,6 +1,7 @@
 package com.mtech.recycler.service;
 
 import com.mtech.recycler.entity.*;
+import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
@@ -237,7 +238,7 @@ public class RequestServiceImplTest {
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
 
-        List<RecycleItem> recycleItems = requestService.getRecycleRequests();
+        List<RecycleRequest> recycleItems = requestService.getRecycleRequests();
         log.info("reycleItems: {}", recycleItems);
         Assertions.assertNotNull(recycleItems);
     }

@@ -1,6 +1,6 @@
 package com.mtech.recycler.model;
 
-import com.mtech.recycler.entity.RecycleItem;
+import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.base.BaseResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GetRecycleReqResponse extends BaseResponse {
 
-    List<RecycleItem> data;
+    List<RecycleRequest> data;
 }
 
 

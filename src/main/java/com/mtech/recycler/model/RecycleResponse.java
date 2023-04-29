@@ -1,19 +1,19 @@
 package com.mtech.recycler.model;
 
+import com.mtech.recycler.model.base.BaseResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecycleResponse {
+public class RecycleResponse extends BaseResponse implements Serializable {
     private String email;
-    private String returnCode;
-    private String message;
     private BigDecimal totalPrice;
     private List<Item> items;
     private String collectionStatus;

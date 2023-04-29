@@ -1,6 +1,6 @@
 package com.mtech.recycler.service;
 
-import com.mtech.recycler.entity.RecycleItem;
+import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.*;
 
 import java.util.List;
@@ -12,9 +12,9 @@ public interface RequestService {
 
     List<Category> GetAllRecycleCategories();
 
-    Optional<RecycleResponse> SubmitRequest(RecycleRequest recycleRequest);
+    Optional<RecycleResponse> SubmitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest);
 
-    Optional<RecycleItem> getRequest(String email,int record);
+    Optional<RecycleRequest> getRequest(String email, int record);
 
-    List<RecycleItem> getRecycleRequests();
+    List<RecycleRequest> getRecycleRequests();
 }

@@ -1,7 +1,7 @@
 package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
-import com.mtech.recycler.entity.RecycleItem;
+import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.service.RequestService;
 import jakarta.validation.Valid;
@@ -64,14 +64,14 @@ public class RequestController {
 
     @GetMapping("/recycle")
     public ResponseEntity<?> getRecycleRequest(@RequestBody GetRequest getRequest) {
-        Optional<RecycleItem> recycleItems = requestService.getRequest(getRequest.getEmail(), getRequest.getRecord());
+        Optional<RecycleRequest> recycleItems = requestService.getRequest(getRequest.getEmail(), getRequest.getRecord());
         return ResponseEntity.ok(recycleItems);
     }
 
 
     @GetMapping("/retrieve")
     public ResponseEntity<?> getRecycleRequests() {
-        List<RecycleItem> recycleItems = requestService.getRecycleRequests();
+        List<RecycleRequest> recycleItems = requestService.getRecycleRequests();
         GetRecycleReqResponse getRecycleReqResponse = new GetRecycleReqResponse();
         getRecycleReqResponse.setData(recycleItems);
         getRecycleReqResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
@@ -81,7 +81,7 @@ public class RequestController {
 
 
     @PostMapping("/recycle")
-    public ResponseEntity<?> submitRequest(@RequestBody RecycleRequest recycleRequest) {
+    public ResponseEntity<?> submitRequest(@RequestBody com.mtech.recycler.model.RecycleRequest recycleRequest) {
         Optional<RecycleResponse> recycleResponse = requestService.SubmitRequest(recycleRequest);
         return ResponseEntity.ok(recycleResponse);
     }
