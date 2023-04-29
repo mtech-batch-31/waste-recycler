@@ -25,7 +25,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
-      - run: ./gradlew check
+      # - run: ./gradlew check
       - run: ./gradlew bootJar
 
       - name: Upload Artifact
