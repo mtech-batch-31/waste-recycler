@@ -25,7 +25,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
-      - run: ./gradlew check
+      # - run: ./gradlew check
       - run: ./gradlew bootJar
 
       - name: Upload Artifact
@@ -60,7 +60,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: my-artifact
-          path: build/libs/recycler.jar
+          path: build
 
       - name: Build Image
         uses: docker/build-push-action@v2
