@@ -1,17 +1,21 @@
 package com.mtech.recycler.service;
 
-import com.mtech.recycler.entity.Promotion;
-import com.mtech.recycler.entity.RecycleCategory;
+import com.mtech.recycler.entity.*;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.RecycleItemRepository;
 import com.mtech.recycler.service.Impl.RequestServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -22,6 +26,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
+@Slf4j
 public class RequestServiceImplTest {
 
     private RecycleCategoryRepository recycleCategoryRepository;
@@ -220,4 +225,21 @@ public class RequestServiceImplTest {
             Assertions.assertNull(response);
         });
     }
+
+
+    @Test
+    void testGetRecycleRequests_Success() {
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        User user = new Customer();
+        user.setEmail("test@mail.com");
+        Mockito.when(authentication.getPrincipal()).thenReturn(user);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        List<RecycleItem> recycleItems = requestService.getRecycleRequests();
+        log.info("reycleItems: {}", recycleItems);
+        Assertions.assertNotNull(recycleItems);
+    }
+
 }

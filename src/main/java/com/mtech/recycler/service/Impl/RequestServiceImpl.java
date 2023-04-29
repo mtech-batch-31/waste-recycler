@@ -2,6 +2,7 @@ package com.mtech.recycler.service.Impl;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.RecycleItem;
+import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.repository.PromotionRepository;
@@ -14,6 +15,7 @@ import com.mtech.recycler.service.pricingstrategy.PromotionCode3PricingStrategy;
 import com.mtech.recycler.service.pricingstrategy.PromotionPricingStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -89,8 +91,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RecycleItem> getRecycleRequests(String email) {
-        List<RecycleItem> recycleItems = recycleItemRepository.findByEmail(email);
+    public List<RecycleItem> getRecycleRequests() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        log.info("user: {}", user);
+        List<RecycleItem> recycleItems = recycleItemRepository.findByEmail(user.getEmail());
         return recycleItems;
     }
 

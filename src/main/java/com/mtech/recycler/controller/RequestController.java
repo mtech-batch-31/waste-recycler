@@ -2,13 +2,11 @@ package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.RecycleItem;
-import com.mtech.recycler.entity.User;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.service.RequestService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -71,13 +69,14 @@ public class RequestController {
     }
 
 
-    @GetMapping
+    @GetMapping("/retrieve")
     public ResponseEntity<?> getRecycleRequests() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        log.info("user: {}", user);
-        List<RecycleItem> recycleItems = requestService.getRecycleRequests(user.getEmail());
-        return ResponseEntity.ok(recycleItems);
+        List<RecycleItem> recycleItems = requestService.getRecycleRequests();
+        GetRecycleReqResponse getRecycleReqResponse = new GetRecycleReqResponse();
+        getRecycleReqResponse.setData(recycleItems);
+        getRecycleReqResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        getRecycleReqResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
+        return ResponseEntity.ok(getRecycleReqResponse);
     }
 
 
