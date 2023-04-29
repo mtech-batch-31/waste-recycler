@@ -1,4 +1,4 @@
-name: SonarCloud
+name: SonarCloud Scan
 on:
   push:
     branches:
@@ -6,32 +6,71 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened ]
 jobs:
-  build:
-    name: Build and analyze
+  tests:
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
+      # checkout the codes
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: 'zulu' # Alternative distribution options are available
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+
+      # cache Gradle packages
       - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
-      - name: Run all Scans
-        run: ./gradlew check
+
+      # give permission to gradle wrapper
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      # Run all unit tests
+      - name: Run unit tests
+        run: ./gradlew test
+
+  sonar:
+    # run after gradle test
+    needs: tests
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      # checkout the codes
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'zulu' # Alternative distribution options are available
+
+      # cache sonarcloud packages
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      # cache Gradle packages
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
