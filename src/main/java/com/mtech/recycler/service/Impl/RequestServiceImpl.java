@@ -5,6 +5,7 @@ import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.*;
+import com.mtech.recycler.notification.*;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.RecycleItemRepository;
@@ -14,6 +15,7 @@ import com.mtech.recycler.service.pricingstrategy.PromotionCode2PricingStrategy;
 import com.mtech.recycler.service.pricingstrategy.PromotionCode3PricingStrategy;
 import com.mtech.recycler.service.pricingstrategy.PromotionPricingStrategy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class RequestServiceImpl implements RequestService {
     final private RecycleCategoryRepository recycleCategoryRepository;
     final private PromotionRepository promotionRepository;
     final private RecycleItemRepository recycleItemRepository;
+
+    @Autowired
+    NotificationChannelFactory notifyChannelFactory;
 
     public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository, RecycleItemRepository recycleItemRepository) {
         this.recycleCategoryRepository = recycleCategoryRepository;
@@ -110,29 +115,40 @@ public class RequestServiceImpl implements RequestService {
 
         PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(recycleRequest);
         Optional<PricingResponse> pricingResponse = getRequestTotalPricing(pricingRequest);
+
         RecycleResponse recycleResponse = new RecycleResponse();
         recycleResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
         recycleResponse.setEmail(recycleRequest.getEmail());
-        pricingResponse.ifPresent(response -> recycleResponse.setTotalPrice(response.getTotalPrice()));
         recycleResponse.setCollectionStatus("Pending Approval");
         recycleResponse.setPromoCode(recycleRequest.getPromoCode());
         recycleResponse.setContactPerson(recycleRequest.getContactPerson());
         recycleResponse.setContactNumber(recycleRequest.getContactNumber());
         recycleResponse.setCollectionDate(recycleRequest.getCollectionDate());
-        pricingResponse.ifPresent(response -> recycleResponse.setItems(response.getItems()));
-        RecycleRequest recycleItem = new RecycleRequest();
-        recycleItem.setEmail(recycleRequest.getEmail());
-        recycleItem.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
-        recycleItem.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
-        recycleItem.setTotalPrice(recycleResponse.getTotalPrice());
-        pricingResponse.ifPresent(response -> recycleItem.setDbItems(response.getItems()));
-        recycleItem.setCollectionStatus("Pending Approval");
-        recycleItem.setPromoCode(recycleRequest.getPromoCode());
-        recycleItem.setContactPerson(recycleRequest.getContactPerson());
-        recycleItem.setContactNumber(recycleRequest.getContactNumber());
-        recycleItem.setCollectionDate(recycleRequest.getCollectionDate());
-        recycleItemRepository.save(recycleItem);
+        pricingResponse.ifPresent(response -> {
+            recycleResponse.setTotalPrice(response.getTotalPrice());
+            recycleResponse.setItems(response.getItems());
+        });
+
+        RecycleRequest recycleRequestEntity = new RecycleRequest();
+        recycleRequestEntity.setEmail(recycleRequest.getEmail());
+        recycleRequestEntity.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        recycleRequestEntity.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
+        recycleRequestEntity.setTotalPrice(recycleResponse.getTotalPrice());
+        pricingResponse.ifPresent(response -> recycleRequestEntity.setDbItems(response.getItems()));
+        recycleRequestEntity.setCollectionStatus("Pending Approval");
+        recycleRequestEntity.setPromoCode(recycleRequest.getPromoCode());
+        recycleRequestEntity.setContactPerson(recycleRequest.getContactPerson());
+        recycleRequestEntity.setContactNumber(recycleRequest.getContactNumber());
+        recycleRequestEntity.setCollectionDate(recycleRequest.getCollectionDate());
+        recycleItemRepository.save(recycleRequestEntity);
+
+        if(recycleResponse.getReturnCode().equals(CommonConstant.ReturnCode.SUCCESS)){
+            //send email
+            NotificationChannel channel = notifyChannelFactory.notificationChannel(NotificationChannelFactory.CHANNEL_TYPE.SMTP);
+            RequestNotification requestNotification = new RequestNotification(channel);
+            requestNotification.send(recycleRequest.getEmail(), "Your request is received.");
+        }
         return Optional.of(recycleResponse);
     }
 

@@ -34,6 +34,8 @@ dependencies {
     implementation 'org.springframework.data:spring-data-releasetrain:Neumann-SR9'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws-ses:2.4.4'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5', 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     testImplementation 'junit:junit:4.13.1'
     compileOnly 'org.projectlombok:lombok'
