@@ -196,4 +196,6 @@ jobs:
           tags: ${{ env.IMAGE_NAME }}
 
       - name: Push to ECR
-        run: docker push ${{ env.IMAGE_NAME }}
+        run: docker tag ${{ env.IMAGE_NAME }} ${{ secrets.ECR_REPOSITORY_URL }}:latest &&
+          docker push ${{ env.IMAGE_NAME }} &&
+          docker push ${{ secrets.ECR_REPOSITORY_URL }}:latest
