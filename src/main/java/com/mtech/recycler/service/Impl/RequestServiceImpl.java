@@ -102,6 +102,12 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public Optional<RecycleResponse> SubmitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        log.info("user: {}", user);
+        recycleRequest.setEmail(user.getEmail());
+
         PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(recycleRequest);
         Optional<PricingResponse> pricingResponse = getRequestTotalPricing(pricingRequest);
         RecycleResponse recycleResponse = new RecycleResponse();
