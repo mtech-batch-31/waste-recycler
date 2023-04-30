@@ -14,6 +14,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  IMAGE_NAME: ${{ secrets.ECR_REPOSITORY_URL }}:${{ github.sha }}
 
 jobs:
   # sonarqube:
@@ -165,7 +166,7 @@ jobs:
     needs: build_and_test
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: ${{ secrets.ECR_REPOSITORY_URL }}:${{ github.sha }}
+      LATEST_IMAGE_NAME: ${{ secrets.ECR_REPOSITORY_URL }}:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -187,15 +188,42 @@ jobs:
           name: my-artifact
           path: build
 
-      - name: Build Image
+      - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ env.IMAGE_NAME }}
+          tags: |
+            ${{ env.IMAGE_NAME }}
+            ${{ env.LATEST_IMAGE_NAME }}
 
-      - name: Push to ECR
-        run: docker tag ${{ env.IMAGE_NAME }} ${{ secrets.ECR_REPOSITORY_URL }}:latest &&
-          docker push ${{ env.IMAGE_NAME }} &&
-          docker push ${{ secrets.ECR_REPOSITORY_URL }}:latest
+  deploy_to_ecs:
+    needs: build_and_push_image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: aws/task-definition.json
+          container-name: service
+          image: ${{ env.IMAGE_NAME }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: waste-recycler-v4
+          cluster: waste-recycler
+          wait-for-service-stability: false
