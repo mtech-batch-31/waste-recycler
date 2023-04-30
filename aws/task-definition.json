@@ -1,0 +1,66 @@
+{
+    "family": "waste-recycler-v2",
+    "containerDefinitions": [
+        {
+            "name": "client",
+            "image": "845698241774.dkr.ecr.ap-southeast-1.amazonaws.com/recycler-client:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "client-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/waste-recycler-v2",
+                    "awslogs-region": "ap-southeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        },
+        {
+            "name": "service",
+            "image": "845698241774.dkr.ecr.ap-southeast-1.amazonaws.com/recycler-service:latest",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": false,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/waste-recycler-v2",
+                    "awslogs-region": "ap-southeast-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::845698241774:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::845698241774:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "1024",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}

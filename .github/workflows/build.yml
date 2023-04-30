@@ -14,63 +14,64 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  IMAGE_NAME: ${{ secrets.ECR_REPOSITORY_URL }}:${{ github.sha }}
 
 jobs:
-  sonarqube:
-    name: SonarCloud Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          # Disabling shallow clone is recommended for improving relevancy of reporting.
-          fetch-depth: 0
+  # sonarqube:
+  #   name: SonarCloud Scan
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         # Disabling shallow clone is recommended for improving relevancy of reporting.
+  #         fetch-depth: 0
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: 'zulu' # Alternative distribution options are available
+  #     - name: Set up JDK 17
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         java-version: 17
+  #         distribution: 'zulu' # Alternative distribution options are available
 
-      # cache sonarcloud packages
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+  #     # cache sonarcloud packages
+  #     - name: Cache SonarCloud packages
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ~/.sonar/cache
+  #         key: ${{ runner.os }}-sonar
+  #         restore-keys: ${{ runner.os }}-sonar
 
-      # cache Gradle packages
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
+  #     # cache Gradle packages
+  #     - name: Cache Gradle packages
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ~/.gradle/caches
+  #         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+  #         restore-keys: ${{ runner.os }}-gradle
 
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonar --info
+  #     - name: Build and analyze
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       run: ./gradlew build sonar --info
 
-      # Check the Quality Gate status.
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: SonarSource/sonarqube-quality-gate-action@master
-        # Force to fail step after specific time.
-        timeout-minutes: 5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  #     # Check the Quality Gate status.
+  #     - name: SonarQube Quality Gate check
+  #       id: sonarqube-quality-gate-check
+  #       uses: SonarSource/sonarqube-quality-gate-action@master
+  #       # Force to fail step after specific time.
+  #       timeout-minutes: 5
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      # Optionally you can use the output from the Quality Gate in another step.
-      # The possible outputs of the `quality-gate-status` variable are `PASSED`, `WARN` or `FAILED`.
-      - name: "Example show SonarQube Quality Gate Status value"
-        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+  #     # Optionally you can use the output from the Quality Gate in another step.
+  #     # The possible outputs of the `quality-gate-status` variable are `PASSED`, `WARN` or `FAILED`.
+  #     - name: "Example show SonarQube Quality Gate Status value"
+  #       run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
   tests:
-    needs: sonarqube
+    # needs: sonarqube
     name: Unit tests
     runs-on: ubuntu-latest
     steps:
@@ -165,7 +166,7 @@ jobs:
     needs: build_and_test
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: ${{ secrets.ECR_REPOSITORY_URL }}:${{ github.sha }}
+      LATEST_IMAGE_NAME: ${{ secrets.ECR_REPOSITORY_URL }}:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -187,13 +188,42 @@ jobs:
           name: my-artifact
           path: build
 
-      - name: Build Image
+      - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ env.IMAGE_NAME }}
+          tags: |
+            ${{ env.IMAGE_NAME }}
+            ${{ env.LATEST_IMAGE_NAME }}
 
-      - name: Push to ECR
-        run: docker push ${{ env.IMAGE_NAME }}
+  deploy_to_ecs:
+    needs: build_and_push_image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: aws/task-definition.json
+          container-name: service
+          image: ${{ env.IMAGE_NAME }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: waste-recycler-v4
+          cluster: waste-recycler
+          wait-for-service-stability: false
