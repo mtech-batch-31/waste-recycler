@@ -9,4 +9,6 @@ public interface UserService {
     User getUserByEmail(String userName);
 
     Customer createCustomer(RegisterRequest registerRequest);
+
+    boolean registrationConfirm(String token);
 }

@@ -4,6 +4,7 @@ package com.mtech.recycler.service;
 import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.repository.CustomerRepository;
+import com.mtech.recycler.repository.VerificationTokenRepository;
 import com.mtech.recycler.service.Impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -22,7 +23,7 @@ public class UserServiceImplTest {
 
 
     private CustomerRepository customerRepository;
-
+    private VerificationTokenRepository verificationTokenRepository;
     private final String email = "test@mail.com";
     private RegisterRequest registerRequest;
 
@@ -39,7 +40,8 @@ public class UserServiceImplTest {
         registerRequest.setPostalCode("123456");
         userService = Mockito.mock(UserServiceImpl.class);
         customerRepository = Mockito.mock(CustomerRepository.class);
-        userService = new UserServiceImpl(customerRepository);
+        verificationTokenRepository = Mockito.mock(VerificationTokenRepository.class);
+        userService = new UserServiceImpl(customerRepository, verificationTokenRepository);
     }
 
 

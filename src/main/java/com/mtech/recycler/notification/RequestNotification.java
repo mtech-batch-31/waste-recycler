@@ -1,6 +1,9 @@
 package com.mtech.recycler.notification;
 
+import com.mtech.recycler.notification.model.NotificationModel;
 import org.springframework.stereotype.Component;
+
+import java.text.MessageFormat;
 
 @Component
 public class RequestNotification extends NotificationService {
@@ -9,11 +12,9 @@ public class RequestNotification extends NotificationService {
         super.setNotificationChannel(channel);
     }
     @Override
-    public boolean send(String sendTo, String message) {
-        String subject = "Recycle Request notification";
-        String body = message;
-        String[] sendToList = new String[] {sendTo};
-        super.notificationChannel.send(sendToList, body, subject);
-        return false;
+    public boolean send(NotificationModel notificationModel) {
+        notificationModel.setSubject( "Recycle Request notification");
+        notificationModel.setMessage(MessageFormat.format("Hi {0}, \n We have received your recycling request and is pending processing. ", notificationModel.user.getFirstName()));
+        return super.notificationChannel.send(notificationModel);
     }
 }

@@ -34,4 +34,6 @@ public class User {
     @DynamoDBTypeConvertedEnum
     private Role role;
 
+    @DynamoDBAttribute
+    private boolean enabled;
 }

@@ -6,6 +6,7 @@ import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.notification.*;
+import com.mtech.recycler.notification.model.NotificationModel;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.RecycleItemRepository;
@@ -34,9 +35,10 @@ public class RequestServiceImpl implements RequestService {
     final private RecycleItemRepository recycleItemRepository;
 
     @Autowired
-    NotificationChannelFactory notifyChannelFactory;
+    private NotificationChannelFactory notifyChannelFactory;
 
-    public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository, RecycleItemRepository recycleItemRepository) {
+    public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository
+            , RecycleItemRepository recycleItemRepository) {
         this.recycleCategoryRepository = recycleCategoryRepository;
         this.promotionRepository = promotionRepository;
         this.recycleItemRepository = recycleItemRepository;
@@ -147,7 +149,9 @@ public class RequestServiceImpl implements RequestService {
             //send email
             NotificationChannel channel = notifyChannelFactory.notificationChannel(NotificationChannelFactory.CHANNEL_TYPE.SMTP);
             RequestNotification requestNotification = new RequestNotification(channel);
-            requestNotification.send(recycleRequest.getEmail(), "Your request is received.");
+            NotificationModel notifModel = new NotificationModel();
+            notifModel.setUser(user);
+            requestNotification.send(notifModel);
         }
         return Optional.of(recycleResponse);
     }
