@@ -62,13 +62,6 @@ public class RequestController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/recycle")
-    public ResponseEntity<?> getRecycleRequest(@RequestBody GetRequest getRequest) {
-        Optional<RecycleRequest> recycleItems = requestService.getRequest(getRequest.getEmail(), getRequest.getRecord());
-        return ResponseEntity.ok(recycleItems);
-    }
-
-
     @GetMapping("/retrieve")
     public ResponseEntity<?> getRecycleRequests() {
         List<RecycleRequest> recycleItems = requestService.getRecycleRequests();

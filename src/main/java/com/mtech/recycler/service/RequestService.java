@@ -14,7 +14,5 @@ public interface RequestService {
 
     Optional<RecycleResponse> SubmitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest);
 
-    Optional<RecycleRequest> getRequest(String email, int record);
-
     List<RecycleRequest> getRecycleRequests();
 }
