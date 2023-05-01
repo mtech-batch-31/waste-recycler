@@ -82,21 +82,6 @@ public class RequestServiceImpl implements RequestService {
         return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement(), "")).toList();
     }
 
-    public Optional<RecycleRequest> getRequest(String email, int record) {
-        List<RecycleRequest> recycleItems = recycleItemRepository.findByEmail(email);
-        if (recycleItems.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.NO_RECORD_FOUND);
-        }
-        else {
-            try {
-                RecycleRequest recycleItem = recycleItems.get(record);
-                return Optional.of(recycleItem);
-            } catch (IndexOutOfBoundsException e) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.NO_INDEX_FOUND + record);
-            }
-        }
-    }
-
     @Override
     public List<RecycleRequest> getRecycleRequests() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication()
