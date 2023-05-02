@@ -3,6 +3,7 @@ package com.mtech.recycler.controller;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
 import com.mtech.recycler.constant.CommonConstant;
+import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.Category;
@@ -43,6 +44,8 @@ public class RequestControllerTest {
     private final String ENDPOINT_CALCULATE_PRICING = "/api/v1/request/price";
 
     private final String ENDPOINT_GET_CATEGORIES = "/api/v1/request/categories";
+
+    private final String ENDPOINT_RETRIEVE_REQUEST = "/api/v1/request/retrieve";
 
     @Autowired
     private MockMvc mockMvc;
@@ -192,4 +195,22 @@ public class RequestControllerTest {
         Assertions.assertEquals(expectedResponse, result.getResponse().getContentAsString());
     }
 
+
+    @Test
+    public void givenRetrieveRequest_returnSuccess() throws Exception {
+        initAuth();
+        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"data\":[]}";
+
+        List<RecycleRequest> recycleRequests = new ArrayList<>();
+        given(requestService.getRecycleRequests()).willReturn(recycleRequests);
+
+        var result = mockMvc.perform(get(ENDPOINT_RETRIEVE_REQUEST).header("Authorization", "Bearer 12334"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
+                .andExpect(jsonPath("message", is(CommonConstant.Message.SUCCESSFUL_REQUEST)))
+                .andReturn();
+
+        Assertions.assertEquals(expectedResponse, result.getResponse().getContentAsString());
+    }
 }
