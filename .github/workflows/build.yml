@@ -46,75 +46,9 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test
 
-  code_scan:
-    name: Analyze with SonarCloud
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew clean build sonar --info
-
-      - name: Get SonarCloud quality gate status
-        run: |
-          STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}": "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${{ secrets.PROJECT_KEY }}" | jq -r .projectStatus.status)
-          echo "Quality gate status is $STATUS"          
-
-      - name: Upload Unit Test Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: unit-test-artifact
-          path: |
-            build/reports/tests/                  
-
-      - name: Upload Code Coverage Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: code-coverage-artifact
-          path: |
-            build/reports/jacoco/test/html/
-
-      - name: Upload Lint (Checkstyle) Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: lint-artifact
-          path: |
-            build/reports/checkstyle/
-
-      - name: Upload SonarCloud Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: sast-artifact
-          path: |
-            build/sonar/report-task.txt
-
   generate_jar:
     name: Generate Jar File
-    needs: code_scan
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -215,6 +149,72 @@ jobs:
           service: waste-recycler-v4
           cluster: waste-recycler
           wait-for-service-stability: false
+
+  code_scan:
+    name: Analyze with SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew clean build sonar --info
+
+      - name: Get SonarCloud quality gate status
+        run: |
+          STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}": "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${{ secrets.PROJECT_KEY }}" | jq -r .projectStatus.status)
+          echo "Quality gate status is $STATUS"          
+
+      - name: Upload Unit Test Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: unit-test-artifact
+          path: |
+            build/reports/tests/                  
+
+      - name: Upload Code Coverage Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-artifact
+          path: |
+            build/reports/jacoco/test/html/
+
+      - name: Upload Lint (Checkstyle) Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: lint-artifact
+          path: |
+            build/reports/checkstyle/
+
+      - name: Upload SonarCloud Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: sast-artifact
+          path: |
+            build/sonar/report-task.txt
 
   zap_scan:
     needs: code_scan
