@@ -67,7 +67,8 @@ jobs:
         with:
           name: spring-boot-artifact
           path: |
-            build/libs/recycler.jar            
+            build/libs/recycler.jar
+            build/reports            
 
   build_and_push_image:
     needs: generate_jar
@@ -104,19 +105,7 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}
-
-#      - name: Build Image
-#        uses: docker/build-push-action@v2
-#        with:
-#          context: .
-#          file: ./Dockerfile
-#          push: true
-#          tags: ${{ env.IMAGE_NAME }}
-
-      - name: Push to ECR
-        run: docker tag ${{ env.IMAGE_NAME }} ${{ secrets.ECR_REPOSITORY_URL }}:latest &&
-          docker push ${{ env.IMAGE_NAME }} &&
-          docker push ${{ secrets.ECR_REPOSITORY_URL }}:latest
+            ${{ env.LATEST_IMAGE_NAME }}
 
   deploy_to_ecs:
     name: Deploy to ECS
