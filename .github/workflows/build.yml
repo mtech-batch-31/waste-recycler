@@ -104,7 +104,6 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}
-            ${{ env.LATEST_IMAGE_NAME }}
 
 #      - name: Build Image
 #        uses: docker/build-push-action@v2
