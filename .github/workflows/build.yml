@@ -47,7 +47,6 @@ jobs:
         run: ./gradlew test
 
   code_scan:
-    needs: tests
     name: Analyze with SonarCloud
     runs-on: ubuntu-latest
     steps:
@@ -218,6 +217,7 @@ jobs:
           wait-for-service-stability: false
 
   zap_scan:
+    needs: code_scan
     runs-on: ubuntu-latest
     name: Zap Scan
     steps:
