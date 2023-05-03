@@ -102,14 +102,14 @@ jobs:
       - name: Upload Lint (Checkstyle) Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: code-coverage-artifact
+          name: lint-artifact
           path: |
             build/reports/checkstyle/
 
       - name: Upload SonarCloud Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: sonar-artifact
+          name: sast-artifact
           path: |
             build/sonar/report-task.txt
 
@@ -132,7 +132,7 @@ jobs:
       - name: Upload Project Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: my-artifact
+          name: spring-boot-artifact
           path: |
             build/libs/recycler.jar            
 
@@ -160,7 +160,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
-          name: my-artifact
+          name: spring-boot-artifact
           path: build
 
       - name: Build and Push Image
