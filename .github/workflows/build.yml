@@ -7,6 +7,8 @@ on:
   pull_request:
     types: [ opened, synchronize, reopened ]
 
+permissions: write-all
+
 env:
   AWS_REGION: ap-southeast-1
   ECR_REPO_NAME: ${{ secrets.ECR_REPOSITORY_URL }}
@@ -200,7 +202,6 @@ jobs:
           wait-for-service-stability: false
 
   zap_scan:
-    needs: sonar
     runs-on: ubuntu-latest
     name: Zap Scan
     steps:
