@@ -67,8 +67,7 @@ jobs:
         with:
           name: spring-boot-artifact
           path: |
-            build/libs/recycler.jar
-            build/reports            
+            build/libs/recycler.jar            
 
   build_and_push_image:
     needs: generate_jar
