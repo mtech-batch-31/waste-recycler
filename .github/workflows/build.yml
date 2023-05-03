@@ -114,6 +114,7 @@ jobs:
             build/sonar/report-task.txt
 
   generate_jar:
+    name: Generate Jar File
     needs: code_scan
     runs-on: ubuntu-latest
     steps:
@@ -137,6 +138,7 @@ jobs:
 
   build_and_push_image:
     needs: generate_jar
+    name: Push Docker Image to ECR
     runs-on: ubuntu-latest
     env:
       LATEST_IMAGE_NAME: ${{ secrets.ECR_REPOSITORY_URL }}:latest
@@ -172,6 +174,7 @@ jobs:
             ${{ env.LATEST_IMAGE_NAME }}
 
   deploy_to_ecs:
+    name: Deploy
     needs: build_and_push_image
     runs-on: ubuntu-latest
     steps:
