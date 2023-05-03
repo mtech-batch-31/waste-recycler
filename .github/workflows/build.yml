@@ -164,7 +164,7 @@ jobs:
           path: build
 
       - name: Build and Push Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v2
         with:
           context: .
           file: ./Dockerfile
@@ -172,6 +172,19 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}
             ${{ env.LATEST_IMAGE_NAME }}
+
+#      - name: Build Image
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: .
+#          file: ./Dockerfile
+#          push: true
+#          tags: ${{ env.IMAGE_NAME }}
+
+      - name: Push to ECR
+        run: docker tag ${{ env.IMAGE_NAME }} ${{ secrets.ECR_REPOSITORY_URL }}:latest &&
+          docker push ${{ env.IMAGE_NAME }} &&
+          docker push ${{ secrets.ECR_REPOSITORY_URL }}:latest
 
   deploy_to_ecs:
     name: Deploy to ECS
@@ -209,7 +222,7 @@ jobs:
     name: Zap Scan
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           ref: main
 
