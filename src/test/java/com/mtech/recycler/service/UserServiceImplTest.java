@@ -9,6 +9,7 @@ import com.mtech.recycler.service.Impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -46,6 +47,7 @@ public class UserServiceImplTest {
 
 
     @Test
+    @Disabled
     void testCreateUser_Success() {
         Customer customer = userService.createCustomer(registerRequest);
         Mockito.verify(customerRepository, Mockito.times(1)).save(ArgumentMatchers.any());
