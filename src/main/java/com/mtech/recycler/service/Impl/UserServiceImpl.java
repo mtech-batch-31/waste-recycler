@@ -16,7 +16,6 @@ import com.mtech.recycler.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 
-import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 @Slf4j
@@ -40,9 +38,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private NotificationChannelFactory notifyChannelFactory;
 
-    public UserServiceImpl(CustomerRepository customerRepository, VerificationTokenRepository verificationTokenRepository){
+    public UserServiceImpl(CustomerRepository customerRepository, VerificationTokenRepository verificationTokenRepository, NotificationChannelFactory notifyChannelFactory){
         this.customerRepository = customerRepository;
         this.verificationTokenRepository = verificationTokenRepository;
+        this.notifyChannelFactory = notifyChannelFactory;
     }
     @Override
     public User getUserByEmail(String userName) {
@@ -75,12 +74,13 @@ public class UserServiceImpl implements UserService {
         //send verification email
         log.info("Sending Verification Email");
         NotificationChannel channel = notifyChannelFactory.notificationChannel(NotificationChannelFactory.CHANNEL_TYPE.SMTP);
-        EmailVerification emailVerification = new EmailVerification(channel);
-        NotificationModel notifModel = new NotificationModel();
-        notifModel.setUser(customer);
-        notifModel.setVerificationToken(token.getToken());
-        emailVerification.send(notifModel);
-
+        if(channel != null) {
+            EmailVerification emailVerification = new EmailVerification(channel);
+            NotificationModel notifModel = new NotificationModel();
+            notifModel.setUser(customer);
+            notifModel.setVerificationToken(token.getToken());
+            emailVerification.send(notifModel);
+        }
         log.info("customer created: {}", customer);
         return customer;
     }
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
     public boolean registrationConfirm(String token) {
 
         VerificationToken verificationToken =  verificationTokenRepository.findByToken(token)
-                                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Invalid Token")));
+                                                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Token"));
         //update user account to enable
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         DateTime tokeExpiryDate = DateTime.parse(verificationToken.getExpiryDate(), formatter);
@@ -98,13 +98,13 @@ public class UserServiceImpl implements UserService {
 
         if(tokeExpiryDate.isAfter(now)) {
             Customer customer = customerRepository.findByEmail(verificationToken.getEmail())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Invalid Token")));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Token"));
             customer.setEnabled(true);
             customerRepository.save(customer);
         }
         else
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Token has expires"));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token has expires");
         }
         return true;
     }

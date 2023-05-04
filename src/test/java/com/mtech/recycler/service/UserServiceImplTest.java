@@ -3,6 +3,7 @@ package com.mtech.recycler.service;
 
 import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.model.RegisterRequest;
+import com.mtech.recycler.notification.NotificationChannelFactory;
 import com.mtech.recycler.repository.CustomerRepository;
 import com.mtech.recycler.repository.VerificationTokenRepository;
 import com.mtech.recycler.service.Impl.UserServiceImpl;
@@ -24,12 +25,14 @@ public class UserServiceImplTest {
 
 
     private CustomerRepository customerRepository;
-    private VerificationTokenRepository verificationTokenRepository;
     private final String email = "test@mail.com";
     private RegisterRequest registerRequest;
 
     @BeforeEach
     public void init() {
+        VerificationTokenRepository verificationTokenRepository;
+        NotificationChannelFactory notifyChannelFactory;
+
         registerRequest = new RegisterRequest();
         registerRequest.setEmail(email);
         String password = "P@ssw0rd";
@@ -42,7 +45,8 @@ public class UserServiceImplTest {
         userService = Mockito.mock(UserServiceImpl.class);
         customerRepository = Mockito.mock(CustomerRepository.class);
         verificationTokenRepository = Mockito.mock(VerificationTokenRepository.class);
-        userService = new UserServiceImpl(customerRepository, verificationTokenRepository);
+        notifyChannelFactory = Mockito.mock(NotificationChannelFactory.class);
+        userService = new UserServiceImpl(customerRepository, verificationTokenRepository, notifyChannelFactory);
     }
 
 

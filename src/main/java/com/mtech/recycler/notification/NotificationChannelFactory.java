@@ -10,7 +10,7 @@ public class NotificationChannelFactory {
     private final BeanFactory beanFactory;
 
     public enum CHANNEL_TYPE {
-        SMTP, SES
+        SMTP, SMS
     }
     @Autowired
     public NotificationChannelFactory(BeanFactory beanFactory){
