@@ -67,7 +67,8 @@ jobs:
         with:
           name: spring-boot-artifact
           path: |
-            build/libs/recycler.jar            
+            build/libs/recycler.jar
+            build/reports
 
   build_and_push_image:
     needs: generate_jar
@@ -174,13 +175,6 @@ jobs:
         run: |
           STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}": "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${{ secrets.PROJECT_KEY }}" | jq -r .projectStatus.status)
           echo "Quality gate status is $STATUS"          
-
-      - name: Upload Unit Test Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: unit-test-artifact
-          path: |
-            build/reports/tests/                  
 
       - name: Upload Code Coverage Artifacts
         uses: actions/upload-artifact@v3
