@@ -51,7 +51,6 @@ public class UserServiceImplTest {
 
 
     @Test
-    @Disabled
     void testCreateUser_Success() {
         Customer customer = userService.createCustomer(registerRequest);
         Mockito.verify(customerRepository, Mockito.times(1)).save(ArgumentMatchers.any());
