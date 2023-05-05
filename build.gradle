@@ -66,6 +66,7 @@ jacocoTestReport {
                             '**/model/*',
                             '**/exception/*',
                             '**/constant/*',
+                            '**/helper/DataSeeder.java',
                             '**/RecyclerApplication.java'
                     ])
                 }))
