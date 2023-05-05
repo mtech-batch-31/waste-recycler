@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 @EnableScan
-public interface RecycleItemRepository extends CrudRepository<RecycleRequest, String> {
+public interface RecycleRequestRepository extends CrudRepository<RecycleRequest, String> {
 
     List<RecycleRequest> findByEmail(String email);
 }

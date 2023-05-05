@@ -5,7 +5,7 @@ import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
-import com.mtech.recycler.repository.RecycleItemRepository;
+import com.mtech.recycler.repository.RecycleRequestRepository;
 import com.mtech.recycler.service.Impl.RequestServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -39,8 +39,8 @@ public class RequestServiceImplTest {
     public void init() {
         promotionRepository = Mockito.mock(PromotionRepository.class);
         recycleCategoryRepository = Mockito.mock(RecycleCategoryRepository.class);
-        RecycleItemRepository recycleItemRepository = Mockito.mock(RecycleItemRepository.class);
-        requestService = new RequestServiceImpl(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+        RecycleRequestRepository recycleRequestRepository = Mockito.mock(RecycleRequestRepository.class);
+        requestService = new RequestServiceImpl(recycleCategoryRepository, promotionRepository, recycleRequestRepository);
     }
 
     @Test

@@ -9,7 +9,7 @@ import com.mtech.recycler.notification.*;
 import com.mtech.recycler.notification.model.NotificationModel;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
-import com.mtech.recycler.repository.RecycleItemRepository;
+import com.mtech.recycler.repository.RecycleRequestRepository;
 import com.mtech.recycler.service.RequestService;
 import com.mtech.recycler.service.pricingstrategy.PromotionCode1PricingStrategy;
 import com.mtech.recycler.service.pricingstrategy.PromotionCode2PricingStrategy;
@@ -32,16 +32,16 @@ public class RequestServiceImpl implements RequestService {
 
     final private RecycleCategoryRepository recycleCategoryRepository;
     final private PromotionRepository promotionRepository;
-    final private RecycleItemRepository recycleItemRepository;
+    final private RecycleRequestRepository recycleRequestRepository;
 
     @Autowired
     private NotificationChannelFactory notifyChannelFactory;
 
     public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository
-            , RecycleItemRepository recycleItemRepository) {
+            , RecycleRequestRepository recycleRequestRepository) {
         this.recycleCategoryRepository = recycleCategoryRepository;
         this.promotionRepository = promotionRepository;
-        this.recycleItemRepository = recycleItemRepository;
+        this.recycleRequestRepository = recycleRequestRepository;
     }
 
     @Override
@@ -51,10 +51,10 @@ public class RequestServiceImpl implements RequestService {
 
         PromotionPricingStrategy pricingStrategy;
         switch (Objects.requireNonNullElse(request.getPromoCode(), "").toLowerCase()) {
-            case "p001" -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
-            case "p002" -> pricingStrategy = new PromotionCode2PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
-            case "p003" -> pricingStrategy = new PromotionCode3PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
-            default -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+            case "p001" -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "p002" -> pricingStrategy = new PromotionCode2PricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "p003" -> pricingStrategy = new PromotionCode3PricingStrategy(recycleCategoryRepository, promotionRepository);
+            default -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository);
         }
 
         try {
@@ -87,8 +87,7 @@ public class RequestServiceImpl implements RequestService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         log.info("user: {}", user);
-        List<RecycleRequest> recycleRequests = recycleItemRepository.findByEmail(user.getEmail());
-        return recycleRequests;
+        return recycleRequestRepository.findByEmail(user.getEmail());
     }
 
 
@@ -128,7 +127,7 @@ public class RequestServiceImpl implements RequestService {
         recycleRequestEntity.setContactPerson(recycleRequest.getContactPerson());
         recycleRequestEntity.setContactNumber(recycleRequest.getContactNumber());
         recycleRequestEntity.setCollectionDate(recycleRequest.getCollectionDate());
-        recycleItemRepository.save(recycleRequestEntity);
+        recycleRequestRepository.save(recycleRequestEntity);
 
         if(recycleResponse.getReturnCode().equals(CommonConstant.ReturnCode.SUCCESS)){
             //send email

@@ -5,9 +5,8 @@ import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.Category;
 import com.mtech.recycler.model.Item;
-import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.PromotionRepository;
-import com.mtech.recycler.repository.RecycleItemRepository;
+import com.mtech.recycler.repository.RecycleCategoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,12 +24,10 @@ public class PromotionCode1PricingStrategy implements PromotionPricingStrategy {
 
     private final RecycleCategoryRepository recycleCategoryRepository;
     private final PromotionRepository promotionRepository;
-    private final RecycleItemRepository recycleItemRepository;
 
-    public PromotionCode1PricingStrategy(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository, RecycleItemRepository recycleItemRepository) {
+    public PromotionCode1PricingStrategy(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository) {
         this.recycleCategoryRepository = recycleCategoryRepository;
         this.promotionRepository = promotionRepository;
-        this.recycleItemRepository = recycleItemRepository;
     }
 
     private boolean isWithinRange(Date startDate, Date endDate) {
