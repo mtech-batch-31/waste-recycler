@@ -31,7 +31,7 @@ public class UserController {
 
     @PostMapping("/registrationConfirm")
     public ResponseEntity<BaseResponse> registrationConfirm(@RequestParam("token") String token) {
-        log.info("RegistrationConfirm Verification Token"+token);
+        log.info("RegistrationConfirm Verification Token:" + token);
         boolean result = userService.registrationConfirm(token);
         return ResponseEntity.ok(new BaseResponse("00", CommonConstant.Message.SUCCESSFUL_REQUEST));
     }
