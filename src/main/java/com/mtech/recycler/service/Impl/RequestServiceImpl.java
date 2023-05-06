@@ -49,13 +49,7 @@ public class RequestServiceImpl implements RequestService {
         var response = new PricingResponse();
         List<Item> items = new ArrayList<>();
 
-        PromotionPricingStrategy pricingStrategy;
-        switch (Objects.requireNonNullElse(request.getPromoCode(), "").toLowerCase()) {
-            case "p001" -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
-            case "p002" -> pricingStrategy = new DayPricingStrategy(recycleCategoryRepository, promotionRepository);
-            case "p003" -> pricingStrategy = new CategoryPricingStrategy(recycleCategoryRepository, promotionRepository);
-            default -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
-        }
+        PromotionPricingStrategy pricingStrategy = setPricingStrategy(request);
 
         try {
             BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode(), items);
@@ -74,6 +68,24 @@ public class RequestServiceImpl implements RequestService {
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name is not found: " + e.getMessage());
         }
+    }
+
+    private PromotionPricingStrategy setPricingStrategy(PricingRequest request) {
+        PromotionPricingStrategy pricingStrategy;
+        // Type = Normal
+        switch (Objects.requireNonNullElse(request.getPromoCode(), "").toLowerCase()) {
+            case "p001" -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "p002" -> pricingStrategy = new DayPricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "p003" -> pricingStrategy = new CategoryPricingStrategy(recycleCategoryRepository, promotionRepository);
+            default -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
+        }
+        // Type = Day
+        // 2. condition: today() = Earth day, override promo code
+        //               pricingStrategy = new EarthDayAbstractPromotionStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+        // Type = Category
+        // 3. condition: electronics, add 10% promotion
+        //               pricingStrategy = new EarthDayAbstractPromotionStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
+        return pricingStrategy;
     }
 
 
