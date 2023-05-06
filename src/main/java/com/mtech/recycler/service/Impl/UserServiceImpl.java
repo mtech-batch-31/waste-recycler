@@ -13,7 +13,6 @@ import com.mtech.recycler.notification.model.NotificationModel;
 import com.mtech.recycler.repository.CustomerRepository;
 import com.mtech.recycler.repository.VerificationTokenRepository;
 import com.mtech.recycler.service.UserService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -113,41 +112,41 @@ public class UserServiceImpl implements UserService {
     private void validateRegisterRequest(RegisterRequest registerRequest) {
         log.info("validating registerRequest: {}", registerRequest);
         if (!StringUtils.hasText(registerRequest.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "email cannot be empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be empty");
         }
         if (!Utilities.isValidEmail(registerRequest.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid email");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
         }
         Optional<Customer> customerFromDB = customerRepository.findByEmail(registerRequest.getEmail());
         if (customerFromDB.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "email already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
         if (!StringUtils.hasText(registerRequest.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "password cannot be empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be empty");
         }
         if (!Utilities.isValidPassword(registerRequest.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid Password");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password");
         }
         if (!StringUtils.hasText(registerRequest.getFirstName())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "firstName cannot be empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "First name cannot be empty");
         }
         if (!StringUtils.hasText(registerRequest.getLastName())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "lastName cannot be empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Last name cannot be empty");
         }
         if (!StringUtils.hasText(registerRequest.getContactNumber())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "contactNumber cannot be empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Contact number cannot be empty");
         }
         if (!Utilities.isValidContactNumber(registerRequest.getContactNumber())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid contactNumber");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid contact number");
         }
         if (!StringUtils.hasText(registerRequest.getAddress())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "address cannot be empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Address cannot be empty");
         }
         if (!StringUtils.hasText(registerRequest.getPostalCode())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "postalCode cannot be empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Postal code cannot be empty");
         }
         if (!Utilities.isValidPostalCode(registerRequest.getPostalCode())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid postalCode");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid postal code");
         }
     }
 
