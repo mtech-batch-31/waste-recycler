@@ -11,9 +11,9 @@ import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.RecycleRequestRepository;
 import com.mtech.recycler.service.RequestService;
-import com.mtech.recycler.service.pricingstrategy.PromotionCode1PricingStrategy;
-import com.mtech.recycler.service.pricingstrategy.PromotionCode2PricingStrategy;
-import com.mtech.recycler.service.pricingstrategy.PromotionCode3PricingStrategy;
+import com.mtech.recycler.service.pricingstrategy.NormalPricingStrategy;
+import com.mtech.recycler.service.pricingstrategy.DayPricingStrategy;
+import com.mtech.recycler.service.pricingstrategy.CategoryPricingStrategy;
 import com.mtech.recycler.service.pricingstrategy.PromotionPricingStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +51,10 @@ public class RequestServiceImpl implements RequestService {
 
         PromotionPricingStrategy pricingStrategy;
         switch (Objects.requireNonNullElse(request.getPromoCode(), "").toLowerCase()) {
-            case "p001" -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository);
-            case "p002" -> pricingStrategy = new PromotionCode2PricingStrategy(recycleCategoryRepository, promotionRepository);
-            case "p003" -> pricingStrategy = new PromotionCode3PricingStrategy(recycleCategoryRepository, promotionRepository);
-            default -> pricingStrategy = new PromotionCode1PricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "p001" -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "p002" -> pricingStrategy = new DayPricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "p003" -> pricingStrategy = new CategoryPricingStrategy(recycleCategoryRepository, promotionRepository);
+            default -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
         }
 
         try {

@@ -20,13 +20,12 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class PromotionCode3PricingStrategy implements PromotionPricingStrategy {
+public class DayPricingStrategy implements PromotionPricingStrategy {
 
     private final RecycleCategoryRepository recycleCategoryRepository;
     private final PromotionRepository promotionRepository;
 
-
-    public PromotionCode3PricingStrategy(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository) {
+    public DayPricingStrategy(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository) {
         this.recycleCategoryRepository = recycleCategoryRepository;
         this.promotionRepository = promotionRepository;
     }
@@ -35,7 +34,7 @@ public class PromotionCode3PricingStrategy implements PromotionPricingStrategy {
         Date currentDate = new Date();
         return currentDate.after(startDate) && currentDate.before(endDate);
     }
-    private static final Logger log = LoggerFactory.getLogger(PromotionCode1PricingStrategy.class);
+    private static final Logger log = LoggerFactory.getLogger(NormalPricingStrategy.class);
 
     @Override
     public BigDecimal calculateTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
@@ -59,7 +58,7 @@ public class PromotionCode3PricingStrategy implements PromotionPricingStrategy {
             }
 
             totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
-            totalPrice = totalPrice.multiply(BigDecimal.valueOf(1.6));
+            totalPrice = totalPrice.multiply(BigDecimal.valueOf(1.4));
         }
         return totalPrice;
     }
@@ -74,7 +73,7 @@ public class PromotionCode3PricingStrategy implements PromotionPricingStrategy {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
 
-            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1.6));
+            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1.4));
         }
         return items;
     }

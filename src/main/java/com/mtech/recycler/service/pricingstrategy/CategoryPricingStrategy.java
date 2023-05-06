@@ -20,12 +20,13 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class PromotionCode1PricingStrategy implements PromotionPricingStrategy {
+public class CategoryPricingStrategy implements PromotionPricingStrategy {
 
     private final RecycleCategoryRepository recycleCategoryRepository;
     private final PromotionRepository promotionRepository;
 
-    public PromotionCode1PricingStrategy(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository) {
+
+    public CategoryPricingStrategy(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository) {
         this.recycleCategoryRepository = recycleCategoryRepository;
         this.promotionRepository = promotionRepository;
     }
@@ -34,33 +35,33 @@ public class PromotionCode1PricingStrategy implements PromotionPricingStrategy {
         Date currentDate = new Date();
         return currentDate.after(startDate) && currentDate.before(endDate);
     }
-    private static final Logger log = LoggerFactory.getLogger(PromotionCode1PricingStrategy.class);
+    private static final Logger log = LoggerFactory.getLogger(NormalPricingStrategy.class);
 
     @Override
     public BigDecimal calculateTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
-     BigDecimal totalPrice = categories.stream().map(c -> {
-        BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name (%s) is not found".formatted(c.getCategory())))
-                .getPrice();
-        BigDecimal subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
-        items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
-        return subTotalPrice;
-    }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalPrice = categories.stream().map(c -> {
+            BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name (%s) is not found".formatted(c.getCategory())))
+                    .getPrice();
+            BigDecimal subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
+            items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
+            return subTotalPrice;
+        }).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    log.info("RequestService - GetRequestTotalPricing - total price before promo: %s".formatted(totalPrice));
+        log.info("RequestService - GetRequestTotalPricing - total price before promo: %s".formatted(totalPrice));
 
-    if (StringUtils.hasText(promoCode)) {
-        Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
+        if (StringUtils.hasText(promoCode)) {
+            Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
 
-        if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
+            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
+            }
+
+            totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
+            totalPrice = totalPrice.multiply(BigDecimal.valueOf(1.6));
         }
-
-        totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
-        totalPrice = totalPrice.multiply(BigDecimal.valueOf(1));
-    }
-    return totalPrice;
+        return totalPrice;
     }
 
     public List<Item> calculateSubTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
@@ -73,7 +74,7 @@ public class PromotionCode1PricingStrategy implements PromotionPricingStrategy {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
 
-            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1));
+            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1.6));
         }
         return items;
     }
