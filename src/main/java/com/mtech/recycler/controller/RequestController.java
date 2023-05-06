@@ -51,7 +51,7 @@ public class RequestController {
         log.info("RequestController - getAllCategories - started");
         RecyclingCategoryResponse response = new RecyclingCategoryResponse();
 
-        List<Category> recyclingCategories = requestService.GetAllRecycleCategories();
+        List<Category> recyclingCategories = requestService.getAllRecycleCategories();
 
         response.setCategories(recyclingCategories);
         response.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
@@ -75,7 +75,7 @@ public class RequestController {
 
     @PostMapping("/recycle")
     public ResponseEntity<?> submitRequest(@RequestBody com.mtech.recycler.model.RecycleRequest recycleRequest) {
-        Optional<RecycleResponse> recycleResponse = requestService.SubmitRequest(recycleRequest);
+        Optional<RecycleResponse> recycleResponse = requestService.submitRequest(recycleRequest);
         return ResponseEntity.ok(recycleResponse);
     }
 }

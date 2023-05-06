@@ -90,7 +90,7 @@ public class RequestServiceImpl implements RequestService {
 
 
     @Override
-    public List<Category> GetAllRecycleCategories() {
+    public List<Category> getAllRecycleCategories() {
         return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement(), "")).toList();
     }
 
@@ -104,7 +104,7 @@ public class RequestServiceImpl implements RequestService {
 
 
     @Override
-    public Optional<RecycleResponse> SubmitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest) {
+    public Optional<RecycleResponse> submitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest) {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();

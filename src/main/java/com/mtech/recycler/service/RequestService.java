@@ -10,9 +10,9 @@ public interface RequestService {
 
     Optional<PricingResponse> getRequestTotalPricing(PricingRequest request);
 
-    List<Category> GetAllRecycleCategories();
+    List<Category> getAllRecycleCategories();
 
-    Optional<RecycleResponse> SubmitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest);
+    Optional<RecycleResponse> submitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest);
 
     List<RecycleRequest> getRecycleRequests();
 }

@@ -164,7 +164,7 @@ public class RequestControllerTest {
             add(new Category("c2", new BigDecimal(1), 0.1, "kg", ""));
         }};
 
-        given(requestService.GetAllRecycleCategories()).willReturn(response);
+        given(requestService.getAllRecycleCategories()).willReturn(response);
 
         var result = mockMvc.perform(get(ENDPOINT_GET_CATEGORIES).header("Authorization", "Bearer 12334"))
                 .andExpect(status().isOk())
@@ -183,7 +183,7 @@ public class RequestControllerTest {
 
         var response = new ArrayList<Category>();
 
-        given(requestService.GetAllRecycleCategories()).willReturn(response);
+        given(requestService.getAllRecycleCategories()).willReturn(response);
 
         var result = mockMvc.perform(get(ENDPOINT_GET_CATEGORIES).header("Authorization", "Bearer 12334"))
                 .andExpect(status().isOk())

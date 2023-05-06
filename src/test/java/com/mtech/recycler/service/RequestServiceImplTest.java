@@ -54,7 +54,7 @@ public class RequestServiceImplTest {
         }};
 
         Mockito.when(recycleCategoryRepository.findAll()).thenReturn(recycleCategories);
-        List<Category> rc = requestService.GetAllRecycleCategories();
+        List<Category> rc = requestService.getAllRecycleCategories();
         verify(recycleCategoryRepository, Mockito.times(1)).findAll();
         Assertions.assertNotNull(rc);
         Assertions.assertEquals(expectedSize, rc.size());
@@ -68,7 +68,7 @@ public class RequestServiceImplTest {
         Iterable<RecycleCategory> recycleCategories = new ArrayList<>();
 
         Mockito.when(recycleCategoryRepository.findAll()).thenReturn(recycleCategories);
-        List<Category> rc = requestService.GetAllRecycleCategories();
+        List<Category> rc = requestService.getAllRecycleCategories();
         verify(recycleCategoryRepository, Mockito.times(1)).findAll();
         Assertions.assertNotNull(rc);
         Assertions.assertEquals(expectedSize, rc.size());
