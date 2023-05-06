@@ -58,23 +58,28 @@ bootJar {
 
 jacocoTestReport {
     dependsOn test
-    afterEvaluate {
-        getClassDirectories().setFrom(
-                files(classDirectories.files.collect {
-                    fileTree(dir: it, exclude: [
-                            '**/entity/*',
-                            '**/model/*',
-                            '**/exception/*',
-                            '**/constant/*',
-                            '**/helper/DataSeeder.java',
-                            '**/RecyclerApplication.java'
-                    ])
-                }))
-    }
 
     reports {
         xml.enabled true
     }
+
+    afterEvaluate {
+        excludedClassFilesForReport(classDirectories)
+    }
+}
+
+private excludedClassFilesForReport(classDirectories) {
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: [
+                '**/entity/*.class',
+                '**/model/**/*.class',
+                '**/helper/*.class',
+                '**/exception/*.class',
+                '**/constant/*.class',
+                '**/helper/DataSeeder*.class',
+                '**/RecyclerApplication.class'
+        ])
+    }))
 }
 
 
