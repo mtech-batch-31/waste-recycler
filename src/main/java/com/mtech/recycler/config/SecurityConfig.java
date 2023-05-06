@@ -27,9 +27,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf()
-                .ignoringRequestMatchers("/api/v1/auth/login")
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()
+                .disable()
+//                .ignoringRequestMatchers("/api/v1/auth/login")
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/user/register", "/api/v1/auth/**", "/api/v1/user/registrationConfirm").permitAll()
                 .anyRequest()
