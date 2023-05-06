@@ -33,9 +33,11 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 @WebMvcTest(RequestController.class)
 @Import(SecurityConfig.class)
@@ -93,7 +95,7 @@ public class RequestControllerTest {
 
         given(requestService.getRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.of(response));
 
-        MvcResult result = mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+        MvcResult result = mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334").with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)))
@@ -109,7 +111,7 @@ public class RequestControllerTest {
         request.getData().get(0).setCategory("");
         String requestJsonString = Utilities.asJsonString(request);
 
-        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334").with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("returnCode", is(String.valueOf(HttpStatus.BAD_REQUEST.value()))))
                 .andExpect(jsonPath("message", is(CommonConstant.ErrorMessage.CATEGORY_VALIDATION_FAILED)));
@@ -122,7 +124,7 @@ public class RequestControllerTest {
         request.getData().get(0).setQuantity(0);
         String requestJsonString = Utilities.asJsonString(request);
 
-        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334").with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("returnCode", is(String.valueOf(HttpStatus.BAD_REQUEST.value()))))
                 .andExpect(jsonPath("message", is(CommonConstant.ErrorMessage.QUANTITY_VALIDATION_FAILED)));
@@ -136,7 +138,7 @@ public class RequestControllerTest {
 
         given(requestService.getRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.empty());
 
-        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334").with(csrf()))
                 .andExpect(status().isNotFound());
     }
 
@@ -147,7 +149,7 @@ public class RequestControllerTest {
 
         given(requestService.getRequestTotalPricing(any(PricingRequest.class))).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "error"));
 
-        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334"))
+        mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334").with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("returnCode", is(String.valueOf(HttpStatus.BAD_REQUEST.value()))))

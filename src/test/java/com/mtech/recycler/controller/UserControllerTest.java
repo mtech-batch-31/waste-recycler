@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -58,7 +59,7 @@ public class UserControllerTest {
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/user/register")
                                 .content(Utilities.asJsonString(new RegisterRequest()))
-                                .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -73,7 +74,7 @@ public class UserControllerTest {
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/user/register")
                                 .content(Utilities.asJsonString(new RegisterRequest()))
-                                .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isConflict())
                 .andExpect(MockMvcResultMatchers.content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
