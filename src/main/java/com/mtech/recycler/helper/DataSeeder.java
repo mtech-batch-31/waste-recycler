@@ -49,17 +49,30 @@ public class DataSeeder implements CommandLineRunner {
             log.info("seedEnabled");
             customerRepository.deleteAll();
 
+            // USERS
             var user = new Customer();
-            user.setEmail("andrew@mail.com");
+            user.setEmail("ernest@mail.com");
             user.setAddress("25 Heng Mui Keng Terrace, Institute of Systems Science, Singapore 119615");
             user.setPostalCode("119615");
             user.setContactNumber("65162093");
-            user.setFirstName("Andrew");
-            user.setLastName("Tan");
+            user.setFirstName("Ernest");
+            user.setLastName("Lee");
             user.setPassword(Utilities.encodePassword("P@ssw0rd"));
             user.setRole(Role.CUSTOMER);
             customerRepository.save(user);
 
+            var user2 = new Customer();
+            user2.setEmail("ray@mail.com");
+            user2.setAddress("25 Heng Mui Keng Terrace, Institute of Systems Science, Singapore 119615");
+            user2.setPostalCode("119615");
+            user2.setContactNumber("65162093");
+            user2.setFirstName("Raymond");
+            user2.setLastName("Htet");
+            user2.setPassword(Utilities.encodePassword("P@ssw0rd"));
+            user2.setRole(Role.CUSTOMER);
+            customerRepository.save(user2);
+
+            // RECYCLE CATEGORIES
             recycleCategoryRepository.deleteAll();
             ArrayList<RecycleCategory> categories = new ArrayList<>() {{
                 add(new RecycleCategory("Electronics", new BigDecimal(10), "piece"));
@@ -76,6 +89,7 @@ public class DataSeeder implements CommandLineRunner {
                     x -> log.info(String.valueOf(x))
             );
 
+            // PROMO CODE
             promotionRepository.deleteAll();
             var promotion1 = new Promotion();
             promotion1.setPromotionCode("p001");
@@ -101,11 +115,11 @@ public class DataSeeder implements CommandLineRunner {
             promotion3.setEndDate(Instant.now().toDateTime().plusMonths(1).toDate());
             promotionRepository.save(promotion3);
 
-            // Recycle Request
+            // RECYCLE REQUESTS
             recycleRequestRepository.deleteAll();
 
             RecycleRequest recycleRequestEntity = new RecycleRequest();
-            recycleRequestEntity.setEmail("andrew@mail.com");
+            recycleRequestEntity.setEmail("ernest@mail.com");
             recycleRequestEntity.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
             recycleRequestEntity.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
             recycleRequestEntity.setTotalPrice(BigDecimal.valueOf(15));
@@ -116,13 +130,13 @@ public class DataSeeder implements CommandLineRunner {
 
             recycleRequestEntity.setCollectionStatus("Collected");
             recycleRequestEntity.setPromoCode("p001");
-            recycleRequestEntity.setContactPerson("Andrew");
+            recycleRequestEntity.setContactPerson("Ernest");
             recycleRequestEntity.setContactNumber("65162093");
             recycleRequestEntity.setCollectionDate("2023-04-30 10:00:00");
             recycleRequestRepository.save(recycleRequestEntity);
 
             RecycleRequest recycleRequestEntity2 = new RecycleRequest();
-            recycleRequestEntity2.setEmail("andrew@mail.com");
+            recycleRequestEntity2.setEmail("ernest@mail.com");
             recycleRequestEntity2.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
             recycleRequestEntity2.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
             recycleRequestEntity2.setTotalPrice(BigDecimal.valueOf(12));
@@ -132,13 +146,13 @@ public class DataSeeder implements CommandLineRunner {
             recycleRequestEntity2.setDbItems(items2);
 
             recycleRequestEntity2.setCollectionStatus("Collected");
-            recycleRequestEntity2.setContactPerson("Andrew");
+            recycleRequestEntity2.setContactPerson("Ernest");
             recycleRequestEntity2.setContactNumber("65162093");
             recycleRequestEntity2.setCollectionDate("2023-05-04 18:00:00");
             recycleRequestRepository.save(recycleRequestEntity2);
 
             RecycleRequest recycleRequestEntity3 = new RecycleRequest();
-            recycleRequestEntity3.setEmail("andrew@mail.com");
+            recycleRequestEntity3.setEmail("ernest@mail.com");
             recycleRequestEntity3.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
             recycleRequestEntity3.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
             recycleRequestEntity3.setTotalPrice(BigDecimal.valueOf(7));
@@ -148,7 +162,7 @@ public class DataSeeder implements CommandLineRunner {
             recycleRequestEntity3.setDbItems(items3);
 
             recycleRequestEntity3.setCollectionStatus("Pending Approval");
-            recycleRequestEntity3.setContactPerson("Andrew");
+            recycleRequestEntity3.setContactPerson("Ernest");
             recycleRequestEntity3.setContactNumber("65162093");
             recycleRequestEntity3.setCollectionDate("2023-05-14 18:00:00");
             recycleRequestRepository.save(recycleRequestEntity3);
