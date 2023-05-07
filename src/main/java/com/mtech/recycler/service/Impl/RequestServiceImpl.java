@@ -111,7 +111,7 @@ public class RequestServiceImpl implements RequestService {
         log.info("user: {}", user);
         recycleRequest.setEmail(user.getEmail());
 
-        PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(recycleRequest);
+        PricingRequest pricingRequest = Utilities.convertRecycleRequestToPricingRequest(recycleRequest);
         Optional<PricingResponse> pricingResponse = getRequestTotalPricing(pricingRequest);
 
         RecycleResponse recycleResponse = new RecycleResponse();
