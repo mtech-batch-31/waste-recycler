@@ -77,16 +77,15 @@ public class RequestServiceImpl implements RequestService {
         // Type = Normal
         switch (Objects.requireNonNullElse(request.getPromoCode(), "").toLowerCase()) {
             case "p001" -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
-            case "p002" -> pricingStrategy = new DayPricingStrategy(recycleCategoryRepository, promotionRepository);
-            case "p003" -> pricingStrategy = new CategoryPricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "p002" -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "p003" -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
+            // Type = Day
+            case "earth" -> pricingStrategy = new DayPricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "xmas" -> pricingStrategy = new DayPricingStrategy(recycleCategoryRepository, promotionRepository);
+            // Type = Category
+            case "electronics" -> pricingStrategy = new CategoryPricingStrategy(recycleCategoryRepository, promotionRepository);
             default -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
         }
-        // Type = Day
-        // 2. condition: today() = Earth day, override promo code
-        //               pricingStrategy = new EarthDayAbstractPromotionStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
-        // Type = Category
-        // 3. condition: electronics, add 10% promotion
-        //               pricingStrategy = new EarthDayAbstractPromotionStrategy(recycleCategoryRepository, promotionRepository, recycleItemRepository);
         return pricingStrategy;
     }
 
@@ -153,10 +152,4 @@ public class RequestServiceImpl implements RequestService {
         }
         return Optional.of(recycleResponse);
     }
-
-//    boolean isWithinRange(Date startDate, Date endDate) {
-//        Date today = Instant.now().toDate();
-//
-//        return today.after(startDate) && today.before(endDate);
-//    }
 }

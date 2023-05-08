@@ -58,7 +58,7 @@ public class DayPricingStrategy implements PromotionPricingStrategy {
             }
 
             totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
-            totalPrice = totalPrice.multiply(BigDecimal.valueOf(1.4));
+            totalPrice = totalPrice.multiply(BigDecimal.valueOf(1.0));
         }
         return totalPrice;
     }
@@ -73,7 +73,7 @@ public class DayPricingStrategy implements PromotionPricingStrategy {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
 
-            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1.4));
+            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1.0));
         }
         return items;
     }

@@ -56,7 +56,6 @@ public class NormalPricingStrategy implements PromotionPricingStrategy {
         if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
         }
-
         totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
         totalPrice = totalPrice.multiply(BigDecimal.valueOf(1));
     }
