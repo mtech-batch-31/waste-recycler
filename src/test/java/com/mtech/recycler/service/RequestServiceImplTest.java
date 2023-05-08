@@ -149,6 +149,87 @@ public class RequestServiceImplTest {
     }
 
     @Test
+    void testGetRequestTotalPricing_WithCategoryStrategy_Success() {
+        var expectedTotalPrice = new BigDecimal("26.00");
+        var expectedBatteryTotalPrice = new BigDecimal("4.00");
+        var expectedPlasticTotalPrice = new BigDecimal("22.00");
+        var categories = new ArrayList<Category>() {{
+            add(new Category("Metal", new BigDecimal(0), 2, "", ""));
+            add(new Category("Electronics", new BigDecimal(0), 2, "", ""));
+        }};
+
+        var promotion = new Promotion() {{
+            setPromotionCode("electronics");
+            setStartDate(DateTime.now().minusDays(1).toDate());
+            setEndDate(DateTime.now().plusDays(1).toDate());
+            setPercentage(0.1);
+        }};
+
+        var batteryRecycle = new RecycleCategory();
+        batteryRecycle.setPrice(new BigDecimal(2));
+
+        var plasticRecycle = new RecycleCategory();
+        plasticRecycle.setPrice(new BigDecimal(10));
+
+        var pricingRequest = new PricingRequest();
+        pricingRequest.setPromoCode("electronics");
+        pricingRequest.setData(categories);
+
+        Mockito.when(recycleCategoryRepository.findByName("Metal")).thenReturn(Optional.of(batteryRecycle));
+        Mockito.when(recycleCategoryRepository.findByName("Electronics")).thenReturn(Optional.of(plasticRecycle));
+        Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
+
+        Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+        verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
+        Assertions.assertNotNull(response);
+        assertTrue(response.isPresent());
+        Assertions.assertNotNull(response.get());
+        Assertions.assertEquals(expectedTotalPrice, response.get().getTotalPrice());
+        Assertions.assertEquals(expectedBatteryTotalPrice, response.get().getItems().get(0).getSubTotalPrice());
+        Assertions.assertEquals(expectedPlasticTotalPrice, response.get().getItems().get(1).getSubTotalPrice());
+    }
+
+    @Test
+    void testGetRequestTotalPricing_WithDayStrategy_Success() {
+        var expectedTotalPrice = new BigDecimal("33.600");
+        var expectedBatteryTotalPrice = new BigDecimal("5.60");
+        var expectedPlasticTotalPrice = new BigDecimal("28.00");
+        var categories = new ArrayList<Category>() {{
+            add(new Category("Metal", new BigDecimal(0), 2, "", ""));
+            add(new Category("Electronics", new BigDecimal(0), 2, "", ""));
+        }};
+
+        var promotion = new Promotion() {{
+            setPromotionCode("earth");
+            setStartDate(DateTime.now().minusDays(1).toDate());
+            setEndDate(DateTime.now().plusDays(1).toDate());
+            setPercentage(0.4);
+        }};
+
+        var batteryRecycle = new RecycleCategory();
+        batteryRecycle.setPrice(new BigDecimal(2));
+
+        var plasticRecycle = new RecycleCategory();
+        plasticRecycle.setPrice(new BigDecimal(10));
+
+        var pricingRequest = new PricingRequest();
+        pricingRequest.setPromoCode("earth");
+        pricingRequest.setData(categories);
+
+        Mockito.when(recycleCategoryRepository.findByName("Metal")).thenReturn(Optional.of(batteryRecycle));
+        Mockito.when(recycleCategoryRepository.findByName("Electronics")).thenReturn(Optional.of(plasticRecycle));
+        Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
+
+        Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+        verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
+        Assertions.assertNotNull(response);
+        assertTrue(response.isPresent());
+        Assertions.assertNotNull(response.get());
+        Assertions.assertEquals(expectedTotalPrice, response.get().getTotalPrice());
+        Assertions.assertEquals(expectedBatteryTotalPrice, response.get().getItems().get(0).getSubTotalPrice());
+        Assertions.assertEquals(expectedPlasticTotalPrice, response.get().getItems().get(1).getSubTotalPrice());
+    }
+    @Test
     void testGetRequestTotalPricing_ThrowExceptionWhenPromoCodeNotFound() {
         var categories = new ArrayList<Category>() {{
             add(new Category("Battery", new BigDecimal(0), 10, "", ""));
