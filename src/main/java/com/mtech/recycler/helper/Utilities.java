@@ -69,10 +69,10 @@ public class Utilities {
         return matcher.matches();
     }
 
-    public static PricingRequest convertSubmitRequestToPricingRequest(com.mtech.recycler.model.RecycleRequest submitRequest) {
+    public static PricingRequest convertRecycleRequestToPricingRequest(com.mtech.recycler.model.RecycleRequest recycleRequest) {
         PricingRequest pricingRequest = new PricingRequest();
-        pricingRequest.setPromoCode(submitRequest.getPromoCode());
-        pricingRequest.setData(submitRequest.getData());
+        pricingRequest.setPromoCode(recycleRequest.getPromoCode());
+        pricingRequest.setData(recycleRequest.getData());
         return pricingRequest;
     }
 
