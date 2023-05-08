@@ -3,10 +3,10 @@ package com.mtech.recycler.service.Impl;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.User;
+import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.model.LoginResponse;
 import com.mtech.recycler.service.LoginService;
 import com.mtech.recycler.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,11 +14,11 @@ import java.util.Optional;
 
 import static com.mtech.recycler.helper.Utilities.isMatchedPassword;
 
-@Slf4j
 @Service
 @Transactional
 public class LoginServiceImpl implements LoginService {
 
+    private final Logger log = Logger.getInstance();
     final private JwtTokenProvider tokenProvider;
     final private UserService userService;
 

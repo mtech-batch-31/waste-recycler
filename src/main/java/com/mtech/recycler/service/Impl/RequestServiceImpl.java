@@ -3,19 +3,21 @@ package com.mtech.recycler.service.Impl;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.entity.User;
+import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.*;
-import com.mtech.recycler.notification.*;
+import com.mtech.recycler.notification.NotificationChannel;
+import com.mtech.recycler.notification.NotificationChannelFactory;
+import com.mtech.recycler.notification.RequestNotification;
 import com.mtech.recycler.notification.model.NotificationModel;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.RecycleRequestRepository;
 import com.mtech.recycler.service.RequestService;
-import com.mtech.recycler.service.pricingstrategy.NormalPricingStrategy;
-import com.mtech.recycler.service.pricingstrategy.DayPricingStrategy;
 import com.mtech.recycler.service.pricingstrategy.CategoryPricingStrategy;
+import com.mtech.recycler.service.pricingstrategy.DayPricingStrategy;
+import com.mtech.recycler.service.pricingstrategy.NormalPricingStrategy;
 import com.mtech.recycler.service.pricingstrategy.PromotionPricingStrategy;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,10 +28,10 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
-@Slf4j
 @Service
 public class RequestServiceImpl implements RequestService {
 
+    private final Logger log = Logger.getInstance();
     final private RecycleCategoryRepository recycleCategoryRepository;
     final private PromotionRepository promotionRepository;
     final private RecycleRequestRepository recycleRequestRepository;
@@ -98,7 +100,7 @@ public class RequestServiceImpl implements RequestService {
     public List<RecycleRequest> getRecycleRequests() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
-        log.info("user: {}", user);
+        log.info("user: " + user);
         return recycleRequestRepository.findByEmail(user.getEmail());
     }
 
@@ -108,7 +110,7 @@ public class RequestServiceImpl implements RequestService {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
-        log.info("user: {}", user);
+        log.info("user: " + user);
         recycleRequest.setEmail(user.getEmail());
 
         PricingRequest pricingRequest = Utilities.convertSubmitRequestToPricingRequest(recycleRequest);

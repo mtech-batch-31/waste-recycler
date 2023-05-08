@@ -2,20 +2,21 @@ package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.RecycleRequest;
+import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.model.*;
 import com.mtech.recycler.service.RequestService;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/request")
 public class RequestController {
+
+    private final Logger log = Logger.getInstance();
 
     private final RequestService requestService;
 

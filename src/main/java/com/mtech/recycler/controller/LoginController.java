@@ -1,10 +1,10 @@
 package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
+import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.model.LoginRequest;
 import com.mtech.recycler.model.LoginResponse;
 import com.mtech.recycler.service.LoginService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/auth")
 public class LoginController {
+
+    private final Logger log = Logger.getInstance();
 
     private final LoginService loginService;
 

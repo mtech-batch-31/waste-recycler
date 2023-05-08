@@ -3,6 +3,7 @@ package com.mtech.recycler.service.Impl;
 import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.entity.VerificationToken;
+import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.model.Role;
@@ -13,7 +14,6 @@ import com.mtech.recycler.notification.model.NotificationModel;
 import com.mtech.recycler.repository.CustomerRepository;
 import com.mtech.recycler.repository.VerificationTokenRepository;
 import com.mtech.recycler.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -23,12 +23,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
-
 import java.util.Optional;
 
-@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
+
+    private final Logger log = Logger.getInstance();
 
     private final CustomerRepository customerRepository;
 
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Customer createCustomer(RegisterRequest registerRequest) {
-        log.info("creating new customer registerRequest: {}", registerRequest);
+        log.info("creating new customer registerRequest: " + registerRequest);
         validateRegisterRequest(registerRequest);
         Customer customer = new Customer();
         customer.setEmail(registerRequest.getEmail());
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
             notifModel.setVerificationToken(token.getToken());
             emailVerification.send(notifModel);
         }
-        log.info("customer created: {}", customer);
+        log.info("customer created: " + customer);
         return customer;
     }
 
@@ -110,7 +110,6 @@ public class UserServiceImpl implements UserService {
 
 
     private void validateRegisterRequest(RegisterRequest registerRequest) {
-        log.info("validating registerRequest: {}", registerRequest);
         if (!StringUtils.hasText(registerRequest.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be empty");
         }

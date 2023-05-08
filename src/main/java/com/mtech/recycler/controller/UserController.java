@@ -2,18 +2,19 @@ package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Customer;
+import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.model.base.BaseResponse;
 import com.mtech.recycler.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
+
+    private final Logger log = Logger.getInstance();
 
     @Autowired
     private UserService userService;
