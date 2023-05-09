@@ -55,7 +55,7 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
             BigDecimal subTotalPrice;
             subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
             items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
-            if (c.getCategory().equalsIgnoreCase("Electronics")) {
+            if (c.getCategory().equalsIgnoreCase(promotion.getDescription())) {
                 subTotalPrice = subTotalPrice.add(subTotalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage())));
             }
             return subTotalPrice;
@@ -70,7 +70,7 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
         if (StringUtils.hasText(promoCode)) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
-            updateSubTotalPriceWithPromotionCategoryStrategy(items, promotion.getPercentage(), "Electronics");
+            updateSubTotalPriceWithPromotionCategoryStrategy(items, promotion.getPercentage(), promotion.getDescription());
         }
         return items;
     }
