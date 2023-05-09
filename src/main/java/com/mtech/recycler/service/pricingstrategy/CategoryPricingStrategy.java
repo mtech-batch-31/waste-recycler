@@ -35,11 +35,11 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
         Date currentDate = new Date();
         return currentDate.after(startDate) && currentDate.before(endDate);
     }
-    private static final Logger log = LoggerFactory.getLogger(NormalPricingStrategy.class);
+    private static final Logger log = LoggerFactory.getLogger(CategoryPricingStrategy.class);
 
     @Override
     public BigDecimal calculateTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
-        BigDecimal totalPrice =null;
+        BigDecimal totalPrice = null;
         if (StringUtils.hasText(promoCode)) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
@@ -47,11 +47,6 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
             if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
-
-//            List<Item> recalculateItems = calculateSubTotalPrice(categories, promoCode, items);
-//            totalPrice = recalculateItems.stream().map(Item::getSubTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-
-//            log.info("RequestService - GetRequestTotalPricing - total price before promo: %s".formatted(totalPrice));
 
             totalPrice = categories.stream().map(c -> {
             BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
@@ -66,7 +61,7 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
             return subTotalPrice;
         }).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
+        log.info("CategoryPricingStrategy - calculateTotalPrice - total Price is :%s".formatted(totalPrice));
         return totalPrice;
     }
 
@@ -75,10 +70,6 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
         if (StringUtils.hasText(promoCode)) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
-
-            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
-            }
             updateSubTotalPriceWithPromotionCategoryStrategy(items, promotion.getPercentage(), "Electronics");
         }
         return items;

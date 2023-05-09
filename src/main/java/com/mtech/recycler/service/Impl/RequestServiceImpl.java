@@ -40,10 +40,11 @@ public class RequestServiceImpl implements RequestService {
     private NotificationChannelFactory notifyChannelFactory;
 
     public RequestServiceImpl(RecycleCategoryRepository recycleCategoryRepository, PromotionRepository promotionRepository
-            , RecycleRequestRepository recycleRequestRepository) {
+            , RecycleRequestRepository recycleRequestRepository, NotificationChannelFactory notifyChannelFactory) {
         this.recycleCategoryRepository = recycleCategoryRepository;
         this.promotionRepository = promotionRepository;
         this.recycleRequestRepository = recycleRequestRepository;
+        this.notifyChannelFactory = notifyChannelFactory;
     }
 
     @Override
@@ -84,6 +85,7 @@ public class RequestServiceImpl implements RequestService {
             case "xmas" -> pricingStrategy = new DayPricingStrategy(recycleCategoryRepository, promotionRepository);
             // Type = Category
             case "electronics" -> pricingStrategy = new CategoryPricingStrategy(recycleCategoryRepository, promotionRepository);
+            case "glass" -> pricingStrategy = new CategoryPricingStrategy(recycleCategoryRepository, promotionRepository);
             default -> pricingStrategy = new NormalPricingStrategy(recycleCategoryRepository, promotionRepository);
         }
         return pricingStrategy;
@@ -153,3 +155,4 @@ public class RequestServiceImpl implements RequestService {
         return Optional.of(recycleResponse);
     }
 }
+

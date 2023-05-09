@@ -1,8 +1,11 @@
 package com.mtech.recycler.service;
 
+import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.*;
 import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.*;
+import com.mtech.recycler.notification.NotificationChannel;
+import com.mtech.recycler.notification.NotificationChannelFactory;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import com.mtech.recycler.repository.RecycleRequestRepository;
@@ -13,6 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.BeanFactory;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -20,10 +24,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
@@ -40,7 +43,10 @@ public class RequestServiceImplTest {
         promotionRepository = Mockito.mock(PromotionRepository.class);
         recycleCategoryRepository = Mockito.mock(RecycleCategoryRepository.class);
         RecycleRequestRepository recycleRequestRepository = Mockito.mock(RecycleRequestRepository.class);
-        requestService = new RequestServiceImpl(recycleCategoryRepository, promotionRepository, recycleRequestRepository);
+        BeanFactory beanFactory = Mockito.mock(BeanFactory.class);
+        NotificationChannelFactory mockNotifyChannelFactory = new NotificationChannelFactory(beanFactory);
+        requestService = new RequestServiceImpl(recycleCategoryRepository, promotionRepository, recycleRequestRepository,
+                mockNotifyChannelFactory);
     }
 
     @Test
@@ -248,7 +254,7 @@ public class RequestServiceImplTest {
 
         Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(Optional.of(batteryRecycle));
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
-        Assertions.assertThrows(ResponseStatusException.class, () -> {
+        assertThrows(ResponseStatusException.class, () -> {
             Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
 
             Assertions.assertNull(response);
@@ -267,7 +273,7 @@ public class RequestServiceImplTest {
 
         Mockito.when(recycleCategoryRepository.findByName(Mockito.any())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResponseStatusException.class, () -> {
+        assertThrows(ResponseStatusException.class, () -> {
             Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
             Assertions.assertNull(response);
         });
@@ -301,13 +307,175 @@ public class RequestServiceImplTest {
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
         Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
 
-        Assertions.assertThrows(ResponseStatusException.class, () -> {
+        assertThrows(ResponseStatusException.class, () -> {
             Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
             verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
             Assertions.assertNull(response);
         });
     }
 
+    @Test
+    void testGetRequestTotalPricing_WithDayStrategyIsExpired_Success() {
+        var categories = new ArrayList<Category>() {{
+            add(new Category("Metal", new BigDecimal(0), 2, "", ""));
+            add(new Category("Electronics", new BigDecimal(0), 2, "", ""));
+        }};
+
+        var promotion = new Promotion() {{
+            setPromotionCode("xmas");
+            setStartDate(DateTime.now().minusDays(1).toDate());
+            setEndDate(DateTime.now().toDate());
+            setPercentage(0.4);
+        }};
+
+        var batteryRecycle = new RecycleCategory();
+        batteryRecycle.setPrice(new BigDecimal(2));
+
+        var plasticRecycle = new RecycleCategory();
+        plasticRecycle.setPrice(new BigDecimal(10));
+
+        var pricingRequest = new PricingRequest();
+        pricingRequest.setPromoCode("xmas");
+        pricingRequest.setData(categories);
+
+        Mockito.when(recycleCategoryRepository.findByName("Metal")).thenReturn(Optional.of(batteryRecycle));
+        Mockito.when(recycleCategoryRepository.findByName("Electronics")).thenReturn(Optional.of(plasticRecycle));
+        Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
+
+        assertThrows(ResponseStatusException.class, () -> {
+            Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+            verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
+            Assertions.assertNull(response);
+        });
+    }
+
+    @Test
+    void testGetRequestTotalPricing_WithCategoryStrategyIsExpired_Success() {
+        var categories = new ArrayList<Category>() {{
+            add(new Category("Metal", new BigDecimal(0), 2, "", ""));
+            add(new Category("Electronics", new BigDecimal(0), 2, "", ""));
+        }};
+
+        var promotion = new Promotion() {{
+            setPromotionCode("glass");
+            setStartDate(DateTime.now().minusDays(1).toDate());
+            setEndDate(DateTime.now().toDate());
+            setPercentage(0.4);
+        }};
+
+        var batteryRecycle = new RecycleCategory();
+        batteryRecycle.setPrice(new BigDecimal(2));
+
+        var plasticRecycle = new RecycleCategory();
+        plasticRecycle.setPrice(new BigDecimal(10));
+
+        var pricingRequest = new PricingRequest();
+        pricingRequest.setPromoCode("glass");
+        pricingRequest.setData(categories);
+
+        Mockito.when(recycleCategoryRepository.findByName("Metal")).thenReturn(Optional.of(batteryRecycle));
+        Mockito.when(recycleCategoryRepository.findByName("Electronics")).thenReturn(Optional.of(plasticRecycle));
+        Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
+
+        assertThrows(ResponseStatusException.class, () ->
+                requestService.getRequestTotalPricing(pricingRequest)
+        );
+    }
+
+    @Test
+    void testSubmitRequest_Success() {
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        User user = Mockito.mock(User.class);
+        com.mtech.recycler.model.RecycleRequest recycleRequest = new com.mtech.recycler.model.RecycleRequest();
+
+        recycleRequest.setEmail("andrew@mail.com");
+        recycleRequest.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        recycleRequest.setData(Collections.singletonList(new Category("Electronics", new BigDecimal(10), 2, "piece", "Electronics")));
+        recycleRequest.setCollectionStatus("Pending Approval");
+        recycleRequest.setPromoCode("electronics");
+        recycleRequest.setContactPerson("Andrew");
+        recycleRequest.setContactNumber("83930521");
+        recycleRequest.setCollectionDate("2023-05-04 18:00:00");
+        recycleRequest.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        recycleRequest.setCollectionStatus("Pending Approval");
+
+        RecycleResponse expectedResponse = new RecycleResponse();
+
+        expectedResponse.setItems(Collections.singletonList(new Item("Electronics",
+                 2,
+                 new BigDecimal("10"),
+                 new BigDecimal("22.00"),
+                "Electronics")));
+        expectedResponse.setReturnCode("00");
+        expectedResponse.setEmail("andrew@mail.com");
+        expectedResponse.setMessage("The request has been successfully processed");
+        expectedResponse.setTotalPrice(new BigDecimal("22.00"));
+        expectedResponse.setCollectionStatus("Pending Approval");
+        expectedResponse.setPromoCode("electronics");
+        expectedResponse.setContactPerson("Andrew");
+        expectedResponse.setContactNumber("83930521");
+        expectedResponse.setCollectionDate("2023-05-04 18:00:00");
+
+        RecycleRequest recycleRequestEntity = new RecycleRequest();
+        RecycleRequestRepository recycleRequestRepository = Mockito.mock(RecycleRequestRepository.class);
+
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(authentication.getPrincipal()).thenReturn(user);
+        Mockito.when(user.getEmail()).thenReturn("andrew@mail.com");
+        Mockito.when(recycleRequestRepository.save(Mockito.any())).thenReturn(recycleRequestEntity);
+
+        Promotion promotion = new Promotion();
+        promotion.setId("1");
+        promotion.setPromotionCode("electronics");
+        promotion.setDescription("Electronics");
+        promotion.setStartDate(DateTime.now().minusDays(1).toDate());
+        promotion.setEndDate(DateTime.now().plusDays(1).toDate());
+        promotion.setPercentage(0.1);
+        Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.anyString()))
+                .thenReturn(Optional.of(promotion));
+
+        RecycleCategoryRepository recycleCategoryRepository = Mockito.mock(RecycleCategoryRepository.class);
+        RecycleCategory recycleCategory = new RecycleCategory("Electronics", BigDecimal.valueOf(10), "Piece");
+
+        Mockito.when(recycleCategoryRepository.findByName("Electronics"))
+                .thenReturn(Optional.of(recycleCategory));
+
+        NotificationChannelFactory notifyChannelFactory = Mockito.mock(NotificationChannelFactory.class);
+        NotificationChannel notificationChannel = Mockito.mock(NotificationChannel.class);
+        Mockito.when(notifyChannelFactory.notificationChannel(NotificationChannelFactory.CHANNEL_TYPE.SMTP))
+                .thenReturn(notificationChannel);
+
+        BeanFactory beanFactory = Mockito.mock(BeanFactory.class);
+        NotificationChannelFactory mockNotifyChannelFactory = new NotificationChannelFactory(beanFactory);
+
+        Mockito.when(mockNotifyChannelFactory.notificationChannel(NotificationChannelFactory.CHANNEL_TYPE.SMTP))
+                .thenReturn(notificationChannel);
+
+        requestService = new RequestServiceImpl(
+                recycleCategoryRepository,
+                promotionRepository,
+                recycleRequestRepository,
+                mockNotifyChannelFactory
+        );
+
+        Mockito.when(notifyChannelFactory.notificationChannel(NotificationChannelFactory.CHANNEL_TYPE.SMTP))
+                .thenReturn(notificationChannel);
+
+        Optional<RecycleResponse> actualResponse = requestService.submitRequest(recycleRequest);
+
+        Assertions.assertTrue(actualResponse.isPresent());
+        Assertions.assertEquals(expectedResponse, actualResponse.get());
+
+        Mockito.verify(securityContext).getAuthentication();
+        Mockito.verify(authentication).getPrincipal();
+//        Mockito.verify(Utilities.convertRecycleRequestToPricingRequest(recycleRequest));
+//        Mockito.verify(requestService).getRequestTotalPricing(pricingRequest);
+//        Mockito.verify(recycleRequestRepository).save(recycleRequestEntity);
+//        Mockito.verify(requestNotification).send(Mockito.any(NotificationModel.class));
+    }
 
     @Test
     void testGetRecycleRequests_Success() {
