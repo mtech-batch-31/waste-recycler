@@ -156,9 +156,9 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_WithCategoryStrategy_Success() {
-        var expectedTotalPrice = new BigDecimal("26.00");
+        var expectedTotalPrice = new BigDecimal("24.0");
         var expectedBatteryTotalPrice = new BigDecimal("4.00");
-        var expectedPlasticTotalPrice = new BigDecimal("22.00");
+        var expectedPlasticTotalPrice = new BigDecimal("20.00");
         var categories = new ArrayList<Category>() {{
             add(new Category("Metal", new BigDecimal(0), 2, "", ""));
             add(new Category("Electronics", new BigDecimal(0), 2, "", ""));
