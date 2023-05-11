@@ -47,8 +47,8 @@ jobs:
         run: ./gradlew test
 
   generate_jar:
+    needs: code_scan
     name: Generate Jar File
-    needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -139,6 +139,7 @@ jobs:
           wait-for-service-stability: false
 
   code_scan:
+    needs: tests
     name: Analyze with SonarCloud
     runs-on: ubuntu-latest
     steps:
@@ -198,7 +199,6 @@ jobs:
             build/sonar/report-task.txt
 
   zap_scan:
-    needs: code_scan
     runs-on: ubuntu-latest
     name: Zap Scan
     steps:
