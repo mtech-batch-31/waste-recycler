@@ -175,7 +175,11 @@ jobs:
       - name: Get SonarCloud quality gate status
         run: |
           STATUS=$(curl -s -u "${{ secrets.SONAR_TOKEN }}": "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${{ secrets.PROJECT_KEY }}" | jq -r .projectStatus.status)
-          echo "Quality gate status is $STATUS"          
+          echo "Quality gate status is $STATUS"   
+          if [[ "$STATUS" != "OK" ]]; then
+          echo "Quality gate failed"
+            exit 1            
+          fi      
 
       - name: Upload Code Coverage Artifacts
         uses: actions/upload-artifact@v3
@@ -199,7 +203,6 @@ jobs:
             build/sonar/report-task.txt
 
   zap_scan:
-    needs: deploy_to_ecs
     runs-on: ubuntu-latest
     name: Zap Scan
     steps:
