@@ -203,6 +203,7 @@ jobs:
             build/sonar/report-task.txt
 
   zap_scan:
+    needs: deploy_to_ecs
     runs-on: ubuntu-latest
     name: Zap Scan
     steps:
