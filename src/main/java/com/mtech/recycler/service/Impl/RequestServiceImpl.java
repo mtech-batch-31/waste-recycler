@@ -136,7 +136,7 @@ public class RequestServiceImpl implements RequestService {
         recycleRequestEntity.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleRequestEntity.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
         recycleRequestEntity.setTotalPrice(recycleResponse.getTotalPrice());
-        pricingResponse.ifPresent(response -> recycleRequestEntity.setDbItems(response.getItems()));
+        pricingResponse.ifPresent(response -> recycleRequestEntity.setRequestItems(Utilities.convertToRequestItem(response.getItems())));
         recycleRequestEntity.setCollectionStatus("Pending Approval");
         recycleRequestEntity.setPromoCode(recycleRequest.getPromoCode());
         recycleRequestEntity.setContactPerson(recycleRequest.getContactPerson());

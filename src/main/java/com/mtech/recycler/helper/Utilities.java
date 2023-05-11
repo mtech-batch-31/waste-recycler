@@ -69,6 +69,20 @@ public class Utilities {
         return matcher.matches();
     }
 
+    public static List<RecycleRequest.RequestItem> convertToRequestItem(List<Item> items) {
+        List<RecycleRequest.RequestItem> recycleRequestItems = new ArrayList<>();
+        for (Item item : items) {
+            RecycleRequest.RequestItem requestItem = new RecycleRequest.RequestItem();
+            requestItem.setCategory(item.getCategory());
+            requestItem.setQuantity(item.getQuantity());
+            requestItem.setUnitPrice(item.getUnitPrice());
+            requestItem.setSubTotalPrice(item.getSubTotalPrice());
+            requestItem.setDescription(item.getDescription());
+            recycleRequestItems.add(requestItem);
+        }
+        return recycleRequestItems;
+    }
+
     public static PricingRequest convertRecycleRequestToPricingRequest(com.mtech.recycler.model.RecycleRequest recycleRequest) {
         PricingRequest pricingRequest = new PricingRequest();
         pricingRequest.setPromoCode(recycleRequest.getPromoCode());
@@ -76,31 +90,31 @@ public class Utilities {
         return pricingRequest;
     }
 
-    public static class ItemListConverter implements DynamoDBTypeConverter<List<RecycleRequest.DbItem>, List<Item>> {
+    public static class ItemListConverter implements DynamoDBTypeConverter<List<RecycleRequest.RequestItem>, List<Item>> {
         @Override
-        public List<RecycleRequest.DbItem> convert(List<Item> items) {
-            List<RecycleRequest.DbItem> recycleDbItems = new ArrayList<>();
+        public List<RecycleRequest.RequestItem> convert(List<Item> items) {
+            List<RecycleRequest.RequestItem> recycleRequestItems = new ArrayList<>();
             for (Item item : items) {
-                RecycleRequest.DbItem dbItem = new RecycleRequest.DbItem();
-                dbItem.setCategory(item.getCategory());
-                dbItem.setQuantity(item.getQuantity());
-                dbItem.setUnitPrice(item.getUnitPrice());
-                dbItem.setSubTotalPrice(item.getSubTotalPrice());
-                dbItem.setDescription(item.getDescription());
-                recycleDbItems.add(dbItem);
+                RecycleRequest.RequestItem requestItem = new RecycleRequest.RequestItem();
+                requestItem.setCategory(item.getCategory());
+                requestItem.setQuantity(item.getQuantity());
+                requestItem.setUnitPrice(item.getUnitPrice());
+                requestItem.setSubTotalPrice(item.getSubTotalPrice());
+                requestItem.setDescription(item.getDescription());
+                recycleRequestItems.add(requestItem);
             }
-            return recycleDbItems;
+            return recycleRequestItems;
         }
         @Override
-        public List<Item> unconvert(List<RecycleRequest.DbItem> recycleDbItems) {
+        public List<Item> unconvert(List<RecycleRequest.RequestItem> recycleRequestItems) {
             List<Item> items = new ArrayList<>();
-            for (RecycleRequest.DbItem dbItem : recycleDbItems) {
+            for (RecycleRequest.RequestItem requestItem : recycleRequestItems) {
                 Item item = new Item();
-                item.setCategory(dbItem.getCategory());
-                item.setQuantity(dbItem.getQuantity());
-                item.setUnitPrice(dbItem.getUnitPrice());
-                item.setSubTotalPrice(dbItem.getSubTotalPrice());
-                item.setDescription(dbItem.getDescription());
+                item.setCategory(requestItem.getCategory());
+                item.setQuantity(requestItem.getQuantity());
+                item.setUnitPrice(requestItem.getUnitPrice());
+                item.setSubTotalPrice(requestItem.getSubTotalPrice());
+                item.setDescription(requestItem.getDescription());
                 items.add(item);
             }
             return items;

@@ -166,10 +166,10 @@ public class DataSeeder implements CommandLineRunner {
             recycleRequestEntity.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
             recycleRequestEntity.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
             recycleRequestEntity.setTotalPrice(BigDecimal.valueOf(15));
-            List<Item> items = new ArrayList<>();
-            items.add(new Item("Paper", 5, BigDecimal.ONE, BigDecimal.valueOf(5),  "Newspaper"));
-            items.add(new Item("Electronics", 1, BigDecimal.valueOf(10), BigDecimal.valueOf(10),  "iPhone 6"));
-            recycleRequestEntity.setDbItems(items);
+            List<RecycleRequest.RequestItem> items = new ArrayList<>();
+            items.add(new RecycleRequest.RequestItem("Paper", 5.0, BigDecimal.ONE, BigDecimal.valueOf(5),  "Newspaper"));
+            items.add(new RecycleRequest.RequestItem("Electronics", 1.0, BigDecimal.valueOf(10), BigDecimal.valueOf(10),  "iPhone 6"));
+            recycleRequestEntity.setRequestItems(items);
 
             recycleRequestEntity.setCollectionStatus("Collected");
             recycleRequestEntity.setPromoCode("p001");
@@ -183,10 +183,10 @@ public class DataSeeder implements CommandLineRunner {
             recycleRequestEntity2.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
             recycleRequestEntity2.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
             recycleRequestEntity2.setTotalPrice(BigDecimal.valueOf(12));
-            List<Item> items2 = new ArrayList<>();
-            items2.add(new Item("Metal", 5, BigDecimal.valueOf(2), BigDecimal.valueOf(10),  "Aluminium drink cans"));
-            items2.add(new Item("Plastic", 1, BigDecimal.valueOf(2), BigDecimal.valueOf(2),  "Plastic bottles"));
-            recycleRequestEntity2.setDbItems(items2);
+            List<RecycleRequest.RequestItem> items2 = new ArrayList<>();
+            items2.add(new RecycleRequest.RequestItem("Metal", 5.0, BigDecimal.valueOf(2), BigDecimal.valueOf(10),  "Aluminium drink cans"));
+            items2.add(new RecycleRequest.RequestItem("Plastic", 1.0, BigDecimal.valueOf(2), BigDecimal.valueOf(2),  "Plastic bottles"));
+            recycleRequestEntity2.setRequestItems(items2);
 
             recycleRequestEntity2.setCollectionStatus("Collected");
             recycleRequestEntity2.setContactPerson("Ernest");
@@ -199,10 +199,10 @@ public class DataSeeder implements CommandLineRunner {
             recycleRequestEntity3.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
             recycleRequestEntity3.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
             recycleRequestEntity3.setTotalPrice(BigDecimal.valueOf(7));
-            List<Item> items3 = new ArrayList<>();
-            items3.add(new Item("Glass", 1, BigDecimal.valueOf(3), BigDecimal.valueOf(3),  "Glass bottles"));
-            items3.add(new Item("Textile", 2, BigDecimal.valueOf(2), BigDecimal.valueOf(4),  "Tee shirts and jeans"));
-            recycleRequestEntity3.setDbItems(items3);
+            List<RecycleRequest.RequestItem> items3 = new ArrayList<>();
+            items3.add(new RecycleRequest.RequestItem("Glass", 1.0, BigDecimal.valueOf(3), BigDecimal.valueOf(3),  "Glass bottles"));
+            items3.add(new RecycleRequest.RequestItem("Textile", 2.0, BigDecimal.valueOf(2), BigDecimal.valueOf(4),  "Tee shirts and jeans"));
+            recycleRequestEntity3.setRequestItems(items3);
 
             recycleRequestEntity3.setCollectionStatus("Pending Approval");
             recycleRequestEntity3.setContactPerson("Ernest");
