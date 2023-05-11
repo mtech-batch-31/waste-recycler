@@ -72,6 +72,17 @@ public class DataSeeder implements CommandLineRunner {
             user2.setRole(Role.CUSTOMER);
             customerRepository.save(user2);
 
+            var user3 = new Customer();
+            user3.setEmail("andrew@mail.com");
+            user3.setAddress("25 Heng Mui Keng Terrace, Institute of Systems Science, Singapore 119615");
+            user3.setPostalCode("119615");
+            user3.setContactNumber("6583930521");
+            user3.setFirstName("Andrew");
+            user3.setLastName("Tan");
+            user3.setPassword(Utilities.encodePassword("P@ssw0rd"));
+            user3.setRole(Role.CUSTOMER);
+            customerRepository.save(user3);
+
             // RECYCLE CATEGORIES
             recycleCategoryRepository.deleteAll();
             ArrayList<RecycleCategory> categories = new ArrayList<>() {{
@@ -114,6 +125,38 @@ public class DataSeeder implements CommandLineRunner {
             promotion3.setStartDate(Instant.now().toDateTime().minusDays(1).toDate());
             promotion3.setEndDate(Instant.now().toDateTime().plusMonths(1).toDate());
             promotionRepository.save(promotion3);
+
+            var promotion4 = new Promotion();
+            promotion4.setPromotionCode("electronics");
+            promotion4.setDescription("Electronics");
+            promotion4.setPercentage(0.1);
+            promotion4.setStartDate(Instant.now().toDateTime().minusDays(1).toDate());
+            promotion4.setEndDate(Instant.now().toDateTime().plusMonths(1).toDate());
+            promotionRepository.save(promotion4);
+
+            var promotion5 = new Promotion();
+            promotion5.setPromotionCode("glass");
+            promotion5.setDescription("Glass");
+            promotion5.setPercentage(0.1);
+            promotion5.setStartDate(Instant.now().toDateTime().minusDays(1).toDate());
+            promotion5.setEndDate(Instant.now().toDateTime().plusMonths(1).toDate());
+            promotionRepository.save(promotion5);
+
+            var promotion6 = new Promotion();
+            promotion6.setPromotionCode("earth");
+            promotion6.setDescription("Earth");
+            promotion6.setPercentage(0.4);
+            promotion6.setStartDate(Instant.now().toDateTime().minusDays(1).toDate());
+            promotion6.setEndDate(Instant.now().toDateTime().plusMonths(1).toDate());
+            promotionRepository.save(promotion6);
+
+            var promotion7 = new Promotion();
+            promotion7.setPromotionCode("xmas");
+            promotion7.setDescription("Christmas");
+            promotion7.setPercentage(0.4);
+            promotion7.setStartDate(Instant.now().toDateTime().minusDays(2).toDate());
+            promotion7.setEndDate(Instant.now().toDateTime().minusMonths(1).toDate());
+            promotionRepository.save(promotion7);
 
             // RECYCLE REQUESTS
             recycleRequestRepository.deleteAll();
