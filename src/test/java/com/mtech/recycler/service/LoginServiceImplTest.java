@@ -54,6 +54,7 @@ public class LoginServiceImplTest {
         Assertions.assertEquals(CommonConstant.ErrorMessage.WRONG_USER_NAME_OR_PASSWORD, loginResponse.get().getMessage());
         Assertions.assertNotNull(CommonConstant.ReturnCode.WRONG_USER_NAME_OR_PASSWORD, loginResponse.get().getReturnCode());
         Mockito.verify(userService, Mockito.times(1)).getUserByEmail(any());
+        Assertions.assertEquals("Hello", "Hello");
     }
 
     @Test
