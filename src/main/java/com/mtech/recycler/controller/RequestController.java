@@ -75,8 +75,8 @@ public class RequestController {
 
 
     @PostMapping("/recycle")
-    public ResponseEntity<?> submitRequest(@RequestBody com.mtech.recycler.model.RecycleRequest recycleRequest) {
-        Optional<RecycleResponse> recycleResponse = requestService.submitRequest(recycleRequest);
+    public ResponseEntity<?> submitRequest(@RequestBody com.mtech.recycler.model.RecycleRequest request) {
+        Optional<RecycleResponse> recycleResponse = requestService.submitRequest(request);
         return ResponseEntity.ok(recycleResponse);
     }
 }
