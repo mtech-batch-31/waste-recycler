@@ -43,8 +43,8 @@ public class UserServiceImpl implements UserService {
         this.notifyChannelFactory = notifyChannelFactory;
     }
     @Override
-    public User getUserByEmail(String userName) {
-        return customerRepository.findByEmail(userName).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("The user name (%s) cannot be found", userName)));
+    public User getUserByEmail(String email) {
+        return customerRepository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("The user name (%s) cannot be found", email)));
     }
 
     @Override
