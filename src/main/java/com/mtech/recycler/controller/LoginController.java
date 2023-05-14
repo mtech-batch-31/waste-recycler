@@ -5,7 +5,6 @@ import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.model.LoginRequest;
 import com.mtech.recycler.model.LoginResponse;
 import com.mtech.recycler.service.LoginService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,6 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    @Autowired
     public LoginController(LoginService loginService) {
         this.loginService = loginService;
     }

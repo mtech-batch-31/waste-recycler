@@ -6,7 +6,6 @@ import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.model.base.BaseResponse;
 import com.mtech.recycler.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +15,11 @@ public class UserController {
 
     private final Logger log = Logger.getInstance();
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/secured")
     public ResponseEntity<BaseResponse> test() {
