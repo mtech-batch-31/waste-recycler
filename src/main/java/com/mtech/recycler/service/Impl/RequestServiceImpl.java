@@ -107,41 +107,41 @@ public class RequestServiceImpl implements RequestService {
 
 
     @Override
-    public Optional<RecycleResponse> submitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest) {
+    public Optional<RecycleResponse> submitRequest(RecycleRequestDto recycleRequestDto) {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         log.info("user: " + user);
-        recycleRequest.setEmail(user.getEmail());
+        recycleRequestDto.setEmail(user.getEmail());
 
-        PricingRequest pricingRequest = Utilities.convertRecycleRequestToPricingRequest(recycleRequest);
+        PricingRequest pricingRequest = Utilities.convertRecycleRequestToPricingRequest(recycleRequestDto);
         Optional<PricingResponse> pricingResponse = getRequestTotalPricing(pricingRequest);
 
         RecycleResponse recycleResponse = new RecycleResponse();
         recycleResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
-        recycleResponse.setEmail(recycleRequest.getEmail());
+        recycleResponse.setEmail(recycleRequestDto.getEmail());
         recycleResponse.setCollectionStatus("Pending Approval");
-        recycleResponse.setPromoCode(recycleRequest.getPromoCode());
-        recycleResponse.setContactPerson(recycleRequest.getContactPerson());
-        recycleResponse.setContactNumber(recycleRequest.getContactNumber());
-        recycleResponse.setCollectionDate(recycleRequest.getCollectionDate());
+        recycleResponse.setPromoCode(recycleRequestDto.getPromoCode());
+        recycleResponse.setContactPerson(recycleRequestDto.getContactPerson());
+        recycleResponse.setContactNumber(recycleRequestDto.getContactNumber());
+        recycleResponse.setCollectionDate(recycleRequestDto.getCollectionDate());
         pricingResponse.ifPresent(response -> {
             recycleResponse.setTotalPrice(response.getTotalPrice());
             recycleResponse.setItems(response.getItems());
         });
 
         RecycleRequest recycleRequestEntity = new RecycleRequest();
-        recycleRequestEntity.setEmail(recycleRequest.getEmail());
+        recycleRequestEntity.setEmail(recycleRequestDto.getEmail());
         recycleRequestEntity.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleRequestEntity.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
         recycleRequestEntity.setTotalPrice(recycleResponse.getTotalPrice());
         pricingResponse.ifPresent(response -> recycleRequestEntity.setDbItems(response.getItems()));
         recycleRequestEntity.setCollectionStatus("Pending Approval");
-        recycleRequestEntity.setPromoCode(recycleRequest.getPromoCode());
-        recycleRequestEntity.setContactPerson(recycleRequest.getContactPerson());
-        recycleRequestEntity.setContactNumber(recycleRequest.getContactNumber());
-        recycleRequestEntity.setCollectionDate(recycleRequest.getCollectionDate());
+        recycleRequestEntity.setPromoCode(recycleRequestDto.getPromoCode());
+        recycleRequestEntity.setContactPerson(recycleRequestDto.getContactPerson());
+        recycleRequestEntity.setContactNumber(recycleRequestDto.getContactNumber());
+        recycleRequestEntity.setCollectionDate(recycleRequestDto.getCollectionDate());
         recycleRequestRepository.save(recycleRequestEntity);
 
         if(recycleResponse.getReturnCode().equals(CommonConstant.ReturnCode.SUCCESS)){

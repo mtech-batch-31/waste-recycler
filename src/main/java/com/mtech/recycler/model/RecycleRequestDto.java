@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecycleRequest extends PricingRequest {
+public class RecycleRequestDto extends PricingRequest {
     private String email;
     private String returnCode;
     private String collectionStatus;

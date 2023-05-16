@@ -1,24 +1,23 @@
 package com.mtech.recycler.helper;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.model.Category;
 import com.mtech.recycler.model.Item;
 import com.mtech.recycler.model.PricingRequest;
+import com.mtech.recycler.model.RecycleRequestDto;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public class Utilities {
@@ -69,10 +68,10 @@ public class Utilities {
         return matcher.matches();
     }
 
-    public static PricingRequest convertRecycleRequestToPricingRequest(com.mtech.recycler.model.RecycleRequest recycleRequest) {
+    public static PricingRequest convertRecycleRequestToPricingRequest(RecycleRequestDto recycleRequestDto) {
         PricingRequest pricingRequest = new PricingRequest();
-        pricingRequest.setPromoCode(recycleRequest.getPromoCode());
-        pricingRequest.setData(recycleRequest.getData());
+        pricingRequest.setPromoCode(recycleRequestDto.getPromoCode());
+        pricingRequest.setData(recycleRequestDto.getData());
         return pricingRequest;
     }
 

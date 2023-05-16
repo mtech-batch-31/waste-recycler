@@ -1,18 +1,11 @@
 package com.mtech.recycler.helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mtech.recycler.model.Category;
-import com.mtech.recycler.model.PricingRequest;
 import com.mtech.recycler.model.RegisterRequest;
-import com.mtech.recycler.model.RecycleRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

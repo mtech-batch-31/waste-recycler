@@ -389,18 +389,18 @@ public class RequestServiceImplTest {
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         User user = Mockito.mock(User.class);
-        com.mtech.recycler.model.RecycleRequest recycleRequest = new com.mtech.recycler.model.RecycleRequest();
+        RecycleRequestDto recycleRequestDto = new RecycleRequestDto();
 
-        recycleRequest.setEmail("andrew@mail.com");
-        recycleRequest.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
-        recycleRequest.setData(Collections.singletonList(new Category("Electronics", new BigDecimal(10), 2, "piece", "Electronics")));
-        recycleRequest.setCollectionStatus("Pending Approval");
-        recycleRequest.setPromoCode("electronics");
-        recycleRequest.setContactPerson("Andrew");
-        recycleRequest.setContactNumber("83930521");
-        recycleRequest.setCollectionDate("2023-05-04 18:00:00");
-        recycleRequest.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
-        recycleRequest.setCollectionStatus("Pending Approval");
+        recycleRequestDto.setEmail("andrew@mail.com");
+        recycleRequestDto.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        recycleRequestDto.setData(Collections.singletonList(new Category("Electronics", new BigDecimal(10), 2, "piece", "Electronics")));
+        recycleRequestDto.setCollectionStatus("Pending Approval");
+        recycleRequestDto.setPromoCode("electronics");
+        recycleRequestDto.setContactPerson("Andrew");
+        recycleRequestDto.setContactNumber("83930521");
+        recycleRequestDto.setCollectionDate("2023-05-04 18:00:00");
+        recycleRequestDto.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
+        recycleRequestDto.setCollectionStatus("Pending Approval");
 
         RecycleResponse expectedResponse = new RecycleResponse();
 
@@ -464,7 +464,7 @@ public class RequestServiceImplTest {
         Mockito.when(notifyChannelFactory.notificationChannel(NotificationChannelFactory.CHANNEL_TYPE.SMTP))
                 .thenReturn(notificationChannel);
 
-        Optional<RecycleResponse> actualResponse = requestService.submitRequest(recycleRequest);
+        Optional<RecycleResponse> actualResponse = requestService.submitRequest(recycleRequestDto);
 
         Assertions.assertTrue(actualResponse.isPresent());
         Assertions.assertEquals(expectedResponse, actualResponse.get());

@@ -12,7 +12,7 @@ public interface RequestService {
 
     List<Category> getAllRecycleCategories();
 
-    Optional<RecycleResponse> submitRequest(com.mtech.recycler.model.RecycleRequest recycleRequest);
+    Optional<RecycleResponse> submitRequest(RecycleRequestDto recycleRequestDto);
 
     List<RecycleRequest> getRecycleRequests();
 }
