@@ -2,8 +2,8 @@ package com.mtech.recycler.controller;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.helper.Logger;
-import com.mtech.recycler.model.LoginRequest;
-import com.mtech.recycler.model.LoginResponse;
+import com.mtech.recycler.dto.LoginRequestDto;
+import com.mtech.recycler.dto.LoginResponseDto;
 import com.mtech.recycler.service.LoginService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -29,13 +29,13 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> authenticate(@RequestBody LoginRequestDto request) {
         log.info("LoginController - authenticate - started");
 
         if (!StringUtils.hasText(request.getEmail()) || !StringUtils.hasText(request.getPassword()))
             return ResponseEntity.badRequest().body(CommonConstant.ErrorMessage.INVALID_REQUEST);
 
-        Optional<LoginResponse> response = loginService.authenticate(request.getEmail(), request.getPassword());
+        Optional<LoginResponseDto> response = loginService.authenticate(request.getEmail(), request.getPassword());
 
         log.info("LoginController - authenticate - Is Empty: " + response.isEmpty());
 

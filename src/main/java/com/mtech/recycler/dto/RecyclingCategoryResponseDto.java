@@ -1,6 +1,6 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
-import com.mtech.recycler.model.base.BaseResponse;
+import com.mtech.recycler.dto.base.BaseResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +13,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecyclingCategoryResponse extends BaseResponse implements Serializable {
-    private List<Category> categories;
+public class RecyclingCategoryResponseDto extends BaseResponseDto implements Serializable {
+    private List<CategoryDto> categories;
 }

@@ -4,10 +4,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mtech.recycler.entity.RecycleRequest;
-import com.mtech.recycler.model.Category;
-import com.mtech.recycler.model.Item;
-import com.mtech.recycler.model.PricingRequest;
-import com.mtech.recycler.model.RecycleRequestDto;
+import com.mtech.recycler.dto.CategoryDto;
+import com.mtech.recycler.dto.ItemDto;
+import com.mtech.recycler.dto.PricingRequestDto;
+import com.mtech.recycler.dto.RecycleRequestDto;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -68,51 +68,51 @@ public class Utilities {
         return matcher.matches();
     }
 
-    public static PricingRequest convertRecycleRequestToPricingRequest(RecycleRequestDto recycleRequestDto) {
-        PricingRequest pricingRequest = new PricingRequest();
-        pricingRequest.setPromoCode(recycleRequestDto.getPromoCode());
-        pricingRequest.setData(recycleRequestDto.getData());
-        return pricingRequest;
+    public static PricingRequestDto convertRecycleRequestToPricingRequest(RecycleRequestDto recycleRequestDto) {
+        PricingRequestDto pricingRequestDto = new PricingRequestDto();
+        pricingRequestDto.setPromoCode(recycleRequestDto.getPromoCode());
+        pricingRequestDto.setData(recycleRequestDto.getData());
+        return pricingRequestDto;
     }
 
-    public static class ItemListConverter implements DynamoDBTypeConverter<List<RecycleRequest.DbItem>, List<Item>> {
+    public static class ItemListConverter implements DynamoDBTypeConverter<List<RecycleRequest.DbItem>, List<ItemDto>> {
         @Override
-        public List<RecycleRequest.DbItem> convert(List<Item> items) {
+        public List<RecycleRequest.DbItem> convert(List<ItemDto> itemDtos) {
             List<RecycleRequest.DbItem> recycleDbItems = new ArrayList<>();
-            for (Item item : items) {
+            for (ItemDto itemDto : itemDtos) {
                 RecycleRequest.DbItem dbItem = new RecycleRequest.DbItem();
-                dbItem.setCategory(item.getCategory());
-                dbItem.setQuantity(item.getQuantity());
-                dbItem.setUnitPrice(item.getUnitPrice());
-                dbItem.setSubTotalPrice(item.getSubTotalPrice());
-                dbItem.setDescription(item.getDescription());
+                dbItem.setCategory(itemDto.getCategory());
+                dbItem.setQuantity(itemDto.getQuantity());
+                dbItem.setUnitPrice(itemDto.getUnitPrice());
+                dbItem.setSubTotalPrice(itemDto.getSubTotalPrice());
+                dbItem.setDescription(itemDto.getDescription());
                 recycleDbItems.add(dbItem);
             }
             return recycleDbItems;
         }
         @Override
-        public List<Item> unconvert(List<RecycleRequest.DbItem> recycleDbItems) {
-            List<Item> items = new ArrayList<>();
+        public List<ItemDto> unconvert(List<RecycleRequest.DbItem> recycleDbItems) {
+            List<ItemDto> itemDtos = new ArrayList<>();
             for (RecycleRequest.DbItem dbItem : recycleDbItems) {
-                Item item = new Item();
-                item.setCategory(dbItem.getCategory());
-                item.setQuantity(dbItem.getQuantity());
-                item.setUnitPrice(dbItem.getUnitPrice());
-                item.setSubTotalPrice(dbItem.getSubTotalPrice());
-                item.setDescription(dbItem.getDescription());
-                items.add(item);
+                ItemDto itemDto = new ItemDto();
+                itemDto.setCategory(dbItem.getCategory());
+                itemDto.setQuantity(dbItem.getQuantity());
+                itemDto.setUnitPrice(dbItem.getUnitPrice());
+                itemDto.setSubTotalPrice(dbItem.getSubTotalPrice());
+                itemDto.setDescription(dbItem.getDescription());
+                itemDtos.add(itemDto);
             }
-            return items;
+            return itemDtos;
         }
     }
 
-    public static void mapDescriptionsFromCategoryToItems (@Valid List<Category> categories, List<Item> items) {
-        IntStream.range(0, Math.min(categories.size(), items.size()))
-                .forEach(i -> items.get(i).setDescription(categories.get(i).getDescription()));
+    public static void mapDescriptionsFromCategoryToItems (@Valid List<CategoryDto> categories, List<ItemDto> itemDtos) {
+        IntStream.range(0, Math.min(categories.size(), itemDtos.size()))
+                .forEach(i -> itemDtos.get(i).setDescription(categories.get(i).getDescription()));
     }
 
-    public static void updateSubTotalPriceWithPromotion(@Valid List<Item> items, double promoPercentage, BigDecimal pricingStrategyMultiplier) {
-        items.stream()
+    public static void updateSubTotalPriceWithPromotion(@Valid List<ItemDto> itemDtos, double promoPercentage, BigDecimal pricingStrategyMultiplier) {
+        itemDtos.stream()
                 .peek(item -> {
                     item.setDescription(item.getDescription());
                     BigDecimal subTotalPrice = item.getSubTotalPrice();

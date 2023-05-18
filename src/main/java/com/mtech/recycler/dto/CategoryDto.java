@@ -1,4 +1,4 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
 
 import com.mtech.recycler.constant.CommonConstant;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+public class CategoryDto {
 
     @NotNull(message = CommonConstant.ErrorMessage.CATEGORY_VALIDATION_FAILED)
     @NotEmpty(message = CommonConstant.ErrorMessage.CATEGORY_VALIDATION_FAILED)

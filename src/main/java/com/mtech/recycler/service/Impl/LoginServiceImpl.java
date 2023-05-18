@@ -4,7 +4,7 @@ import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Logger;
-import com.mtech.recycler.model.LoginResponse;
+import com.mtech.recycler.dto.LoginResponseDto;
 import com.mtech.recycler.service.LoginService;
 import com.mtech.recycler.service.UserService;
 import org.springframework.stereotype.Service;
@@ -28,9 +28,9 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Optional<LoginResponse> authenticate(String email, String rawInputPassword) {
+    public Optional<LoginResponseDto> authenticate(String email, String rawInputPassword) {
         log.info("Login Service Start");
-        LoginResponse response = new LoginResponse();
+        LoginResponseDto response = new LoginResponseDto();
         User user = userService.getUserByEmail(email);
 
         boolean isMatched = isMatchedPassword(rawInputPassword, user.getPassword());

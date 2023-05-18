@@ -3,8 +3,8 @@ package com.mtech.recycler.service.pricingstrategy;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
 import com.mtech.recycler.helper.Utilities;
-import com.mtech.recycler.model.Category;
-import com.mtech.recycler.model.Item;
+import com.mtech.recycler.dto.CategoryDto;
+import com.mtech.recycler.dto.ItemDto;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import org.slf4j.Logger;
@@ -37,13 +37,13 @@ public class NormalPricingStrategy implements PromotionPricingStrategy {
     private static final Logger log = LoggerFactory.getLogger(NormalPricingStrategy.class);
 
     @Override
-    public BigDecimal calculateTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
+    public BigDecimal calculateTotalPrice(List<CategoryDto> categories, String promoCode, List<ItemDto> itemDtos) {
      BigDecimal totalPrice = categories.stream().map(c -> {
         BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name (%s) is not found".formatted(c.getCategory())))
                 .getPrice();
         BigDecimal subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
-        items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
+        itemDtos.add(new ItemDto(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
         return subTotalPrice;
     }).reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -62,7 +62,7 @@ public class NormalPricingStrategy implements PromotionPricingStrategy {
     return totalPrice;
     }
 
-    public List<Item> calculateSubTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
+    public List<ItemDto> calculateSubTotalPrice(List<CategoryDto> categories, String promoCode, List<ItemDto> itemDtos) {
 
         if (StringUtils.hasText(promoCode)) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
@@ -72,9 +72,9 @@ public class NormalPricingStrategy implements PromotionPricingStrategy {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
             }
 
-            Utilities.updateSubTotalPriceWithPromotion(items, promotion.getPercentage(), BigDecimal.valueOf(1));
+            Utilities.updateSubTotalPriceWithPromotion(itemDtos, promotion.getPercentage(), BigDecimal.valueOf(1));
         }
-        return items;
+        return itemDtos;
     }
 }
 

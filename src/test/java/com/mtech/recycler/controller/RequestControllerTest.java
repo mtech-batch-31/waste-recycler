@@ -6,10 +6,10 @@ import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Utilities;
-import com.mtech.recycler.model.Category;
-import com.mtech.recycler.model.Item;
-import com.mtech.recycler.model.PricingRequest;
-import com.mtech.recycler.model.PricingResponse;
+import com.mtech.recycler.dto.CategoryDto;
+import com.mtech.recycler.dto.ItemDto;
+import com.mtech.recycler.dto.PricingRequestDto;
+import com.mtech.recycler.dto.PricingResponseDto;
 import com.mtech.recycler.service.Impl.RequestServiceImpl;
 import com.mtech.recycler.service.Impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -37,7 +37,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 @WebMvcTest(RequestController.class)
 @Import(SecurityConfig.class)
@@ -52,7 +51,7 @@ public class RequestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private PricingRequest request;
+    private PricingRequestDto request;
 
     @MockBean
     private RequestServiceImpl requestService;
@@ -66,12 +65,12 @@ public class RequestControllerTest {
 
     @BeforeEach
     public void setupEach() {
-        List<Category> categories = new ArrayList<>() {{
-            add(new Category("Electronics", new BigDecimal(700), 0.1, "item", ""));
-            add(new Category("Battery", new BigDecimal(500), 1, "kg", ""));
+        List<CategoryDto> categories = new ArrayList<>() {{
+            add(new CategoryDto("Electronics", new BigDecimal(700), 0.1, "item", ""));
+            add(new CategoryDto("Battery", new BigDecimal(500), 1, "kg", ""));
         }};
 
-        request = new PricingRequest("promo", categories);
+        request = new PricingRequestDto("promo", categories);
 
     }
 
@@ -87,13 +86,13 @@ public class RequestControllerTest {
         initAuth();
         String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"totalPrice\":100,\"items\":[{\"category\":\"test\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50,\"description\":\"\"},{\"category\":\"test2\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50,\"description\":\"\"}]}";
         String requestJsonString = Utilities.asJsonString(request);
-        List<Item> items = new ArrayList<>() {{
-            add(new Item("test", 1, new BigDecimal(50), new BigDecimal(50), ""));
-            add(new Item("test2", 1, new BigDecimal(50), new BigDecimal(50), ""));
+        List<ItemDto> itemDtos = new ArrayList<>() {{
+            add(new ItemDto("test", 1, new BigDecimal(50), new BigDecimal(50), ""));
+            add(new ItemDto("test2", 1, new BigDecimal(50), new BigDecimal(50), ""));
         }};
-        PricingResponse response = new PricingResponse(new BigDecimal(100), items);
+        PricingResponseDto response = new PricingResponseDto(new BigDecimal(100), itemDtos);
 
-        given(requestService.getRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.of(response));
+        given(requestService.getRequestTotalPricing(any(PricingRequestDto.class))).willReturn(Optional.of(response));
 
         MvcResult result = mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334").with(csrf()))
                 .andExpect(status().isOk())
@@ -136,7 +135,7 @@ public class RequestControllerTest {
         initAuth();
         String requestJsonString = Utilities.asJsonString(request);
 
-        given(requestService.getRequestTotalPricing(any(PricingRequest.class))).willReturn(Optional.empty());
+        given(requestService.getRequestTotalPricing(any(PricingRequestDto.class))).willReturn(Optional.empty());
 
         mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334").with(csrf()))
                 .andExpect(status().isNotFound());
@@ -147,7 +146,7 @@ public class RequestControllerTest {
         initAuth();
         String requestJsonString = Utilities.asJsonString(request);
 
-        given(requestService.getRequestTotalPricing(any(PricingRequest.class))).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "error"));
+        given(requestService.getRequestTotalPricing(any(PricingRequestDto.class))).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "error"));
 
         mockMvc.perform(post(ENDPOINT_CALCULATE_PRICING).content(requestJsonString).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 12334").with(csrf()))
                 .andExpect(status().isBadRequest())
@@ -161,9 +160,9 @@ public class RequestControllerTest {
         initAuth();
         String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[{\"category\":\"c1\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"},{\"category\":\"c2\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"}]}";
 
-        var response = new ArrayList<Category>() {{
-            add(new Category("c1", new BigDecimal(1), 0.1, "kg", ""));
-            add(new Category("c2", new BigDecimal(1), 0.1, "kg", ""));
+        var response = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("c1", new BigDecimal(1), 0.1, "kg", ""));
+            add(new CategoryDto("c2", new BigDecimal(1), 0.1, "kg", ""));
         }};
 
         given(requestService.getAllRecycleCategories()).willReturn(response);
@@ -183,7 +182,7 @@ public class RequestControllerTest {
         initAuth();
         String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[]}";
 
-        var response = new ArrayList<Category>();
+        var response = new ArrayList<CategoryDto>();
 
         given(requestService.getAllRecycleCategories()).willReturn(response);
 

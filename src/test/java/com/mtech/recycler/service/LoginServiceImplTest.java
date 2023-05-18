@@ -3,8 +3,8 @@ package com.mtech.recycler.service;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.User;
-import com.mtech.recycler.model.LoginResponse;
-import com.mtech.recycler.model.Role;
+import com.mtech.recycler.dto.LoginResponseDto;
+import com.mtech.recycler.dto.Role;
 import com.mtech.recycler.service.Impl.LoginServiceImpl;
 import com.mtech.recycler.service.Impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -47,7 +47,7 @@ public class LoginServiceImplTest {
 
         Mockito.when(userService.getUserByEmail(any(String.class))).thenReturn(user);
 
-        Optional<LoginResponse> loginResponse = loginService.authenticate("test@test.com", "456");
+        Optional<LoginResponseDto> loginResponse = loginService.authenticate("test@test.com", "456");
 
         Assertions.assertNotNull(loginResponse);
         Assertions.assertTrue(loginResponse.isPresent());
@@ -67,7 +67,7 @@ public class LoginServiceImplTest {
 
         Mockito.when(userService.getUserByEmail(any(String.class))).thenReturn(user);
 
-        Optional<LoginResponse> loginResponse = loginService.authenticate(email, password);
+        Optional<LoginResponseDto> loginResponse = loginService.authenticate(email, password);
 
         Assertions.assertNotNull(loginResponse);
         Assertions.assertTrue(loginResponse.isPresent());
@@ -85,7 +85,7 @@ public class LoginServiceImplTest {
         Mockito.when(userService.getUserByEmail(any(String.class))).thenThrow(ResponseStatusException.class);
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            Optional<LoginResponse> loginResponse = loginService.authenticate(email, password);
+            Optional<LoginResponseDto> loginResponse = loginService.authenticate(email, password);
 
             Assertions.assertNull(loginResponse);
         });

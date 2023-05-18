@@ -5,8 +5,8 @@ import com.mtech.recycler.entity.User;
 import com.mtech.recycler.entity.VerificationToken;
 import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.helper.Utilities;
-import com.mtech.recycler.model.RegisterRequest;
-import com.mtech.recycler.model.Role;
+import com.mtech.recycler.dto.RegisterRequestDto;
+import com.mtech.recycler.dto.Role;
 import com.mtech.recycler.notification.EmailVerification;
 import com.mtech.recycler.notification.NotificationChannel;
 import com.mtech.recycler.notification.NotificationChannelFactory;
@@ -48,18 +48,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Customer createCustomer(RegisterRequest registerRequest) {
-        log.info("creating new customer registerRequest: " + registerRequest);
-        validateRegisterRequest(registerRequest);
+    public Customer createCustomer(RegisterRequestDto registerRequestDto) {
+        log.info("creating new customer registerRequest: " + registerRequestDto);
+        validateRegisterRequest(registerRequestDto);
         Customer customer = new Customer();
-        customer.setEmail(registerRequest.getEmail());
-        customer.setPassword(Utilities.encodePassword(registerRequest.getPassword()));
-        customer.setFirstName(registerRequest.getFirstName());
-        customer.setLastName(registerRequest.getLastName());
+        customer.setEmail(registerRequestDto.getEmail());
+        customer.setPassword(Utilities.encodePassword(registerRequestDto.getPassword()));
+        customer.setFirstName(registerRequestDto.getFirstName());
+        customer.setLastName(registerRequestDto.getLastName());
         customer.setRole(Role.CUSTOMER);
-        customer.setContactNumber(registerRequest.getContactNumber());
-        customer.setAddress(registerRequest.getAddress());
-        customer.setPostalCode(registerRequest.getPostalCode());
+        customer.setContactNumber(registerRequestDto.getContactNumber());
+        customer.setAddress(registerRequestDto.getAddress());
+        customer.setPostalCode(registerRequestDto.getPostalCode());
         customer.setEnabled(false);
         customerRepository.save(customer);
 
@@ -109,42 +109,42 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private void validateRegisterRequest(RegisterRequest registerRequest) {
-        if (!StringUtils.hasText(registerRequest.getEmail())) {
+    private void validateRegisterRequest(RegisterRequestDto registerRequestDto) {
+        if (!StringUtils.hasText(registerRequestDto.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be empty");
         }
-        if (!Utilities.isValidEmail(registerRequest.getEmail())) {
+        if (!Utilities.isValidEmail(registerRequestDto.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
         }
-        Optional<Customer> customerFromDB = customerRepository.findByEmail(registerRequest.getEmail());
+        Optional<Customer> customerFromDB = customerRepository.findByEmail(registerRequestDto.getEmail());
         if (customerFromDB.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
-        if (!StringUtils.hasText(registerRequest.getPassword())) {
+        if (!StringUtils.hasText(registerRequestDto.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be empty");
         }
-        if (!Utilities.isValidPassword(registerRequest.getPassword())) {
+        if (!Utilities.isValidPassword(registerRequestDto.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password");
         }
-        if (!StringUtils.hasText(registerRequest.getFirstName())) {
+        if (!StringUtils.hasText(registerRequestDto.getFirstName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "First name cannot be empty");
         }
-        if (!StringUtils.hasText(registerRequest.getLastName())) {
+        if (!StringUtils.hasText(registerRequestDto.getLastName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Last name cannot be empty");
         }
-        if (!StringUtils.hasText(registerRequest.getContactNumber())) {
+        if (!StringUtils.hasText(registerRequestDto.getContactNumber())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Contact number cannot be empty");
         }
-        if (!Utilities.isValidContactNumber(registerRequest.getContactNumber())) {
+        if (!Utilities.isValidContactNumber(registerRequestDto.getContactNumber())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid contact number");
         }
-        if (!StringUtils.hasText(registerRequest.getAddress())) {
+        if (!StringUtils.hasText(registerRequestDto.getAddress())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Address cannot be empty");
         }
-        if (!StringUtils.hasText(registerRequest.getPostalCode())) {
+        if (!StringUtils.hasText(registerRequestDto.getPostalCode())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Postal code cannot be empty");
         }
-        if (!Utilities.isValidPostalCode(registerRequest.getPostalCode())) {
+        if (!Utilities.isValidPostalCode(registerRequestDto.getPostalCode())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid postal code");
         }
     }

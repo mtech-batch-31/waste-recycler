@@ -1,4 +1,4 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
 public enum Role {
 

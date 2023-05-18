@@ -1,18 +1,18 @@
 package com.mtech.recycler.service;
 
 import com.mtech.recycler.entity.RecycleRequest;
-import com.mtech.recycler.model.*;
+import com.mtech.recycler.dto.*;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface RequestService {
 
-    Optional<PricingResponse> getRequestTotalPricing(PricingRequest request);
+    Optional<PricingResponseDto> getRequestTotalPricing(PricingRequestDto request);
 
-    List<Category> getAllRecycleCategories();
+    List<CategoryDto> getAllRecycleCategories();
 
-    Optional<RecycleResponse> submitRequest(RecycleRequestDto recycleRequestDto);
+    Optional<RecycleResponseDto> submitRequest(RecycleRequestDto recycleRequestDto);
 
     List<RecycleRequest> getRecycleRequests();
 }

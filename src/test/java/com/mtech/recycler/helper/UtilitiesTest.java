@@ -1,7 +1,7 @@
 package com.mtech.recycler.helper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mtech.recycler.model.RegisterRequest;
+import com.mtech.recycler.dto.RegisterRequestDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -61,9 +61,9 @@ public class UtilitiesTest {
 
     @Test
     void test_asJsonString() throws JsonProcessingException {
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("test@mail");
-        assertEquals(Utilities.asJsonString(registerRequest), "{\"email\":\"test@mail\",\"password\":null,\"firstName\":null,\"lastName\":null,\"contactNumber\":null,\"address\":null,\"postalCode\":null}");
+        RegisterRequestDto registerRequestDto = new RegisterRequestDto();
+        registerRequestDto.setEmail("test@mail");
+        assertEquals(Utilities.asJsonString(registerRequestDto), "{\"email\":\"test@mail\",\"password\":null,\"firstName\":null,\"lastName\":null,\"contactNumber\":null,\"address\":null,\"postalCode\":null}");
     }
 //    @Test
 //    public void testConvertSubmitRequestToPricingRequest() {

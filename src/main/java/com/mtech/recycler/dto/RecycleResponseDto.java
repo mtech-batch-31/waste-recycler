@@ -1,6 +1,6 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
-import com.mtech.recycler.model.base.BaseResponse;
+import com.mtech.recycler.dto.base.BaseResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,10 +14,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecycleResponse extends BaseResponse implements Serializable {
+public class RecycleResponseDto extends BaseResponseDto implements Serializable {
     private String email;
     private BigDecimal totalPrice;
-    private List<Item> items;
+    private List<ItemDto> items;
     private String collectionStatus;
     private String promoCode;
     private String contactPerson;

@@ -1,6 +1,6 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
-import com.mtech.recycler.model.base.BaseResponse;
+import com.mtech.recycler.dto.base.BaseResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class LoginResponse extends BaseResponse {
+public class LoginResponseDto extends BaseResponseDto {
     private String accessToken;
 }

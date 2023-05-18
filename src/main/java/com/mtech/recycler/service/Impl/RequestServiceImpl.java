@@ -5,7 +5,7 @@ import com.mtech.recycler.entity.RecycleRequest;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Logger;
 import com.mtech.recycler.helper.Utilities;
-import com.mtech.recycler.model.*;
+import com.mtech.recycler.dto.*;
 import com.mtech.recycler.notification.NotificationChannel;
 import com.mtech.recycler.notification.NotificationChannelFactory;
 import com.mtech.recycler.notification.RequestNotification;
@@ -48,17 +48,17 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Optional<PricingResponse> getRequestTotalPricing(PricingRequest request) {
-        var response = new PricingResponse();
-        List<Item> items = new ArrayList<>();
+    public Optional<PricingResponseDto> getRequestTotalPricing(PricingRequestDto request) {
+        var response = new PricingResponseDto();
+        List<ItemDto> itemDtos = new ArrayList<>();
 
         PromotionPricingStrategy pricingStrategy = setPricingStrategy(request);
 
         try {
-            BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode(), items);
-            List<Item> subTotalPrice = pricingStrategy.calculateSubTotalPrice(request.getData(), request.getPromoCode(), items);
+            BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode(), itemDtos);
+            List<ItemDto> subTotalPrice = pricingStrategy.calculateSubTotalPrice(request.getData(), request.getPromoCode(), itemDtos);
 
-            Utilities.mapDescriptionsFromCategoryToItems(request.getData(), items);
+            Utilities.mapDescriptionsFromCategoryToItems(request.getData(), itemDtos);
 
             log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 
@@ -73,7 +73,7 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
-    private PromotionPricingStrategy setPricingStrategy(PricingRequest request) {
+    private PromotionPricingStrategy setPricingStrategy(PricingRequestDto request) {
         PromotionPricingStrategy pricingStrategy;
         // Type = Normal
         switch (Objects.requireNonNullElse(request.getPromoCode(), "").toLowerCase()) {
@@ -93,8 +93,8 @@ public class RequestServiceImpl implements RequestService {
 
 
     @Override
-    public List<Category> getAllRecycleCategories() {
-        return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new Category(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement(), "")).toList();
+    public List<CategoryDto> getAllRecycleCategories() {
+        return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new CategoryDto(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement(), "")).toList();
     }
 
     @Override
@@ -107,17 +107,17 @@ public class RequestServiceImpl implements RequestService {
 
 
     @Override
-    public Optional<RecycleResponse> submitRequest(RecycleRequestDto recycleRequestDto) {
+    public Optional<RecycleResponseDto> submitRequest(RecycleRequestDto recycleRequestDto) {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         log.info("user: " + user);
         recycleRequestDto.setEmail(user.getEmail());
 
-        PricingRequest pricingRequest = Utilities.convertRecycleRequestToPricingRequest(recycleRequestDto);
-        Optional<PricingResponse> pricingResponse = getRequestTotalPricing(pricingRequest);
+        PricingRequestDto pricingRequestDto = Utilities.convertRecycleRequestToPricingRequest(recycleRequestDto);
+        Optional<PricingResponseDto> pricingResponse = getRequestTotalPricing(pricingRequestDto);
 
-        RecycleResponse recycleResponse = new RecycleResponse();
+        RecycleResponseDto recycleResponse = new RecycleResponseDto();
         recycleResponse.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleResponse.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
         recycleResponse.setEmail(recycleRequestDto.getEmail());
@@ -136,7 +136,7 @@ public class RequestServiceImpl implements RequestService {
         recycleRequestEntity.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleRequestEntity.setMessage(CommonConstant.Message.SUCCESSFUL_REQUEST);
         recycleRequestEntity.setTotalPrice(recycleResponse.getTotalPrice());
-        pricingResponse.ifPresent(response -> recycleRequestEntity.setDbItems(response.getItems()));
+        pricingResponse.ifPresent(response -> recycleRequestEntity.setDbItemDtos(response.getItems()));
         recycleRequestEntity.setCollectionStatus("Pending Approval");
         recycleRequestEntity.setPromoCode(recycleRequestDto.getPromoCode());
         recycleRequestEntity.setContactPerson(recycleRequestDto.getContactPerson());

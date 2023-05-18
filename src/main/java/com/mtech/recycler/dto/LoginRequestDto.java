@@ -1,4 +1,4 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
 import com.mtech.recycler.constant.CommonConstant;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+public class LoginRequestDto {
 
     @NotNull(message = CommonConstant.ErrorMessage.WRONG_USER_NAME_OR_PASSWORD)
     private String email;

@@ -4,10 +4,10 @@ package com.mtech.recycler.controller;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
 import com.mtech.recycler.constant.CommonConstant;
+import com.mtech.recycler.dto.RegisterRequestDto;
 import com.mtech.recycler.entity.Customer;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.helper.Utilities;
-import com.mtech.recycler.model.RegisterRequest;
 import com.mtech.recycler.service.UserService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,11 +54,11 @@ public class UserControllerTest {
     @Test
     void givenRegisterRequest_returnSuccessResponse() throws Exception {
 
-        given(userService.createCustomer(any(RegisterRequest.class))).willReturn(customer);
+        given(userService.createCustomer(any(RegisterRequestDto.class))).willReturn(customer);
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/user/register")
-                                .content(Utilities.asJsonString(new RegisterRequest()))
+                                .content(Utilities.asJsonString(new RegisterRequestDto()))
                                 .contentType(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content()
@@ -69,11 +69,11 @@ public class UserControllerTest {
     @Test
     void givenRegisterRequest_returnErrorResponse() throws Exception {
 
-        given(userService.createCustomer(any(RegisterRequest.class))).willThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists"));
+        given(userService.createCustomer(any(RegisterRequestDto.class))).willThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists"));
 
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/user/register")
-                                .content(Utilities.asJsonString(new RegisterRequest()))
+                                .content(Utilities.asJsonString(new RegisterRequestDto()))
                                 .contentType(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().isConflict())
                 .andExpect(MockMvcResultMatchers.content()
@@ -85,7 +85,7 @@ public class UserControllerTest {
     void callSecuredApi_return401() throws Exception {
         mockMvc.perform(
                         MockMvcRequestBuilders.get("/api/v1/user/secured")
-                                .content(Utilities.asJsonString(new RegisterRequest()))
+                                .content(Utilities.asJsonString(new RegisterRequestDto()))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
 

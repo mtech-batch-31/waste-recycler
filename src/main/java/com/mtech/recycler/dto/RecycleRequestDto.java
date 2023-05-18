@@ -1,4 +1,4 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecycleRequestDto extends PricingRequest {
+public class RecycleRequestDto extends PricingRequestDto {
     private String email;
     private String returnCode;
     private String collectionStatus;

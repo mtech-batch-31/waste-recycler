@@ -1,4 +1,4 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+public class ItemDto {
 
     private String category;
 

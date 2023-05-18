@@ -1,6 +1,6 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
-import com.mtech.recycler.model.base.BaseResponse;
+import com.mtech.recycler.dto.base.BaseResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,11 +13,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PricingResponse extends BaseResponse {
+public class PricingResponseDto extends BaseResponseDto {
 
     private BigDecimal totalPrice;
 
-    private List<Item> items;
+    private List<ItemDto> items;
 }
 
 

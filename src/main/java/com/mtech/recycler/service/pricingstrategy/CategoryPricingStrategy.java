@@ -2,8 +2,8 @@ package com.mtech.recycler.service.pricingstrategy;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
-import com.mtech.recycler.model.Category;
-import com.mtech.recycler.model.Item;
+import com.mtech.recycler.dto.CategoryDto;
+import com.mtech.recycler.dto.ItemDto;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
 import jakarta.validation.Valid;
@@ -38,7 +38,7 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
     private static final Logger log = LoggerFactory.getLogger(CategoryPricingStrategy.class);
 
     @Override
-    public BigDecimal calculateTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
+    public BigDecimal calculateTotalPrice(List<CategoryDto> categories, String promoCode, List<ItemDto> itemDtos) {
         BigDecimal totalPrice = null;
         if (StringUtils.hasText(promoCode)) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
@@ -54,7 +54,7 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
                     .getPrice();
             BigDecimal subTotalPrice;
             subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
-            items.add(new Item(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
+            itemDtos.add(new ItemDto(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
             if (c.getCategory().equalsIgnoreCase(promotion.getDescription())) {
                 subTotalPrice = subTotalPrice.add(subTotalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage())));
             }
@@ -65,18 +65,18 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
         return totalPrice;
     }
 
-    public List<Item> calculateSubTotalPrice(List<Category> categories, String promoCode, List<Item> items) {
+    public List<ItemDto> calculateSubTotalPrice(List<CategoryDto> categories, String promoCode, List<ItemDto> itemDtos) {
 
         if (StringUtils.hasText(promoCode)) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
-            updateSubTotalPriceWithPromotionCategoryStrategy(items, promotion.getPercentage(), promotion.getDescription());
+            updateSubTotalPriceWithPromotionCategoryStrategy(itemDtos, promotion.getPercentage(), promotion.getDescription());
         }
-        return items;
+        return itemDtos;
     }
 
-    public static void updateSubTotalPriceWithPromotionCategoryStrategy(@Valid List<Item> items, double promoPercentage, String promoCategory) {
-        items.stream()
+    public static void updateSubTotalPriceWithPromotionCategoryStrategy(@Valid List<ItemDto> itemDtos, double promoPercentage, String promoCategory) {
+        itemDtos.stream()
                 .peek(item -> {
                     BigDecimal subTotalPrice = item.getSubTotalPrice();
                     if (item.getCategory().equalsIgnoreCase(promoCategory)) {

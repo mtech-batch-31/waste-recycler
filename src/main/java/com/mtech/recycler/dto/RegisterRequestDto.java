@@ -1,9 +1,9 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
 import lombok.Data;
 
 @Data
-public class RegisterRequest {
+public class RegisterRequestDto {
 
     private String email;
     private String password;

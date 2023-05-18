@@ -3,7 +3,7 @@ package com.mtech.recycler.service;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.*;
 import com.mtech.recycler.entity.RecycleRequest;
-import com.mtech.recycler.model.*;
+import com.mtech.recycler.dto.*;
 import com.mtech.recycler.notification.NotificationChannel;
 import com.mtech.recycler.notification.NotificationChannelFactory;
 import com.mtech.recycler.repository.PromotionRepository;
@@ -60,7 +60,7 @@ public class RequestServiceImplTest {
         }};
 
         Mockito.when(recycleCategoryRepository.findAll()).thenReturn(recycleCategories);
-        List<Category> rc = requestService.getAllRecycleCategories();
+        List<CategoryDto> rc = requestService.getAllRecycleCategories();
         verify(recycleCategoryRepository, Mockito.times(1)).findAll();
         Assertions.assertNotNull(rc);
         Assertions.assertEquals(expectedSize, rc.size());
@@ -74,7 +74,7 @@ public class RequestServiceImplTest {
         Iterable<RecycleCategory> recycleCategories = new ArrayList<>();
 
         Mockito.when(recycleCategoryRepository.findAll()).thenReturn(recycleCategories);
-        List<Category> rc = requestService.getAllRecycleCategories();
+        List<CategoryDto> rc = requestService.getAllRecycleCategories();
         verify(recycleCategoryRepository, Mockito.times(1)).findAll();
         Assertions.assertNotNull(rc);
         Assertions.assertEquals(expectedSize, rc.size());
@@ -86,9 +86,9 @@ public class RequestServiceImplTest {
         var expectedTotalPrice = new BigDecimal("150.0");
         var expectedBatteryTotalPrice = new BigDecimal("100.0");
         var expectedPlasticTotalPrice = new BigDecimal("50.0");
-        var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
+        var categories = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
+            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
         var batteryRecycle = new RecycleCategory();
@@ -97,13 +97,13 @@ public class RequestServiceImplTest {
         var plasticRecycle = new RecycleCategory();
         plasticRecycle.setPrice(new BigDecimal(5));
 
-        var pricingRequest = new PricingRequest();
+        var pricingRequest = new PricingRequestDto();
         pricingRequest.setData(categories);
 
         Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(Optional.of(batteryRecycle));
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
 
-        Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+        Optional<PricingResponseDto> response = requestService.getRequestTotalPricing(pricingRequest);
         verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
         Assertions.assertNotNull(response);
         assertTrue(response.isPresent());
@@ -118,9 +118,9 @@ public class RequestServiceImplTest {
         var expectedTotalPrice = new BigDecimal("165.00");
         var expectedBatteryTotalPrice = new BigDecimal("110.00");
         var expectedPlasticTotalPrice = new BigDecimal("55.00");
-        var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
+        var categories = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
+            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
         var promotion = new Promotion() {{
@@ -136,7 +136,7 @@ public class RequestServiceImplTest {
         var plasticRecycle = new RecycleCategory();
         plasticRecycle.setPrice(new BigDecimal(5));
 
-        var pricingRequest = new PricingRequest();
+        var pricingRequest = new PricingRequestDto();
         pricingRequest.setPromoCode("p001");
         pricingRequest.setData(categories);
 
@@ -144,7 +144,7 @@ public class RequestServiceImplTest {
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
         Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
 
-        Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+        Optional<PricingResponseDto> response = requestService.getRequestTotalPricing(pricingRequest);
         verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
         Assertions.assertNotNull(response);
         assertTrue(response.isPresent());
@@ -159,9 +159,9 @@ public class RequestServiceImplTest {
         var expectedTotalPrice = new BigDecimal("24.0");
         var expectedBatteryTotalPrice = new BigDecimal("4.00");
         var expectedPlasticTotalPrice = new BigDecimal("20.00");
-        var categories = new ArrayList<Category>() {{
-            add(new Category("Metal", new BigDecimal(0), 2, "", ""));
-            add(new Category("Electronics", new BigDecimal(0), 2, "", ""));
+        var categories = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("Metal", new BigDecimal(0), 2, "", ""));
+            add(new CategoryDto("Electronics", new BigDecimal(0), 2, "", ""));
         }};
 
         var promotion = new Promotion() {{
@@ -177,7 +177,7 @@ public class RequestServiceImplTest {
         var plasticRecycle = new RecycleCategory();
         plasticRecycle.setPrice(new BigDecimal(10));
 
-        var pricingRequest = new PricingRequest();
+        var pricingRequest = new PricingRequestDto();
         pricingRequest.setPromoCode("electronics");
         pricingRequest.setData(categories);
 
@@ -185,7 +185,7 @@ public class RequestServiceImplTest {
         Mockito.when(recycleCategoryRepository.findByName("Electronics")).thenReturn(Optional.of(plasticRecycle));
         Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
 
-        Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+        Optional<PricingResponseDto> response = requestService.getRequestTotalPricing(pricingRequest);
         verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
         Assertions.assertNotNull(response);
         assertTrue(response.isPresent());
@@ -200,9 +200,9 @@ public class RequestServiceImplTest {
         var expectedTotalPrice = new BigDecimal("33.600");
         var expectedBatteryTotalPrice = new BigDecimal("5.60");
         var expectedPlasticTotalPrice = new BigDecimal("28.00");
-        var categories = new ArrayList<Category>() {{
-            add(new Category("Metal", new BigDecimal(0), 2, "", ""));
-            add(new Category("Electronics", new BigDecimal(0), 2, "", ""));
+        var categories = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("Metal", new BigDecimal(0), 2, "", ""));
+            add(new CategoryDto("Electronics", new BigDecimal(0), 2, "", ""));
         }};
 
         var promotion = new Promotion() {{
@@ -218,7 +218,7 @@ public class RequestServiceImplTest {
         var plasticRecycle = new RecycleCategory();
         plasticRecycle.setPrice(new BigDecimal(10));
 
-        var pricingRequest = new PricingRequest();
+        var pricingRequest = new PricingRequestDto();
         pricingRequest.setPromoCode("earth");
         pricingRequest.setData(categories);
 
@@ -226,7 +226,7 @@ public class RequestServiceImplTest {
         Mockito.when(recycleCategoryRepository.findByName("Electronics")).thenReturn(Optional.of(plasticRecycle));
         Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
 
-        Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+        Optional<PricingResponseDto> response = requestService.getRequestTotalPricing(pricingRequest);
         verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
         Assertions.assertNotNull(response);
         assertTrue(response.isPresent());
@@ -237,9 +237,9 @@ public class RequestServiceImplTest {
     }
     @Test
     void testGetRequestTotalPricing_ThrowExceptionWhenPromoCodeNotFound() {
-        var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
+        var categories = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
+            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
         var batteryRecycle = new RecycleCategory();
@@ -248,14 +248,14 @@ public class RequestServiceImplTest {
         var plasticRecycle = new RecycleCategory();
         plasticRecycle.setPrice(new BigDecimal(5));
 
-        var pricingRequest = new PricingRequest();
+        var pricingRequest = new PricingRequestDto();
         pricingRequest.setPromoCode("p001");
         pricingRequest.setData(categories);
 
         Mockito.when(recycleCategoryRepository.findByName("Battery")).thenReturn(Optional.of(batteryRecycle));
         Mockito.when(recycleCategoryRepository.findByName("Plastic")).thenReturn(Optional.of(plasticRecycle));
         assertThrows(ResponseStatusException.class, () -> {
-            Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+            Optional<PricingResponseDto> response = requestService.getRequestTotalPricing(pricingRequest);
 
             Assertions.assertNull(response);
         });
@@ -263,27 +263,27 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_ThrowExceptionWhenCategoryNotFound() {
-        var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
+        var categories = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
+            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
-        var pricingRequest = new PricingRequest();
+        var pricingRequest = new PricingRequestDto();
         pricingRequest.setData(categories);
 
         Mockito.when(recycleCategoryRepository.findByName(Mockito.any())).thenReturn(Optional.empty());
 
         assertThrows(ResponseStatusException.class, () -> {
-            Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+            Optional<PricingResponseDto> response = requestService.getRequestTotalPricing(pricingRequest);
             Assertions.assertNull(response);
         });
     }
 
     @Test
     void testGetRequestTotalPricing_WithPromotionIsExpired_Success() {
-        var categories = new ArrayList<Category>() {{
-            add(new Category("Battery", new BigDecimal(0), 10, "", ""));
-            add(new Category("Plastic", new BigDecimal(0), 10, "", ""));
+        var categories = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
+            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
         }};
 
         var promotion = new Promotion() {{
@@ -299,7 +299,7 @@ public class RequestServiceImplTest {
         var plasticRecycle = new RecycleCategory();
         plasticRecycle.setPrice(new BigDecimal(5));
 
-        var pricingRequest = new PricingRequest();
+        var pricingRequest = new PricingRequestDto();
         pricingRequest.setPromoCode("p001");
         pricingRequest.setData(categories);
 
@@ -308,7 +308,7 @@ public class RequestServiceImplTest {
         Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
 
         assertThrows(ResponseStatusException.class, () -> {
-            Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+            Optional<PricingResponseDto> response = requestService.getRequestTotalPricing(pricingRequest);
             verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
             Assertions.assertNull(response);
         });
@@ -316,9 +316,9 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_WithDayStrategyIsExpired_Success() {
-        var categories = new ArrayList<Category>() {{
-            add(new Category("Metal", new BigDecimal(0), 2, "", ""));
-            add(new Category("Electronics", new BigDecimal(0), 2, "", ""));
+        var categories = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("Metal", new BigDecimal(0), 2, "", ""));
+            add(new CategoryDto("Electronics", new BigDecimal(0), 2, "", ""));
         }};
 
         var promotion = new Promotion() {{
@@ -334,7 +334,7 @@ public class RequestServiceImplTest {
         var plasticRecycle = new RecycleCategory();
         plasticRecycle.setPrice(new BigDecimal(10));
 
-        var pricingRequest = new PricingRequest();
+        var pricingRequest = new PricingRequestDto();
         pricingRequest.setPromoCode("xmas");
         pricingRequest.setData(categories);
 
@@ -343,7 +343,7 @@ public class RequestServiceImplTest {
         Mockito.when(promotionRepository.findDiscountByPromotionCode(Mockito.any())).thenReturn(Optional.of(promotion));
 
         assertThrows(ResponseStatusException.class, () -> {
-            Optional<PricingResponse> response = requestService.getRequestTotalPricing(pricingRequest);
+            Optional<PricingResponseDto> response = requestService.getRequestTotalPricing(pricingRequest);
             verify(recycleCategoryRepository, Mockito.times(2)).findByName(Mockito.any());
             Assertions.assertNull(response);
         });
@@ -351,9 +351,9 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_WithCategoryStrategyIsExpired_Success() {
-        var categories = new ArrayList<Category>() {{
-            add(new Category("Metal", new BigDecimal(0), 2, "", ""));
-            add(new Category("Electronics", new BigDecimal(0), 2, "", ""));
+        var categories = new ArrayList<CategoryDto>() {{
+            add(new CategoryDto("Metal", new BigDecimal(0), 2, "", ""));
+            add(new CategoryDto("Electronics", new BigDecimal(0), 2, "", ""));
         }};
 
         var promotion = new Promotion() {{
@@ -369,7 +369,7 @@ public class RequestServiceImplTest {
         var plasticRecycle = new RecycleCategory();
         plasticRecycle.setPrice(new BigDecimal(10));
 
-        var pricingRequest = new PricingRequest();
+        var pricingRequest = new PricingRequestDto();
         pricingRequest.setPromoCode("glass");
         pricingRequest.setData(categories);
 
@@ -393,7 +393,7 @@ public class RequestServiceImplTest {
 
         recycleRequestDto.setEmail("andrew@mail.com");
         recycleRequestDto.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
-        recycleRequestDto.setData(Collections.singletonList(new Category("Electronics", new BigDecimal(10), 2, "piece", "Electronics")));
+        recycleRequestDto.setData(Collections.singletonList(new CategoryDto("Electronics", new BigDecimal(10), 2, "piece", "Electronics")));
         recycleRequestDto.setCollectionStatus("Pending Approval");
         recycleRequestDto.setPromoCode("electronics");
         recycleRequestDto.setContactPerson("Andrew");
@@ -402,9 +402,9 @@ public class RequestServiceImplTest {
         recycleRequestDto.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
         recycleRequestDto.setCollectionStatus("Pending Approval");
 
-        RecycleResponse expectedResponse = new RecycleResponse();
+        RecycleResponseDto expectedResponse = new RecycleResponseDto();
 
-        expectedResponse.setItems(Collections.singletonList(new Item("Electronics",
+        expectedResponse.setItems(Collections.singletonList(new ItemDto("Electronics",
                  2,
                  new BigDecimal("10"),
                  new BigDecimal("22.00"),
@@ -464,7 +464,7 @@ public class RequestServiceImplTest {
         Mockito.when(notifyChannelFactory.notificationChannel(NotificationChannelFactory.CHANNEL_TYPE.SMTP))
                 .thenReturn(notificationChannel);
 
-        Optional<RecycleResponse> actualResponse = requestService.submitRequest(recycleRequestDto);
+        Optional<RecycleResponseDto> actualResponse = requestService.submitRequest(recycleRequestDto);
 
         Assertions.assertTrue(actualResponse.isPresent());
         Assertions.assertEquals(expectedResponse, actualResponse.get());

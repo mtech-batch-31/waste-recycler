@@ -1,12 +1,12 @@
 package com.mtech.recycler.service;
 
 
-import com.mtech.recycler.model.LoginResponse;
+import com.mtech.recycler.dto.LoginResponseDto;
 
 import java.util.Optional;
 
 public interface LoginService {
 
-    Optional<LoginResponse> authenticate(String email, String rawInputPassword);
+    Optional<LoginResponseDto> authenticate(String email, String rawInputPassword);
 
 }

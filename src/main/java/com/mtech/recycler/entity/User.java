@@ -1,7 +1,7 @@
 package com.mtech.recycler.entity;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.mtech.recycler.model.Role;
+import com.mtech.recycler.dto.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

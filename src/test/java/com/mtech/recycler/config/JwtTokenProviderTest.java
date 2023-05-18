@@ -1,6 +1,6 @@
 package com.mtech.recycler.config;
 
-import com.mtech.recycler.model.Role;
+import com.mtech.recycler.dto.Role;
 import io.jsonwebtoken.security.SignatureException;
 import org.joda.time.DateTimeUtils;
 import org.joda.time.Instant;

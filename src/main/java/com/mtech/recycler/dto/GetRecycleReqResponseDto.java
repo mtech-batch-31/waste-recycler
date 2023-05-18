@@ -1,7 +1,7 @@
-package com.mtech.recycler.model;
+package com.mtech.recycler.dto;
 
 import com.mtech.recycler.entity.RecycleRequest;
-import com.mtech.recycler.model.base.BaseResponse;
+import com.mtech.recycler.dto.base.BaseResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetRecycleReqResponse extends BaseResponse {
+public class GetRecycleReqResponseDto extends BaseResponseDto {
 
     List<RecycleRequest> data;
 }

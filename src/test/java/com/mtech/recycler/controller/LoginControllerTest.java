@@ -4,8 +4,8 @@ import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.helper.Utilities;
-import com.mtech.recycler.model.LoginRequest;
-import com.mtech.recycler.model.LoginResponse;
+import com.mtech.recycler.dto.LoginRequestDto;
+import com.mtech.recycler.dto.LoginResponseDto;
 import com.mtech.recycler.service.Impl.LoginServiceImpl;
 import com.mtech.recycler.service.Impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ public class LoginControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private LoginRequest loginRequest;
+    private LoginRequestDto loginRequestDto;
 
     @MockBean
     private LoginServiceImpl loginService;
@@ -48,7 +48,7 @@ public class LoginControllerTest {
 
     @BeforeEach
     public void setupEach() {
-        loginRequest = new LoginRequest("username", "password");
+        loginRequestDto = new LoginRequestDto("username", "password");
     }
 
     @Test
@@ -60,8 +60,8 @@ public class LoginControllerTest {
 
     @Test
     public void givenLoginRequest_returnSuccessfulResponse() throws Exception {
-        String requestJsonString = Utilities.asJsonString(loginRequest);
-        LoginResponse response = new LoginResponse("access-token");
+        String requestJsonString = Utilities.asJsonString(loginRequestDto);
+        LoginResponseDto response = new LoginResponseDto("access-token");
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.of(response));
 
@@ -75,10 +75,10 @@ public class LoginControllerTest {
 
     @Test
     public void givenLoginRequestPropertiesAreEmpty_returnBadRequest() throws Exception {
-        loginRequest.setEmail("");
-        loginRequest.setPassword("");
-        String requestJsonString = Utilities.asJsonString(loginRequest);
-        LoginResponse response = new LoginResponse("access-token");
+        loginRequestDto.setEmail("");
+        loginRequestDto.setPassword("");
+        String requestJsonString = Utilities.asJsonString(loginRequestDto);
+        LoginResponseDto response = new LoginResponseDto("access-token");
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.of(response));
 
@@ -88,9 +88,9 @@ public class LoginControllerTest {
 
     @Test
     public void givenLoginRequestUserNotFound_returnBadRequest() throws Exception {
-        loginRequest.setEmail("");
-        loginRequest.setPassword("");
-        String requestJsonString = Utilities.asJsonString(loginRequest);
+        loginRequestDto.setEmail("");
+        loginRequestDto.setPassword("");
+        String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
         given(loginService.authenticate(any(String.class), any(String.class))).willThrow(ResponseStatusException.class);
 
@@ -100,7 +100,7 @@ public class LoginControllerTest {
 
     @Test
     public void givenLoginRequestCouldNotAuthenticate_returnBadRequest() throws Exception {
-        String requestJsonString = Utilities.asJsonString(loginRequest);
+        String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.empty());
 
@@ -110,7 +110,7 @@ public class LoginControllerTest {
 
     @Test
     public void givenLoginRequestNullFromAuthenticate_returnBadRequest() throws Exception {
-        String requestJsonString = Utilities.asJsonString(loginRequest);
+        String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
         given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.ofNullable(null));
 
@@ -120,7 +120,7 @@ public class LoginControllerTest {
 
     @Test
     public void givenLoginRequestThrowsUserNotFoundException_returnNotFound() throws Exception {
-        String requestJsonString = Utilities.asJsonString(loginRequest);
+        String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
         given(loginService.authenticate(any(String.class), any(String.class))).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not found"));
 
