@@ -2,7 +2,6 @@ package com.mtech.recycler.dto;
 
 
 import com.mtech.recycler.constant.CommonConstant;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -22,8 +21,8 @@ public class CategoryDto {
 
     private BigDecimal price;
 
-    @DecimalMin(message = CommonConstant.ErrorMessage.QUANTITY_VALIDATION_FAILED, value = "0.1")
-    private double quantity;
+    //@DecimalMin(message = CommonConstant.ErrorMessage.QUANTITY_VALIDATION_FAILED, value = "0.1")
+    //private double quantity;
 
     private String unitOfMeasurement;
 

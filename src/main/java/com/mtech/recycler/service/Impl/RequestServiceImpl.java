@@ -55,15 +55,15 @@ public class RequestServiceImpl implements RequestService {
         PromotionPricingStrategy pricingStrategy = setPricingStrategy(request);
 
         try {
-            BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode(), itemDtos);
-            List<ItemDto> subTotalPrice = pricingStrategy.calculateSubTotalPrice(request.getData(), request.getPromoCode(), itemDtos);
+            BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode());
+            //List<ItemDto> subTotalPrice = pricingStrategy.calculateSubTotalPrice(request.getData(), request.getPromoCode());
 
-            Utilities.mapDescriptionsFromCategoryToItems(request.getData(), itemDtos);
+            //Utilities.mapDescriptionsFromCategoryToItems(itemDtos);
 
             log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 
             response.setTotalPrice(totalPrice);
-            response.setItems(subTotalPrice);
+            response.setItems(request.getData());
 
             log.info("RequestService - GetRequestTotalPricing - end");
 
@@ -94,7 +94,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<CategoryDto> getAllRecycleCategories() {
-        return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new CategoryDto(r.getName(), r.getPrice(), 0, r.getUnitOfMeasurement(), "")).toList();
+        return StreamSupport.stream(recycleCategoryRepository.findAll().spliterator(), false).map(r -> new CategoryDto(r.getName(), r.getPrice(), r.getUnitOfMeasurement(), "")).toList();
     }
 
     @Override

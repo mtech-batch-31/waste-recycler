@@ -15,6 +15,6 @@ public class PricingRequestDto {
     private String promoCode;
 
     @Valid
-    private List<CategoryDto> data;
+    private List<ItemDto> data;
 
 }

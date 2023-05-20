@@ -84,11 +84,11 @@ public class RequestServiceImplTest {
     void testGetRequestTotalPricing_WithoutPromotion_Success() {
 
         var expectedTotalPrice = new BigDecimal("150.0");
-        var expectedBatteryTotalPrice = new BigDecimal("100.0");
-        var expectedPlasticTotalPrice = new BigDecimal("50.0");
-        var categories = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
-            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
+        var expectedBatteryTotalPrice = new BigDecimal("100.00");
+        var expectedPlasticTotalPrice = new BigDecimal("50.00");
+        var categories = new ArrayList<ItemDto>() {{
+            add(new ItemDto("Battery", 10, new BigDecimal(0), new BigDecimal(0), ""));
+            add(new ItemDto("Plastic", 10, new BigDecimal(0), new BigDecimal(0), ""));
         }};
 
         var batteryRecycle = new RecycleCategory();
@@ -118,9 +118,9 @@ public class RequestServiceImplTest {
         var expectedTotalPrice = new BigDecimal("165.00");
         var expectedBatteryTotalPrice = new BigDecimal("110.00");
         var expectedPlasticTotalPrice = new BigDecimal("55.00");
-        var categories = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
-            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
+        var categories = new ArrayList<ItemDto>() {{
+            add(new ItemDto("Battery", 10, new BigDecimal(0), new BigDecimal(0), ""));
+            add(new ItemDto("Plastic", 10, new BigDecimal(0), new BigDecimal(0), ""));
         }};
 
         var promotion = new Promotion() {{
@@ -159,9 +159,9 @@ public class RequestServiceImplTest {
         var expectedTotalPrice = new BigDecimal("24.0");
         var expectedBatteryTotalPrice = new BigDecimal("4.00");
         var expectedPlasticTotalPrice = new BigDecimal("20.00");
-        var categories = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("Metal", new BigDecimal(0), 2, "", ""));
-            add(new CategoryDto("Electronics", new BigDecimal(0), 2, "", ""));
+        var categories = new ArrayList<ItemDto>() {{
+            add(new ItemDto("Metal", 2.0, new BigDecimal(0), new BigDecimal(0), ""));
+            add(new ItemDto("Electronics", 2.0, new BigDecimal(0), new BigDecimal(0), ""));
         }};
 
         var promotion = new Promotion() {{
@@ -200,9 +200,9 @@ public class RequestServiceImplTest {
         var expectedTotalPrice = new BigDecimal("33.600");
         var expectedBatteryTotalPrice = new BigDecimal("5.60");
         var expectedPlasticTotalPrice = new BigDecimal("28.00");
-        var categories = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("Metal", new BigDecimal(0), 2, "", ""));
-            add(new CategoryDto("Electronics", new BigDecimal(0), 2, "", ""));
+        var categories = new ArrayList<ItemDto>() {{
+            add(new ItemDto("Metal", 2, new BigDecimal(0), new BigDecimal(0), ""));
+            add(new ItemDto("Electronics", 2, new BigDecimal(0), new BigDecimal(0), ""));
         }};
 
         var promotion = new Promotion() {{
@@ -237,9 +237,9 @@ public class RequestServiceImplTest {
     }
     @Test
     void testGetRequestTotalPricing_ThrowExceptionWhenPromoCodeNotFound() {
-        var categories = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
-            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
+        var categories = new ArrayList<ItemDto>() {{
+            add(new ItemDto("Battery", 0, new BigDecimal(10), new BigDecimal(0), ""));
+            add(new ItemDto("Plastic", 0, new BigDecimal(10), new BigDecimal(0), ""));
         }};
 
         var batteryRecycle = new RecycleCategory();
@@ -263,9 +263,9 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_ThrowExceptionWhenCategoryNotFound() {
-        var categories = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
-            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
+        var categories = new ArrayList<ItemDto>() {{
+            add(new ItemDto("Battery", 0, new BigDecimal(10), new BigDecimal(0), ""));
+            add(new ItemDto("Plastic", 0, new BigDecimal(10), new BigDecimal(0), ""));
         }};
 
         var pricingRequest = new PricingRequestDto();
@@ -281,9 +281,9 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_WithPromotionIsExpired_Success() {
-        var categories = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("Battery", new BigDecimal(0), 10, "", ""));
-            add(new CategoryDto("Plastic", new BigDecimal(0), 10, "", ""));
+        var categories = new ArrayList<ItemDto>() {{
+            add(new ItemDto("Battery", 0, new BigDecimal(10), new BigDecimal(0), ""));
+            add(new ItemDto("Plastic", 0, new BigDecimal(10), new BigDecimal(0), ""));
         }};
 
         var promotion = new Promotion() {{
@@ -316,9 +316,9 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_WithDayStrategyIsExpired_Success() {
-        var categories = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("Metal", new BigDecimal(0), 2, "", ""));
-            add(new CategoryDto("Electronics", new BigDecimal(0), 2, "", ""));
+        var categories = new ArrayList<ItemDto>() {{
+            add(new ItemDto("Metal", 0, new BigDecimal(2), new BigDecimal(0), ""));
+            add(new ItemDto("Electronics", 0, new BigDecimal(2), new BigDecimal(0), ""));
         }};
 
         var promotion = new Promotion() {{
@@ -351,9 +351,9 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_WithCategoryStrategyIsExpired_Success() {
-        var categories = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("Metal", new BigDecimal(0), 2, "", ""));
-            add(new CategoryDto("Electronics", new BigDecimal(0), 2, "", ""));
+        var categories = new ArrayList<ItemDto>() {{
+            add(new ItemDto("Metal", 0, new BigDecimal(2), new BigDecimal(0), ""));
+            add(new ItemDto("Electronics", 0, new BigDecimal(2), new BigDecimal(0), ""));
         }};
 
         var promotion = new Promotion() {{
@@ -393,7 +393,7 @@ public class RequestServiceImplTest {
 
         recycleRequestDto.setEmail("andrew@mail.com");
         recycleRequestDto.setReturnCode(CommonConstant.ReturnCode.SUCCESS);
-        recycleRequestDto.setData(Collections.singletonList(new CategoryDto("Electronics", new BigDecimal(10), 2, "piece", "Electronics")));
+        recycleRequestDto.setData(Collections.singletonList(new ItemDto("Electronics", 2, new BigDecimal(10), new BigDecimal(0), "Electronics")));
         recycleRequestDto.setCollectionStatus("Pending Approval");
         recycleRequestDto.setPromoCode("electronics");
         recycleRequestDto.setContactPerson("Andrew");

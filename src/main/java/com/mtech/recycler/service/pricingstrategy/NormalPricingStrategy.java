@@ -37,13 +37,13 @@ public class NormalPricingStrategy implements PromotionPricingStrategy {
     private static final Logger log = LoggerFactory.getLogger(NormalPricingStrategy.class);
 
     @Override
-    public BigDecimal calculateTotalPrice(List<CategoryDto> categories, String promoCode, List<ItemDto> itemDtos) {
-     BigDecimal totalPrice = categories.stream().map(c -> {
+    public BigDecimal calculateTotalPrice(List<ItemDto> itemDtos, String promoCode) {
+     BigDecimal totalPrice = itemDtos.stream().map(c -> {
         BigDecimal unitPrice = recycleCategoryRepository.findByName(c.getCategory())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "The following category name (%s) is not found".formatted(c.getCategory())))
                 .getPrice();
         BigDecimal subTotalPrice = unitPrice.multiply(BigDecimal.valueOf(c.getQuantity()));
-        itemDtos.add(new ItemDto(c.getCategory(), c.getQuantity(), unitPrice, subTotalPrice, ""));
+        c.setSubTotalPrice(subTotalPrice.setScale(2, RoundingMode.CEILING));
         return subTotalPrice;
     }).reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -56,13 +56,18 @@ public class NormalPricingStrategy implements PromotionPricingStrategy {
         if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
         }
+        for (ItemDto itemDto : itemDtos) {
+            itemDto.setSubTotalPrice(itemDto.getSubTotalPrice()
+                    .add(itemDto.getSubTotalPrice().multiply(BigDecimal.valueOf(promotion.getPercentage())))
+                    .setScale(2, RoundingMode.CEILING));
+        }
         totalPrice = totalPrice.add(totalPrice.multiply(BigDecimal.valueOf(promotion.getPercentage()))).setScale(2, RoundingMode.CEILING);
         totalPrice = totalPrice.multiply(BigDecimal.valueOf(1));
     }
     return totalPrice;
     }
 
-    public List<ItemDto> calculateSubTotalPrice(List<CategoryDto> categories, String promoCode, List<ItemDto> itemDtos) {
+    public List<ItemDto> calculateSubTotalPrice(List<ItemDto> itemDtos, String promoCode) {
 
         if (StringUtils.hasText(promoCode)) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)

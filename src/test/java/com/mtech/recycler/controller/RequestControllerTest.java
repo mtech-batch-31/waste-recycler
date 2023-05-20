@@ -65,12 +65,12 @@ public class RequestControllerTest {
 
     @BeforeEach
     public void setupEach() {
-        List<CategoryDto> categories = new ArrayList<>() {{
-            add(new CategoryDto("Electronics", new BigDecimal(700), 0.1, "item", ""));
-            add(new CategoryDto("Battery", new BigDecimal(500), 1, "kg", ""));
+        List<ItemDto> itemDtos = new ArrayList<>() {{
+            add(new ItemDto("Electronics", 700, new BigDecimal(0.1), new BigDecimal(0), ""));
+            add(new ItemDto("Battery", 500, new BigDecimal(1), new BigDecimal(0), ""));
         }};
 
-        request = new PricingRequestDto("promo", categories);
+        request = new PricingRequestDto("promo", itemDtos);
 
     }
 
@@ -158,11 +158,11 @@ public class RequestControllerTest {
     @Test
     public void givenRecyclingCategoriesRequest_returnSuccessfulResponse() throws Exception {
         initAuth();
-        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[{\"category\":\"c1\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"},{\"category\":\"c2\",\"price\":1,\"quantity\":0.1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"}]}";
+        String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[{\"category\":\"c1\",\"price\":1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"},{\"category\":\"c2\",\"price\":1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"}]}";
 
         var response = new ArrayList<CategoryDto>() {{
-            add(new CategoryDto("c1", new BigDecimal(1), 0.1, "kg", ""));
-            add(new CategoryDto("c2", new BigDecimal(1), 0.1, "kg", ""));
+            add(new CategoryDto("c1", new BigDecimal(1),  "kg", ""));
+            add(new CategoryDto("c2", new BigDecimal(1),  "kg", ""));
         }};
 
         given(requestService.getAllRecycleCategories()).willReturn(response);
