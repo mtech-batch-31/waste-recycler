@@ -65,20 +65,6 @@ public class DayPricingStrategy implements PromotionPricingStrategy {
         return totalPrice;
     }
 
-    /*public List<ItemDto> calculateSubTotalPrice(List<ItemDto> itemDtos, String promoCode) {
-
-        if (StringUtils.hasText(promoCode)) {
-            Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
-
-            if (!isWithinRange(promotion.getStartDate(), promotion.getEndDate())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.EXPIRED_PROMOTION_CODE);
-            }
-
-            Utilities.updateSubTotalPriceWithPromotion(itemDtos, promotion.getPercentage(), BigDecimal.valueOf(1.0));
-        }
-        return itemDtos;
-    }*/
 }
 
 

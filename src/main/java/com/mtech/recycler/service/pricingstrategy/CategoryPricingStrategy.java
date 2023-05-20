@@ -64,28 +64,6 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
         return totalPrice;
     }
 
-    /*public List<ItemDto> calculateSubTotalPrice(List<ItemDto> itemDtos, String promoCode) {
-
-        if (StringUtils.hasText(promoCode)) {
-            Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonConstant.ErrorMessage.INVALID_PROMOTION_CODE));
-            updateSubTotalPriceWithPromotionCategoryStrategy(itemDtos, promotion.getPercentage(), promotion.getDescription());
-        }
-        return itemDtos;
-    }*/
-
-    /*public static void updateSubTotalPriceWithPromotionCategoryStrategy(@Valid List<ItemDto> itemDtos, double promoPercentage, String promoCategory) {
-        itemDtos.stream()
-                .peek(item -> {
-                    BigDecimal subTotalPrice = item.getSubTotalPrice();
-                    if (item.getCategory().equalsIgnoreCase(promoCategory)) {
-                        subTotalPrice = subTotalPrice.add(subTotalPrice.multiply(BigDecimal.valueOf(promoPercentage)));
-                    }
-                    subTotalPrice = subTotalPrice.setScale(2, RoundingMode.CEILING);
-                    item.setSubTotalPrice(subTotalPrice);
-                })
-                .forEach(item -> {});
-    }*/
 }
 
 

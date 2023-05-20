@@ -105,24 +105,5 @@ public class Utilities {
             return itemDtos;
         }
     }
-    /*
-    public static void mapDescriptionsFromCategoryToItems (@Valid List<CategoryDto> categories, List<ItemDto> itemDtos) {
-        IntStream.range(0, Math.min(categories.size(), itemDtos.size()))
-                .forEach(i -> itemDtos.get(i).setDescription(categories.get(i).getDescription()));
-    }*/
-    /*
-    public static void updateSubTotalPriceWithPromotion(@Valid List<ItemDto> itemDtos, double promoPercentage, BigDecimal pricingStrategyMultiplier) {
-        itemDtos.stream()
-                .peek(item -> {
-                    item.setDescription(item.getDescription());
-                    BigDecimal subTotalPrice = item.getSubTotalPrice();
-                    subTotalPrice = subTotalPrice.add(subTotalPrice.multiply(BigDecimal.valueOf(promoPercentage)));
-                    subTotalPrice = subTotalPrice.multiply(pricingStrategyMultiplier);
-                    subTotalPrice = subTotalPrice.setScale(2, RoundingMode.CEILING);
-                    item.setSubTotalPrice(subTotalPrice);
-                })
-                .forEach(item -> {});
-    }
-    */
 
 }

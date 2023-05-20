@@ -56,9 +56,6 @@ public class RequestServiceImpl implements RequestService {
 
         try {
             BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode());
-            //List<ItemDto> subTotalPrice = pricingStrategy.calculateSubTotalPrice(request.getData(), request.getPromoCode());
-
-            //Utilities.mapDescriptionsFromCategoryToItems(itemDtos);
 
             log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 
