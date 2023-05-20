@@ -2,11 +2,9 @@ package com.mtech.recycler.service.pricingstrategy;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
-import com.mtech.recycler.dto.CategoryDto;
 import com.mtech.recycler.dto.ItemDto;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -66,7 +64,7 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
         return totalPrice;
     }
 
-    public List<ItemDto> calculateSubTotalPrice(List<ItemDto> itemDtos, String promoCode) {
+    /*public List<ItemDto> calculateSubTotalPrice(List<ItemDto> itemDtos, String promoCode) {
 
         if (StringUtils.hasText(promoCode)) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
@@ -74,9 +72,9 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
             updateSubTotalPriceWithPromotionCategoryStrategy(itemDtos, promotion.getPercentage(), promotion.getDescription());
         }
         return itemDtos;
-    }
+    }*/
 
-    public static void updateSubTotalPriceWithPromotionCategoryStrategy(@Valid List<ItemDto> itemDtos, double promoPercentage, String promoCategory) {
+    /*public static void updateSubTotalPriceWithPromotionCategoryStrategy(@Valid List<ItemDto> itemDtos, double promoPercentage, String promoCategory) {
         itemDtos.stream()
                 .peek(item -> {
                     BigDecimal subTotalPrice = item.getSubTotalPrice();
@@ -87,7 +85,7 @@ public class CategoryPricingStrategy implements PromotionPricingStrategy {
                     item.setSubTotalPrice(subTotalPrice);
                 })
                 .forEach(item -> {});
-    }
+    }*/
 }
 
 

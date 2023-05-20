@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface PromotionPricingStrategy {
         BigDecimal calculateTotalPrice(List<ItemDto> itemDtos, String promoCode);
-        List<ItemDto> calculateSubTotalPrice(List<ItemDto> itemDtos, String promoCode);
+        //List<ItemDto> calculateSubTotalPrice(List<ItemDto> itemDtos, String promoCode);
 
 }

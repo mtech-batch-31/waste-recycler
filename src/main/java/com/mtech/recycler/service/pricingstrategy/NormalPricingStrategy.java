@@ -2,8 +2,6 @@ package com.mtech.recycler.service.pricingstrategy;
 
 import com.mtech.recycler.constant.CommonConstant;
 import com.mtech.recycler.entity.Promotion;
-import com.mtech.recycler.helper.Utilities;
-import com.mtech.recycler.dto.CategoryDto;
 import com.mtech.recycler.dto.ItemDto;
 import com.mtech.recycler.repository.PromotionRepository;
 import com.mtech.recycler.repository.RecycleCategoryRepository;
@@ -67,7 +65,7 @@ public class NormalPricingStrategy implements PromotionPricingStrategy {
     return totalPrice;
     }
 
-    public List<ItemDto> calculateSubTotalPrice(List<ItemDto> itemDtos, String promoCode) {
+    /*public List<ItemDto> calculateSubTotalPrice(List<ItemDto> itemDtos, String promoCode) {
 
         if (StringUtils.hasText(promoCode)) {
             Promotion promotion = promotionRepository.findDiscountByPromotionCode(promoCode)
@@ -80,7 +78,7 @@ public class NormalPricingStrategy implements PromotionPricingStrategy {
             Utilities.updateSubTotalPriceWithPromotion(itemDtos, promotion.getPercentage(), BigDecimal.valueOf(1));
         }
         return itemDtos;
-    }
+    }*/
 }
 
 
