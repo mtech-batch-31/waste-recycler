@@ -104,4 +104,19 @@ public class UserControllerTest {
                 .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)));
 
     }
+
+    @Test
+    public void callRegistrationConfirm_return200() throws Exception {
+        given(jwtTokenProvider.validateToken(any(String.class))).willReturn(true);
+        given(jwtTokenProvider.getUserNameFromJWT(any(String.class))).willReturn("user");
+        given(jwtTokenProvider.getRoleFromJWT(any(String.class))).willReturn("test");
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/user/registrationConfirm?token=test")
+                        .contentType(MediaType.APPLICATION_JSON).with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("returnCode", is(CommonConstant.ReturnCode.SUCCESS)));
+
+    }
 }
