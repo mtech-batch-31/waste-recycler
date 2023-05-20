@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(LoginController.class)
 @Import(SecurityConfig.class)
-public class LoginControllerTest {
+class LoginControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,19 +46,19 @@ public class LoginControllerTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
-    public void setupEach() {
+    void setupEach() {
         loginRequestDto = new LoginRequestDto("username", "password");
     }
 
     @Test
-    public void givenLoginRequest_AbleToReachApi() throws Exception {
+    void givenLoginRequest_AbleToReachApi() throws Exception {
 
         mockMvc.perform(get("/api/v1/auth/test"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void givenLoginRequest_returnSuccessfulResponse() throws Exception {
+    void givenLoginRequest_returnSuccessfulResponse() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
         LoginResponseDto response = new LoginResponseDto("access-token");
         given(loginService.authenticate(loginRequestDto)).willReturn(Optional.of(response));
@@ -72,7 +72,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void givenLoginRequestPropertiesAreEmpty_returnBadRequest() throws Exception {
+    void givenLoginRequestPropertiesAreEmpty_returnBadRequest() throws Exception {
         loginRequestDto.setEmail("");
         loginRequestDto.setPassword("");
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
@@ -85,7 +85,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void givenLoginRequestUserNotFound_returnBadRequest() throws Exception {
+    void givenLoginRequestUserNotFound_returnBadRequest() throws Exception {
         loginRequestDto.setEmail("");
         loginRequestDto.setPassword("");
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
@@ -97,7 +97,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void givenLoginRequestCouldNotAuthenticate_returnBadRequest() throws Exception {
+    void givenLoginRequestCouldNotAuthenticate_returnBadRequest() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
         given(loginService.authenticate(loginRequestDto)).willReturn(Optional.empty());
@@ -107,7 +107,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void givenLoginRequestNullFromAuthenticate_returnBadRequest() throws Exception {
+    void givenLoginRequestNullFromAuthenticate_returnBadRequest() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
         given(loginService.authenticate(loginRequestDto)).willReturn(Optional.ofNullable(null));
@@ -117,7 +117,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void givenLoginRequestThrowsUserNotFoundException_returnNotFound() throws Exception {
+    void givenLoginRequestThrowsUserNotFoundException_returnNotFound() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
         given(loginService.authenticate(loginRequestDto)).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not found"));

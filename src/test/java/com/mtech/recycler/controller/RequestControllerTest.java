@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(RequestController.class)
 @Import(SecurityConfig.class)
-public class RequestControllerTest {
+class RequestControllerTest {
 
     private final String ENDPOINT_CALCULATE_PRICING = "/api/v1/request/price";
 
@@ -64,7 +64,7 @@ public class RequestControllerTest {
 
 
     @BeforeEach
-    public void setupEach() {
+    void setupEach() {
         List<ItemDto> itemDtos = new ArrayList<>() {{
             add(new ItemDto("Electronics", 700, new BigDecimal(0.1), new BigDecimal(0), ""));
             add(new ItemDto("Battery", 500, new BigDecimal(1), new BigDecimal(0), ""));
@@ -82,7 +82,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    public void givenRecyclingRequestWhenSendForPricing_returnSuccessfulResponse() throws Exception {
+    void givenRecyclingRequestWhenSendForPricing_returnSuccessfulResponse() throws Exception {
         initAuth();
         String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"totalPrice\":100,\"items\":[{\"category\":\"test\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50,\"description\":\"\"},{\"category\":\"test2\",\"quantity\":1.0,\"unitPrice\":50,\"subTotalPrice\":50,\"description\":\"\"}]}";
         String requestJsonString = Utilities.asJsonString(request);
@@ -105,7 +105,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    public void givenRecyclingRequestWhenSendWithoutCategory_return404Response() throws Exception {
+    void givenRecyclingRequestWhenSendWithoutCategory_return404Response() throws Exception {
         initAuth();
         request.getData().get(0).setCategory("");
         String requestJsonString = Utilities.asJsonString(request);
@@ -118,7 +118,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    public void givenRecyclingRequestWhenQuantityIsLessOrEqualZero_return404Response() throws Exception {
+    void givenRecyclingRequestWhenQuantityIsLessOrEqualZero_return404Response() throws Exception {
         initAuth();
         request.getData().get(0).setQuantity(0);
         String requestJsonString = Utilities.asJsonString(request);
@@ -131,7 +131,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    public void givenRecyclingRequestWhenEmptyObjectFromService_return404Response() throws Exception {
+    void givenRecyclingRequestWhenEmptyObjectFromService_return404Response() throws Exception {
         initAuth();
         String requestJsonString = Utilities.asJsonString(request);
 
@@ -142,7 +142,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    public void givenRecyclingRequestWhenThrowException_return404Response() throws Exception {
+    void givenRecyclingRequestWhenThrowException_return404Response() throws Exception {
         initAuth();
         String requestJsonString = Utilities.asJsonString(request);
 
@@ -156,7 +156,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    public void givenRecyclingCategoriesRequest_returnSuccessfulResponse() throws Exception {
+    void givenRecyclingCategoriesRequest_returnSuccessfulResponse() throws Exception {
         initAuth();
         String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[{\"category\":\"c1\",\"price\":1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"},{\"category\":\"c2\",\"price\":1,\"unitOfMeasurement\":\"kg\",\"description\":\"\"}]}";
 
@@ -178,7 +178,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    public void givenRecyclingCategoriesRequest_returnEmptyResponse() throws Exception {
+    void givenRecyclingCategoriesRequest_returnEmptyResponse() throws Exception {
         initAuth();
         String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"categories\":[]}";
 
@@ -198,7 +198,7 @@ public class RequestControllerTest {
 
 
     @Test
-    public void givenRetrieveRequest_returnSuccess() throws Exception {
+    void givenRetrieveRequest_returnSuccess() throws Exception {
         initAuth();
         String expectedResponse = "{\"returnCode\":\"00\",\"message\":\"The request has been successfully processed\",\"data\":[]}";
 

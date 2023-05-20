@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @Import(SecurityConfig.class)
-public class UserControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,7 +47,7 @@ public class UserControllerTest {
 
 
     @BeforeEach
-    public void setupEach() {
+    void setupEach() {
         customer = new Customer();
     }
 
@@ -92,7 +92,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void callSecuredApi_return200() throws Exception {
+    void callSecuredApi_return200() throws Exception {
         given(jwtTokenProvider.validateToken(any(String.class))).willReturn(true);
         given(jwtTokenProvider.getUserNameFromJWT(any(String.class))).willReturn("user");
         given(userService.getUserByEmail(any(String.class))).willReturn(new User());
