@@ -25,7 +25,7 @@ public class RequestController {
     }
 
     @PostMapping("/price")
-    public ResponseEntity<?> getRequestTotalPricing(@Valid @RequestBody PricingRequestDto request) {
+    public ResponseEntity<PricingResponseDto> getRequestTotalPricing(@Valid @RequestBody PricingRequestDto request) {
         log.info("RequestController - getRequestTotalPricing - started");
 
         log.info("RequestController - getRequestTotalPricing - discount code: " + request.getPromoCode());
@@ -48,7 +48,7 @@ public class RequestController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<?> getAllCategories() {
+    public ResponseEntity<RecyclingCategoryResponseDto> getAllCategories() {
         log.info("RequestController - getAllCategories - started");
         RecyclingCategoryResponseDto response = new RecyclingCategoryResponseDto();
 
@@ -64,7 +64,7 @@ public class RequestController {
     }
 
     @GetMapping("/retrieve")
-    public ResponseEntity<?> getRecycleRequests() {
+    public ResponseEntity<GetRecycleReqResponseDto> getRecycleRequests() {
         List<RecycleRequest> recycleItems = requestService.getRecycleRequests();
         GetRecycleReqResponseDto getRecycleReqResponse = new GetRecycleReqResponseDto();
         getRecycleReqResponse.setData(recycleItems);
@@ -75,7 +75,7 @@ public class RequestController {
 
 
     @PostMapping("/recycle")
-    public ResponseEntity<?> submitRequest(@RequestBody RecycleRequestDto request) {
+    public ResponseEntity<Optional<RecycleResponseDto>> submitRequest(@RequestBody RecycleRequestDto request) {
         Optional<RecycleResponseDto> recycleResponse = requestService.submitRequest(request);
         return ResponseEntity.ok(recycleResponse);
     }

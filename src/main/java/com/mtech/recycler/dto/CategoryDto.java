@@ -21,9 +21,6 @@ public class CategoryDto {
 
     private BigDecimal price;
 
-    //@DecimalMin(message = CommonConstant.ErrorMessage.QUANTITY_VALIDATION_FAILED, value = "0.1")
-    //private double quantity;
-
     private String unitOfMeasurement;
 
     private String description;
