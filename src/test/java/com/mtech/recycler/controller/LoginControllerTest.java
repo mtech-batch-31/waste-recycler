@@ -3,9 +3,9 @@ package com.mtech.recycler.controller;
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.config.SecurityConfig;
 import com.mtech.recycler.constant.CommonConstant;
-import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.dto.LoginRequestDto;
 import com.mtech.recycler.dto.LoginResponseDto;
+import com.mtech.recycler.helper.Utilities;
 import com.mtech.recycler.service.Impl.LoginServiceImpl;
 import com.mtech.recycler.service.Impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -62,8 +61,7 @@ public class LoginControllerTest {
     public void givenLoginRequest_returnSuccessfulResponse() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
         LoginResponseDto response = new LoginResponseDto("access-token");
-
-        given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.of(response));
+        given(loginService.authenticate(loginRequestDto)).willReturn(Optional.of(response));
 
         mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -80,7 +78,7 @@ public class LoginControllerTest {
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
         LoginResponseDto response = new LoginResponseDto("access-token");
 
-        given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.of(response));
+        given(loginService.authenticate(loginRequestDto)).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, CommonConstant.ErrorMessage.INVALID_REQUEST));
 
         mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -92,7 +90,7 @@ public class LoginControllerTest {
         loginRequestDto.setPassword("");
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
-        given(loginService.authenticate(any(String.class), any(String.class))).willThrow(ResponseStatusException.class);
+        given(loginService.authenticate(loginRequestDto)).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user name xxx cannot be found"));
 
         mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -102,7 +100,7 @@ public class LoginControllerTest {
     public void givenLoginRequestCouldNotAuthenticate_returnBadRequest() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
-        given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.empty());
+        given(loginService.authenticate(loginRequestDto)).willReturn(Optional.empty());
 
         mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -112,7 +110,7 @@ public class LoginControllerTest {
     public void givenLoginRequestNullFromAuthenticate_returnBadRequest() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
-        given(loginService.authenticate(any(String.class), any(String.class))).willReturn(Optional.ofNullable(null));
+        given(loginService.authenticate(loginRequestDto)).willReturn(Optional.ofNullable(null));
 
         mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -122,7 +120,7 @@ public class LoginControllerTest {
     public void givenLoginRequestThrowsUserNotFoundException_returnNotFound() throws Exception {
         String requestJsonString = Utilities.asJsonString(loginRequestDto);
 
-        given(loginService.authenticate(any(String.class), any(String.class))).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not found"));
+        given(loginService.authenticate(loginRequestDto)).willThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not found"));
 
         mockMvc.perform(post("/api/v1/auth/login").content(requestJsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());

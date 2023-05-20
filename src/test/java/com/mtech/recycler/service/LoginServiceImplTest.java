@@ -2,6 +2,7 @@ package com.mtech.recycler.service;
 
 import com.mtech.recycler.config.JwtTokenProvider;
 import com.mtech.recycler.constant.CommonConstant;
+import com.mtech.recycler.dto.LoginRequestDto;
 import com.mtech.recycler.entity.User;
 import com.mtech.recycler.dto.LoginResponseDto;
 import com.mtech.recycler.dto.Role;
@@ -23,6 +24,8 @@ public class LoginServiceImplTest {
     private String email;
     private String password;
 
+    private LoginRequestDto loginRequestDto;
+
     private UserService userService;
 
     private LoginService loginService;
@@ -34,6 +37,7 @@ public class LoginServiceImplTest {
         email = "test@test.com";
         password = "12345";
         loginService = new LoginServiceImpl(tokenProvider, userService);
+        loginRequestDto = new LoginRequestDto(email, password);
     }
 
 
@@ -46,8 +50,8 @@ public class LoginServiceImplTest {
 
 
         Mockito.when(userService.getUserByEmail(any(String.class))).thenReturn(user);
-
-        Optional<LoginResponseDto> loginResponse = loginService.authenticate("test@test.com", "456");
+        loginRequestDto.setPassword("wrongPassword");
+        Optional<LoginResponseDto> loginResponse = loginService.authenticate(loginRequestDto);
 
         Assertions.assertNotNull(loginResponse);
         Assertions.assertTrue(loginResponse.isPresent());
@@ -67,7 +71,7 @@ public class LoginServiceImplTest {
 
         Mockito.when(userService.getUserByEmail(any(String.class))).thenReturn(user);
 
-        Optional<LoginResponseDto> loginResponse = loginService.authenticate(email, password);
+        Optional<LoginResponseDto> loginResponse = loginService.authenticate(loginRequestDto);
 
         Assertions.assertNotNull(loginResponse);
         Assertions.assertTrue(loginResponse.isPresent());
@@ -85,7 +89,7 @@ public class LoginServiceImplTest {
         Mockito.when(userService.getUserByEmail(any(String.class))).thenThrow(ResponseStatusException.class);
 
         Assertions.assertThrows(ResponseStatusException.class, () -> {
-            Optional<LoginResponseDto> loginResponse = loginService.authenticate(email, password);
+            Optional<LoginResponseDto> loginResponse = loginService.authenticate(loginRequestDto);
 
             Assertions.assertNull(loginResponse);
         });
