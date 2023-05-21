@@ -50,12 +50,17 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public Optional<PricingResponseDto> getRequestTotalPricing(PricingRequestDto request) {
         var response = new PricingResponseDto();
-        List<ItemDto> itemDtos = new ArrayList<>();
 
         PromotionPricingStrategy pricingStrategy = setPricingStrategy(request);
 
         try {
-            BigDecimal totalPrice = pricingStrategy.calculateTotalPrice(request.getData(), request.getPromoCode());
+
+            int loyaltyPoint = 0;
+            String membershipTier = "Basic";
+            PricingDecorator pricingDecorator = new LoyaltyPointPricingDecorator(pricingStrategy, loyaltyPoint);
+            pricingDecorator = new MembershipTierPricingDecorator(pricingDecorator, membershipTier);
+
+            BigDecimal totalPrice = pricingDecorator.calculateTotalPrice(request.getData(), request.getPromoCode());
 
             log.info("RequestService - GetRequestTotalPricing - total price after promo: %s".formatted(totalPrice));
 

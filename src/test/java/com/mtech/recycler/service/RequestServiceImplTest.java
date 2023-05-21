@@ -83,7 +83,7 @@ public class RequestServiceImplTest {
     @Test
     void testGetRequestTotalPricing_WithoutPromotion_Success() {
 
-        var expectedTotalPrice = new BigDecimal("150.0");
+        var expectedTotalPrice = new BigDecimal("150.00");
         var expectedBatteryTotalPrice = new BigDecimal("100.00");
         var expectedPlasticTotalPrice = new BigDecimal("50.00");
         var categories = new ArrayList<ItemDto>() {{
@@ -156,7 +156,7 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_WithCategoryStrategy_Success() {
-        var expectedTotalPrice = new BigDecimal("24.0");
+        var expectedTotalPrice = new BigDecimal("24.00");
         var expectedBatteryTotalPrice = new BigDecimal("4.00");
         var expectedPlasticTotalPrice = new BigDecimal("20.00");
         var categories = new ArrayList<ItemDto>() {{
@@ -197,7 +197,7 @@ public class RequestServiceImplTest {
 
     @Test
     void testGetRequestTotalPricing_WithDayStrategy_Success() {
-        var expectedTotalPrice = new BigDecimal("33.600");
+        var expectedTotalPrice = new BigDecimal("33.60");
         var expectedBatteryTotalPrice = new BigDecimal("5.60");
         var expectedPlasticTotalPrice = new BigDecimal("28.00");
         var categories = new ArrayList<ItemDto>() {{
